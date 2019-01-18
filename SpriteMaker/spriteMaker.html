@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script language="javascript" type="text/javascript" src="SpriteMaker.js"></script>
+        <script language="javascript" type="text/javascript" src="ColorPicker.js"></script>
+        <link rel="stylesheet" type="text/css" href="ColorPicker.css">
+        
+        <style> body {padding: 0; margin: 0;} </style>
+    </head>
+
+    <body style="background: #424242">
+        <div>
+            <canvas id="preview" style="border:1px solid #ff0000;">
+                Your browser does not support the canvas element.
+            </canvas>
+            <canvas id="preview_rotate" style="border:1px solid #ff0000;">
+                Your browser does not support the canvas element.
+            </canvas>
+            <canvas id="preview_actual" style="border:1px solid #ff0000;">
+                Your browser does not support the canvas element.
+            </canvas>
+        </div>
+            <label id="position"></label>
+            <input type="range" id="rotation"/>
+            <label>Rotate</label>
+        <div></div>
+
+        <div id="layers" style="border:1px solid #ff0000;">
+            
+
+        </div>
+        <button onclick="addLayer()">Add layer</button>
+        <button onclick="layerDown()">Down</button>
+        <label id="current">sdfsd</label>
+        <button onclick="layerUp()">Up</button>
+        <button onclick="setBackground()">Set background</button>
+        <button onclick="exportImg()">Export</button>
+        <div id="exportFrame"></div>
+        <div id="container">
+            <div id="palette" class="block">
+                <div id="color-palette"></div>
+                <div id="color-info">
+                    <div class="title"> CSS Color </div>
+                </div>
+            </div>
+    
+            <div id="picker" class="block">
+                <div class="ui-color-picker" data-topic="picker" data-mode="HSL"></div>
+                <div id="picker-samples" sample-id="master"></div>
+                <div id="controls">
+                    <div id="delete">
+                        <div id="trash-can"></div>
+                    </div>
+                    <div id="void-sample" class="icon"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
