@@ -17,6 +17,8 @@ class Living extends Entity {
         this.life = 100;
         this.energy = 1000;
         this.hunt = false;
+        this.bounce = 0;
+        this.elapsedTime = 0;
     }
 
     update() {
@@ -93,10 +95,20 @@ class Living extends Entity {
 }
 
 Living.prototype.draw = function (ctx, dt) {
+    this.elapsedTime += dt;
     if (this.sprite instanceof Sprite3D) {
         //this.sprite.drawSprite(ctx, (this.position.x | 0), (this.position.y | 0), this.velocity.angle());   If on OSX
-        var bounce = this.velocity.magnitude()/this.topSpeed;
-        this.sprite.drawSprite(ctx, dt, this.position.x, this.position.y, this.velocity.angle(), bounce);   
+        var b = this.velocity.magnitude();
+        this.bounce += b/6;
+        this.bounce %= Math.PI*2;
+        if (b < 0.1) {
+            if (this.bounce > Math.PI) {
+                this.bounce *= 1.05;
+            } else {
+                this.bounce /= 1.05;
+            }
+        }
+        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.velocity.angle(), this.bounce);   
     } else { 
         this.sprite.drawSubImage(0, ctx, this.position.x, this.position.y, this.velocity.angle());       
     }

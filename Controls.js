@@ -18,7 +18,7 @@ class Controls {
                 game.player.sprite = assetMgr.getSprite("dudeBlue");
                 break;
             case 70: // F
-                terrain.generateChickens(1)
+                terrain.generateChickens(25)
                 break;
             case 71: // G
                 terrain.generateObjects(25);

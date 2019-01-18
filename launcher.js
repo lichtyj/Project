@@ -29,14 +29,14 @@ function createSprites() {
     assetMgr.createSprite3D("dudeGreen", 16, 16, 21, scale, frameduration, 1, true);
     assetMgr.createSprite3D("dudeGreenWalk", 16, 16, 21, scale, frameduration, 5, true);
     assetMgr.createSprite3D("dudeBlue", 16, 16, 18, scale, frameduration, 1, true);
-    assetMgr.createSprite3D("chicken", 16, 16, 10, scale, frameduration, 3, true);
+    assetMgr.createSprite3D("chicken", 16, 16, 10, scale, frameduration*2, 3, true);
     assetMgr.createSprite3D("bush", 16, 16, 6, scale, frameduration, 1, true);
     assetMgr.createSprite3D("tree", 16, 16, 24, scale, frameduration, 1, true);
     assetMgr.createSprite3D("rock", 16, 16, 9, scale, frameduration, 4, true);
     assetMgr.createSprite3D("scientist", 16, 16, 21, scale, frameduration, 6, true);
     assetMgr.createSprite3D("chest", 16, 16, 21, scale, frameduration, 9, false);
     assetMgr.createSprite3D("grass", 16, 16, 21, scale, frameduration, 1, true);
-    assetMgr.createSprite3D("meat", 16, 16, 8, scale, frameduration, 1, true);
+    assetMgr.createSprite3D("meat", 16, 16, 7, scale, frameduration, 1, false);
     console.log("Done creating sprites")
     start();
 }
