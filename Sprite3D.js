@@ -14,26 +14,36 @@ class Sprite3D {
         this.ay = frameHeight/2;
     }
 
-    drawSprite(ctx, elapsedTime, x, y, r, bounce) {
+    drawSprite(ctx, elapsedTime, x, y, z, r, bounce, swing) {
         var currentFrame;
         if (this.loop) elapsedTime %= this.totalTime;    
         currentFrame = Math.floor(elapsedTime / this.frameDuration) % this.frames;
-        this.drawFrame(currentFrame, ctx, x, y, r, bounce);
+        this.drawFrame(currentFrame, ctx, x, y, z, r, bounce, swing);
     }
 
-    drawFrame(frame, ctx, x, y, r, bounce) {
+    drawFrame(frame, ctx, x, y, z, r, bounce, swing) {
         var b = (Math.cos(bounce)-1)/16+1;
         var tempR = Math.sin(bounce)*.75;
         for (let index = 0; index < this.layers; index++) {
-            ctx.setTransform(this.sc,0,0,this.sc,x,y-index*game.viewAngle*b*this.sc);
-            if (index < 6) {
-                ctx.rotate(r+tempR*(1-index/6));
+            if (index == 0) {
+                ctx.globalCompositeOperation = "multiply";
+                var alpha = .25-Math.pow(z/250,2);
+                if (alpha < 0) alpha = 0;
+                ctx.globalAlpha = alpha;
+                ctx.setTransform(this.sc,0,0,this.sc,x,y-index*game.viewAngle*b*this.sc);
+            } else {
+                ctx.globalAlpha = 1;
+                ctx.globalCompositeOperation = "normal";
+                ctx.setTransform(this.sc,0,0,this.sc,x,y-z-index*game.viewAngle*b*this.sc);
+            }
+            if (typeof swing == "number" && index < swing && index != 0) {
+                ctx.rotate(r+tempR*(1-index/swing));
             } else {
                 ctx.rotate(r);
             }
             ctx.drawImage(this.spriteSheet, index * this.frameWidth, 
-                frame * this.frameHeight ,this.frameWidth, this.frameHeight, -this.ax, -this.ay, this.frameWidth, 
-                this.frameHeight);
+                frame * this.frameHeight ,this.frameWidth, this.frameHeight, -this.ax, -this.ay, this.frameWidth*(z/200+1), 
+                this.frameHeight*(z/200+1));
         }
     }
 }

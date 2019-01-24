@@ -1,5 +1,5 @@
 class Vector {
-    constructor(x, y) {
+    constructor(x, y, z) {
         if (arguments.length == 0) {
             this.x = 0;
             this.y = 0;
@@ -10,19 +10,15 @@ class Vector {
     }
 
     add(vector) {
-        if (vector instanceof Vector) {
-            this.x += vector.x;
-            this.y += vector.y;
-        }
+        this.x += vector.x;
+        this.y += vector.y;
         return this;
     }
 
     subtract(vector) {
-        if (vector instanceof Vector) {
-            this.x -= vector.x;
-            this.y -= vector.y;
-            return this;
-        }
+        this.x -= vector.x;
+        this.y -= vector.y;
+        return this;
     }
 
     div(scalar) {
@@ -57,6 +53,15 @@ class Vector {
         }
     }
 
+    toAngle(angle) {
+        var mag = this.magnitude();
+        if (mag < 1) mag = 1;
+        this.x = Math.cos(angle);
+        this.y = Math.sin(angle);
+        this.mult(mag);
+        return this;
+    }
+
     magnitude() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
@@ -78,10 +83,6 @@ class Vector {
         if (max == undefined) max = 1;
         return new Vector((Math.random()*2-1)*max, (Math.random()*2-1)*max);
     }
-    
-    static zero() {
-        return new Vector(0,0);
-    }
 
     static distance(me, other) {
         return Math.sqrt(Math.pow(me.x - other.x, 2) + Math.pow(me.y - other.y, 2));
@@ -89,5 +90,31 @@ class Vector {
 
     static distanceSqrd(me, other) {
         return Math.pow(me.x - other.x, 2) + Math.pow(me.y - other.y, 2);
+    }
+
+
+    //TODO return an encapsulated version of these.  Single instance - no GC
+    static zero() {
+        return new Vector(0,0);
+    }
+
+    static left() {
+        return new Vector(-1,0);
+    }
+
+    static right() {
+        return new Vector(1,0);
+    }
+
+    static up() {
+        return new Vector(0,-1);
+    }
+
+    static down() {
+        return new Vector(0,1);
+    }
+
+    static fromAngle(angle) {
+        return new Vector(Math.cos(angle), Math.sin(angle));
     }
 }

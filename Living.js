@@ -15,7 +15,7 @@ class Living extends Entity {
         this.topSpeed = Math.random()*2+1;
         this.foodSprint = Math.random()*this.vision;
         this.life = 100;
-        this.energy = 1000;
+        this.energy = 10000;
         this.hunt = false;
         this.bounce = 0;
         this.elapsedTime = 0;
@@ -42,8 +42,11 @@ class Living extends Entity {
     }
 
     die() {
+        var p = new Particles(new Vector3D(this.position.x, this.position.y, 6), new Vector3D(this.velocity.x, this.velocity.y, Math.random()*10+10), 20, 4, 0, 10);
+        p.init();
+        game.addParticles(p);
+        game.addEntity(new Resource(this.position, assetMgr.getSprite("meat"), Math.random()*Math.PI*2));
         game.remove(this);
-        game.addEntity(new Resource(this.position.add(Vector.random(25)), assetMgr.getSprite("meat"), Math.random()*Math.PI*2));
     }
 
     eat(food) {
@@ -59,6 +62,9 @@ class Living extends Entity {
         var total = 0;
         for (var other of entities) {
             var d = Vector.distance(this.position,other.position);
+            if (other instanceof Player && d < 15) {
+                this.life = 0;
+            } 
             if (other instanceof Resource && this.life > 0 && d < this.foodSprint) {
                 if (d < 15) {
                     this.eat(other);
@@ -108,7 +114,7 @@ Living.prototype.draw = function (ctx, dt) {
                 this.bounce /= 1.05;
             }
         }
-        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.velocity.angle(), this.bounce);   
+        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, 0/*this.position.z*/, this.velocity.angle(), this.bounce, 8);   
     } else { 
         this.sprite.drawSubImage(0, ctx, this.position.x, this.position.y, this.velocity.angle());       
     }

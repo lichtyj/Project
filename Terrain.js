@@ -26,10 +26,21 @@ class Terrain {
         }
     }
 
-    generateObjects(count) {
-        var spr = assetMgr.getSprite("meat");
+    generateFood(count) {
+        var spr = assetMgr.getSprite("water");
         for (var i = 0; i < count; i++) {
-            game.addEntity(new Object(new Vector(Math.floor(Math.random()*game.surfaceWidth), 
+            switch (Math.floor(Math.random()*3)) {
+                case 0:
+                    spr = assetMgr.getSprite("meat");
+                    break;
+                case 1: 
+                    spr = assetMgr.getSprite("water");
+                    break;
+                case 2: 
+                    spr = assetMgr.getSprite("rock");
+                    break;
+            }
+            game.addEntity(new Resource(new Vector(Math.floor(Math.random()*game.surfaceWidth), 
                             Math.floor(Math.random()*game.surfaceHeight)), 
                             spr, Math.random()*Math.PI*2));
         }
