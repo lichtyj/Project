@@ -13,7 +13,7 @@ class Player extends Living {
         //}
         var avgSep = new Vector();
         for (var other of game.entities) {
-            if (!(other instanceof Particles)) {
+            // if (!(other instanceof Particles)) {
                 var d = Vector.distance(this.position,other.position);
                 if (other != this && d < this.separation) {
                     var sep = this.position.clone();
@@ -23,7 +23,7 @@ class Player extends Living {
                     avgSep.add(sep);
                 }
                         
-            }
+            // }
         }
         this.acceleration.add(avgSep);
         this.acceleration.limit(3);

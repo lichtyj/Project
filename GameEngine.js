@@ -13,15 +13,14 @@ class GameEngine {
         this.player;
         this.viewAngle = 1;
         this.bounds = new Vector(this.surfaceWidth, this.surfaceHeight);
-
-
-        this.examine;
     }
     init() {
         console.log("Initialized");
         this.startInput();
         window.requestAnimationFrame(game.gameLoop);
-        this.addEntity(new Ship(assetMgr.getSprite("ship"),assetMgr.getAsset("shipShadow")));
+        // var ship = new Ship(assetMgr.getSprite("ship"),assetMgr.getAsset("shipShadow"));
+        // this.addEntity(ship);
+        // ship.init();
     }
 
     gameLoop() {
@@ -64,6 +63,8 @@ class GameEngine {
             controls.keyUp(e.keyCode); ///////////////////////////////////////////// CONTROLS
         });
         console.log('Input initiated');
+
+
     }
 
     update() {
@@ -97,8 +98,8 @@ class GameEngine {
         // for (var i = 0; i < this.entities.length; i++) {
         //     tempCtx.drawImage(assetMgr.getAsset("shadow"), this.entities[i].position.x-7, this.entities[i].position.y-7);
         // }
-        // tempCtx.globalCompositeOperation = "normal";
-        // tempCtx.globalAlpha = 1;
+        tempCtx.globalCompositeOperation = "normal";
+        tempCtx.globalAlpha = 1;
         for (var i = 0; i < this.entities.length; i++) {
             this.entities[i].draw(tempCtx, dt);
         }

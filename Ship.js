@@ -13,9 +13,15 @@ class Ship {
         this.stopped = false;
         this.shadowSprite = shadowSprite;
         this.timer = 0;
+        this.particles;
+        this.imgData;
+        this.i = 0;
     }
 
     update(dt) {
+
+        //this.sendMessage("draw", this.i++);
+
         this.direction += this.spin;
         this.position.add(this.velocity);
         this.velocity.add(this.acceleration);
@@ -26,19 +32,29 @@ class Ship {
         if (game.player == undefined) { /// TODO pull this out into an animation method and increment a 'stages' variable instead of all these bools
             if (!this.stopped) {
                 if (this.position.z < 0) {
-                    console.log("Landed");
+                    //console.log("Landed");
                     this.position.z = 0;
                     this.landed = true;
-                    if (this.spin > 0.007) {
-                        var pos = new Vector3D(this.position.x, this.position.y, 3);
-                        var dist = Math.random()*30+25;
-                        var angle = 3.3+Math.random()*.28;
-                        var dir = new Vector3D(Math.cos(this.direction+angle)*dist, Math.sin(this.direction+angle)*dist, 0);
-                        var dir2 = new Vector3D(Math.cos(this.direction+angle+1.5)*dist, Math.sin(this.direction+angle+1.5)*dist, 0).mult(this.spin*20);
-                        var p = new Particles(pos.add(dir), new Vector3D(dir2.x, dir2.y, Math.random()*10+20), this.spin, this.velocity.magnitude()*8, 1.5, 1);
-                        p.init();
-                        game.addParticles(p);
-                    }
+                    // if (this.spin > 0.007) {
+                    //     var pos = new Vector3D(this.position.x, this.position.y, 3);
+                    //     var dist = Math.random()*30+25;
+                    //     var angle = 3.3+Math.random()*.28;
+                    //     var dir = new Vector3D(Math.cos(this.direction+angle)*dist, Math.sin(this.direction+angle)*dist, 0);
+                    //     var dir2 = new Vector3D(Math.cos(this.direction+angle+1.5)*dist, Math.sin(this.direction+angle+1.5)*dist, 0).mult(this.spin*20);
+                    //     if (this.particles != undefined) {
+
+                    //         this.sendMessage( "init", 
+                    //         { "position": pos.add(dir),
+                    //           "velocity": new Vector3D(dir2.x, dir2.y, Math.random()*10+20),
+                    //           "rate": this.spin, 
+                    //           "force": this.velocity.magnitude()*4, 
+                    //           "hue": 1.5,
+                    //           "time": 1} );
+                    //     }
+                    //     //TODO var p = new Particles(pos.add(dir), new Vector3D(dir2.x, dir2.y, Math.random()*10+20), this.spin, this.velocity.magnitude()*8, 1.5, 1);
+                    //     //p.init();
+                    //     //game.addParticles(p);
+                    // }
                 }
 
                 if (!this.landed) {
@@ -71,9 +87,9 @@ class Ship {
             var angle = 2.9+Math.random()*.5;
             var dir = new Vector3D(Math.cos(this.direction+angle)*dist, Math.sin(this.direction+angle)*dist, 0);
             var dir2 = new Vector3D(Math.cos(this.direction+angle)*dist, Math.sin(this.direction+angle)*dist, 0).mult(.25);
-            var p = new Particles(pos.add(dir), new Vector3D(dir2.x, dir2.y, Math.random()*10+20), Math.random()*10, 2+Math.random()*4, 3+Math.random()*2, Math.random()*10);
-            p.init();
-            game.addParticles(p);
+            // TODO var p = new Particles(pos.add(dir), new Vector3D(dir2.x, dir2.y, Math.random()*10+20), Math.random()*10, 2+Math.random()*4, 3+Math.random()*2, Math.random()*10);
+            //p.init();
+            //game.addParticles(p);
         }
     }
 
