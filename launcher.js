@@ -2,6 +2,8 @@ var game;
 var assetMgr = new AssetManager();
 var terrain = new Terrain();
 var controls = new Controls();
+var size = 400;
+var viewSize = 400;
 // Encapsulate these
 
 assetMgr.queueDownload("./sprites/practice.png");
@@ -23,29 +25,30 @@ assetMgr.queueDownload("./sprites/shipShadow.png");
 assetMgr.queueDownload("./sprites/particle.png");
 assetMgr.queueDownload("./sprites/particleShadow.png");
 assetMgr.queueDownload("./sprites/shadow.png");
+assetMgr.queueDownload("./sprites/dna.png");
 assetMgr.downloadAll(function() {
     console.log("Done loading image assets");
     createSprites();
 });
 
 function createSprites() {
-    var scale = 2;
     var frameduration = 0.15;
     assetMgr.createSprite("practice", 16, 16, 16, frameduration, 8, true, 1, 1, 8, 8);
-    assetMgr.createSprite3D("dudeRed", 16, 16, 18, scale, frameduration, 1, true);
-    assetMgr.createSprite3D("dudeGreen", 16, 16, 21, scale, frameduration, 1, true);
-    assetMgr.createSprite3D("dudeGreenWalk", 16, 16, 21, scale, frameduration, 5, true);
-    assetMgr.createSprite3D("dudeBlue", 16, 16, 18, scale, frameduration, 1, true);
-    assetMgr.createSprite3D("chicken", 16, 16, 11, scale, frameduration*2, 3, true);
-    assetMgr.createSprite3D("bush", 16, 16, 6, scale, frameduration, 1, true);
-    assetMgr.createSprite3D("tree", 16, 16, 24, scale, frameduration, 1, true);
-    assetMgr.createSprite3D("rock", 16, 16, 9, scale, frameduration, 4, true);
-    assetMgr.createSprite3D("scientist", 16, 16, 21, scale, frameduration, 6, true);
-    assetMgr.createSprite3D("chest", 16, 16, 21, scale, frameduration, 9, false);
-    assetMgr.createSprite3D("grass", 16, 16, 21, scale, frameduration, 1, true);
-    assetMgr.createSprite3D("meat", 16, 16, 7, scale, frameduration, 1, false);
-    assetMgr.createSprite3D("water", 16, 16, 8, scale, frameduration, 1, true);
-    assetMgr.createSprite3D("ship", 64, 64, 12, scale, frameduration, 1, true);
+    assetMgr.createSprite3D("dudeRed", 16, 16, 18, frameduration, 1, true);
+    assetMgr.createSprite3D("dudeGreen", 16, 16, 21, frameduration, 1, true);
+    assetMgr.createSprite3D("dudeGreenWalk", 16, 16, 21, frameduration, 5, true);
+    assetMgr.createSprite3D("dudeBlue", 16, 16, 18, frameduration, 1, true);
+    assetMgr.createSprite3D("chicken", 16, 16, 11, frameduration*2, 3, true);
+    assetMgr.createSprite3D("bush", 16, 16, 6, frameduration, 1, true);
+    assetMgr.createSprite3D("tree", 16, 16, 24, frameduration, 1, true);
+    assetMgr.createSprite3D("rock", 16, 16, 9, frameduration, 4, true);
+    assetMgr.createSprite3D("scientist", 16, 16, 21, frameduration, 6, true);
+    assetMgr.createSprite3D("chest", 16, 16, 21, frameduration, 9, false);
+    assetMgr.createSprite3D("grass", 16, 16, 21, frameduration, 1, true);
+    assetMgr.createSprite3D("meat", 16, 16, 7, frameduration, 1, false);
+    assetMgr.createSprite3D("water", 16, 16, 8, frameduration, 1, true);
+    assetMgr.createSprite3D("ship", 64, 64, 12, frameduration, 1, true);
+    assetMgr.createSprite3D("dna", 16, 16, 16, frameduration, 1, true);
     console.log("Done creating sprites")
     start();
 }
@@ -54,11 +57,13 @@ function createSprites() {
 
 function start() {
     var canvas = document.getElementById("canvas");
-    canvas.width = 800;
-    canvas.height = 800;
-    var ctx = canvas.getContext("2d");
+    canvas.width = viewSize;
+    canvas.height = viewSize;
+    canvas.style.background = '#559061';
+    // canvas.style.transform = 'scale(2)';
+    var ctx = canvas.getContext('2d', { alpha: false });
     ctx.imageSmoothingEnabled = false;  
-    game = new GameEngine(ctx);
+    game = new GameEngine(ctx, size, size);
     game.init();
 }
 

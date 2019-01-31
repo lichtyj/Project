@@ -1,11 +1,11 @@
 class Entity {
     constructor(position, sprite) {
-        if (position instanceof Vector) {
+        // if (position instanceof Vector) {
             this.position = position;
-        } else {
-            console.error("Invalid argument")
-            this.position = new Vector(window.innerWidth/2, window.innerHeight/2);
-        }
+        // } else {
+        //     console.error("Invalid argument")
+        //     this.position = new Vector(window.innerWidth/2, window.innerHeight/2);
+        // }
         this.velocity = new Vector();
         this.direction = new Vector();
         this.acceleration = new Vector();

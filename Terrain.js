@@ -28,6 +28,7 @@ class Terrain {
 
     generateFood(count) {
         var spr = assetMgr.getSprite("water");
+        var spin;
         for (var i = 0; i < count; i++) {
             switch (Math.floor(Math.random()*3)) {
                 case 0:
@@ -37,12 +38,12 @@ class Terrain {
                     spr = assetMgr.getSprite("water");
                     break;
                 case 2: 
-                    spr = assetMgr.getSprite("rock");
+                    spr = assetMgr.getSprite("dna");
                     break;
             }
             game.addEntity(new Resource(new Vector(Math.floor(Math.random()*game.surfaceWidth), 
                             Math.floor(Math.random()*game.surfaceHeight)), 
-                            spr, Math.random()*Math.PI*2));
+                            spr, Math.random()*Math.PI*2, spin));
         }
     }
 

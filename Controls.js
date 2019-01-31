@@ -4,6 +4,15 @@ class Controls {
     }
 
     keyUp(num) {
+        switch(num) {
+            case 16: // LeftShift
+                game.player.aiming = false;
+                game.ctx.canvas.style["cursor"] = "none";
+                game.ctx.canvas.removeEventListener("mousemove", this.captureMouse);
+                game.ctx.canvas.removeEventListener("mousedown", this.mousePress);
+                break;    
+        }
+
         delete this.keys.splice(this.keys.indexOf(num),1);
     }
 
@@ -13,10 +22,32 @@ class Controls {
         }
     }
 
+    mouseMove(e) {
+        var x = e.clientX - game.ctx.canvas.getBoundingClientRect().left;
+        var y = e.clientY - game.ctx.canvas.getBoundingClientRect().top;
+
+        game.ctx.fillStyle = "#0F0";
+        game.ctx.fillRect(x,y,2,2);
+        game.player.target(x, y);
+    }
+
+    mousePress(e) {
+        game.player.shoot();
+    }
+
     actions() {
         var moving = Vector.zero();
         for (var key of this.keys) {
             switch(key) {
+                case 16: // LeftShift
+                    if (!game.player.aiming) {
+                        game.ctx.canvas.style["cursor"] = "url(./sprites/crosshair.png) 8 8, crosshair";
+                        game.ctx.canvas.addEventListener("mousemove", this.mouseMove);
+                        game.ctx.canvas.addEventListener("mousedown", this.mousePress);
+                    }
+                    game.player.aiming = true;
+
+                    break;
                 case 49: // 1
                     game.player.sprite = assetMgr.getSprite("scientist");
                     break;

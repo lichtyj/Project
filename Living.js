@@ -9,7 +9,8 @@ class Living extends Entity {
         }
         this.bounds = bounds;
 
-        this.vision = Math.random()*50+50;
+        this.vision = Math.random()*100+100;
+        this.visionCone = Math.PI*(1+Math.random());
         this.separation = Math.random()*50+10;
         this.sprint = Math.random()+1;
         this.topSpeed = Math.random()*2+1;
@@ -19,6 +20,11 @@ class Living extends Entity {
         this.hunt = false;
         this.bounce = 0;
         this.elapsedTime = 0;
+        this.facing = new Vector();
+    }
+
+    perceptionCheck() {
+        return game.tree.retrieve(this.position.x, this.position.y, this.vision, this.velocity.x, this.velocity.y, this.visionCone)
     }
 
     update() {
@@ -27,10 +33,15 @@ class Living extends Entity {
         } else {
             this.energy -= this.velocity.magnitude();
         }
-        this.flock(game.entities);
+
+        this.flock(this.perceptionCheck());
 
         this.position.add(this.velocity);
-        this.velocity.add(this.acceleration.limit(this.sprint)).limit(this.topSpeed);
+        this.acceleration.limit(this.sprint);
+        if (this.acceleration.magnitude() > .1)
+            this.velocity.add(this.acceleration);
+        this.velocity.limit(this.topSpeed);
+        this.facing.set(this.velocity);
     
         if (this.position.x < 0) this.position.x = this.bounds.x;
         if (this.position.y < 0) this.position.y = this.bounds.y;
@@ -42,9 +53,9 @@ class Living extends Entity {
     }
 
     die() {
-        var p = new Particles(new Vector3D(this.position.x, this.position.y, 6), new Vector3D(this.velocity.x, this.velocity.y, Math.random()*10+10), 20, 4, 0, 10);
-        p.init();
-        game.addParticles(p);
+        // var p = new Particles(new Vector3D(this.position.x, this.position.y, 6), new Vector3D(this.velocity.x, this.velocity.y, Math.random()*10+10), 20, 4, 0, 10);
+        // p.init();
+        // game.addParticles(p);
         game.addEntity(new Resource(this.position, assetMgr.getSprite("meat"), Math.random()*Math.PI*2));
         game.remove(this);
     }
@@ -56,13 +67,15 @@ class Living extends Entity {
     }
 
     flock(entities) { // This is messy, fix it.
+
         var avg = new Vector();
         var avgSep = new Vector();
         var avgPos = new Vector();
         var total = 0;
         for (var other of entities) {
             var d = Vector.distance(this.position,other.position);
-            if (other instanceof Player && d < 15) {
+            if ((other instanceof Player || other instanceof Projectile) && d < 15) {
+                if (other instanceof Projectile) other.hit();
                 this.life = 0;
             } 
             if (other instanceof Resource && this.life > 0 && d < this.foodSprint) {
@@ -85,7 +98,7 @@ class Living extends Entity {
                     sep.mult(Math.pow(rate,2));
                     avgSep.add(sep);
                     if (other instanceof Player) {
-                        avgSep.add(sep).mult(2);
+                        avgSep.add(sep).mult(3);
                     }
                 } 
             }
@@ -98,24 +111,23 @@ class Living extends Entity {
         this.acceleration.add(avgSep); // Separation
         this.acceleration.limit(this.sprint);
     }
-}
 
-Living.prototype.draw = function (ctx, dt) {
-    this.elapsedTime += dt;
-    if (this.sprite instanceof Sprite3D) {
-        //this.sprite.drawSprite(ctx, (this.position.x | 0), (this.position.y | 0), this.velocity.angle());   If on OSX
-        var b = this.velocity.magnitude();
-        this.bounce += b/6;
-        this.bounce %= Math.PI*2;
-        if (b < 0.1) {
-            if (this.bounce > Math.PI) {
-                this.bounce *= 1.05;
-            } else {
-                this.bounce /= 1.05;
+    draw(ctx, dt) {
+        this.elapsedTime += dt;
+        if (this.sprite instanceof Sprite3D) {
+            var b = this.velocity.magnitude();
+            this.bounce += b/6;
+            this.bounce %= Math.PI*2;
+            if (b < 0.1) {
+                if (this.bounce > Math.PI) {
+                    this.bounce *= 1.05;
+                } else {
+                    this.bounce /= 1.05;
+                }
             }
+            this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, 0/*this.position.z*/, this.facing.angle(), this.bounce, 8);   
+        } else { 
+            this.sprite.drawSubImage(0, ctx, this.position.x, this.position.y, this.facing.angle());       
         }
-        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, 0/*this.position.z*/, this.velocity.angle(), this.bounce, 8);   
-    } else { 
-        this.sprite.drawSubImage(0, ctx, this.position.x, this.position.y, this.velocity.angle());       
     }
 }

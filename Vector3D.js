@@ -59,6 +59,10 @@ class Vector3D {
     //     }
     // }
 
+    offset(offset) {
+        return new Vector3D(this.position.x + Math.cos(this.angle()*offset.x), this.position.y + Math.sin(this.angle() * offset.y));
+    }
+
     magnitude() {
         return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
@@ -74,6 +78,12 @@ class Vector3D {
 
     clone() {
         return new Vector3D(this.x, this.y, this.z);
+    }
+
+    set(vector) {
+        this.x = vector.x;
+        this.y = vector.y;
+        this.z = vector.z;
     }
 
     static random(max) {

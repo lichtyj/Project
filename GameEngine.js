@@ -1,26 +1,26 @@
 class GameEngine {
-    constructor(ctx) {
+    constructor(ctx, worldWidth, worldHeight) {
         this.entities = [];
-        this.particles = [];
         this.ctx = ctx;
         this.lastFrame = 0;
         this.dt = 0;
         this.step = 1/60;
-        this.click = new Vector();
-        this.mouse = new Vector();
         this.surfaceWidth = ctx.canvas.width;
         this.surfaceHeight = ctx.canvas.height;
         this.player;
         this.viewAngle = 1;
-        this.bounds = new Vector(this.surfaceWidth, this.surfaceHeight);
+        this.bounds = new Vector(worldWidth, worldHeight);
+        this.tree;
+        this.toRemove = [];
     }
     init() {
         console.log("Initialized");
         this.startInput();
+        this.tree = new Quadtree(1, 0, 0, this.bounds.x, this.bounds.y, null);
+        this.tree.init();
+        this.player = new Player(new Vector(200,200), new Vector(), assetMgr.getSprite('scientist'), this.bounds);
+        this.addEntity(this.player);
         window.requestAnimationFrame(game.gameLoop);
-        // var ship = new Ship(assetMgr.getSprite("ship"),assetMgr.getAsset("shipShadow"));
-        // this.addEntity(ship);
-        // ship.init();
     }
 
     gameLoop() {
@@ -38,21 +38,6 @@ class GameEngine {
 
     startInput() {
         console.log('Starting input');
-
-        var getXandY = function (e) {
-            return new Vector(e.clientX - that.ctx.canvas.getBoundingClientRect().left,
-                              e.clientY - that.ctx.canvas.getBoundingClientRect().top);
-        }
-
-        var that = this;
-        
-        // AVOID IF POSSIBLE*///////////////////////////////////////
-        // this.ctx.canvas.addEventListener("mousemove", function (e) {
-        //     that.examine.rotation = that.examine.position.angleTo(getXandY(e));
-        //     that.mouse = getXandY(e);
-        // }, false);
-        //AVOID IF POSSIBLE *///////////////////////////////////////
-
         document.addEventListener("keydown", function(e) {
             console.log(e.code + ": down " + e.keyCode);
             controls.keyDown(e.keyCode); ///////////////////////////////////////////// CONTROLS
@@ -63,67 +48,37 @@ class GameEngine {
             controls.keyUp(e.keyCode); ///////////////////////////////////////////// CONTROLS
         });
         console.log('Input initiated');
-
-
     }
 
-    update() {
+    update(dt) {
         controls.actions();
+        this.tree.clear();
         var entitiesCount = this.entities.length;
         for (var i = entitiesCount-1; i >= 0; i--) {
-            this.entities[i].update();    
+            this.tree.insert(this.entities[i]);
         }
-        var particlesCount = this.particles.length;
-        for (var i = particlesCount-1; i >= 0; i--) {
-            this.particles[i].update();    
+        for (var i = entitiesCount-1; i >= 0; i--) {
+            this.entities[i].update(dt);    
+        }
+        while (this.toRemove.length > 0) {
+            this.entities.splice(this.entities.indexOf(this.toRemove.pop()),1);
         }
     }
 
     draw(dt) {
-        var tempCanvas = document.createElement('canvas');
-        tempCanvas.width = this.ctx.canvas.width;
-        tempCanvas.height = this.ctx.canvas.height;
-        var tempCtx = tempCanvas.getContext('2d');
-        tempCtx.fillStyle = "#559061";
-        tempCtx.fillRect(0, 0, tempCtx.canvas.width, tempCtx.canvas.height);
-        tempCtx.save();
-        for (var i = 0; i < this.particles.length; i++) {
-            this.particles[i].draw(tempCtx, dt);
-        }
-        tempCtx.restore();
-        tempCtx.save();
-        this.entities.sort(function(a,b) {return a.position.y-b.position.y})
-        // tempCtx.globalCompositeOperation = "multiply";
-        // tempCtx.globalAlpha = .25;
-        // for (var i = 0; i < this.entities.length; i++) {
-        //     tempCtx.drawImage(assetMgr.getAsset("shadow"), this.entities[i].position.x-7, this.entities[i].position.y-7);
-        // }
-        tempCtx.globalCompositeOperation = "normal";
-        tempCtx.globalAlpha = 1;
+        this.ctx.canvas.width = this.ctx.canvas.width;
+        this.entities.sort(function(a,b) {return a.position.y-b.position.y});
         for (var i = 0; i < this.entities.length; i++) {
-            this.entities[i].draw(tempCtx, dt);
+            this.entities[i].draw(this.ctx, dt);
         }
-        tempCtx.restore();
-        this.ctx.drawImage(tempCanvas, 0,0);
-        tempCanvas.remove();
-    }  
+    }
  
     addEntity(entity) {
         console.log('added entity');
         this.entities.push(entity);
     }
 
-    addParticles(particles) {
-        console.log('added particles');
-        this.particles.push(particles);
-    }
-
-    removeParticles(particles) {
-        console.log('removed particles');
-        this.particles.splice(this.particles.indexOf(particles),1);
-    }
-
     remove(entity) {
-        this.entities.splice(this.entities.indexOf(entity),1);
+        this.toRemove.push(entity);
     }
 }

@@ -79,6 +79,15 @@ class Vector {
         return new Vector(this.x, this.y);
     }
 
+    set(vector) {
+        this.x = vector.x;
+        this.y = vector.y;
+    }
+
+    offset(offset) {
+        return new Vector(this.position.x + Math.cos(this.angle()*offset.x), this.position.y + Math.sin(this.angle() * offset.y));
+    }
+
     static random(max) {
         if (max == undefined) max = 1;
         return new Vector((Math.random()*2-1)*max, (Math.random()*2-1)*max);
