@@ -14,6 +14,8 @@ class Living extends Entity {
         this.separation = Math.random()*50+10;
         this.sprint = Math.random()+1;
         this.topSpeed = Math.random()*2+1;
+        this.stalkSpeed = .5;
+        this.speed;
         this.foodSprint = Math.random()*this.vision;
         this.life = 100;
         this.energy = 10000;
@@ -53,7 +55,7 @@ class Living extends Entity {
     }
 
     die() {
-        // var p = new Particles(new Vector3D(this.position.x, this.position.y, 6), new Vector3D(this.velocity.x, this.velocity.y, Math.random()*10+10), 20, 4, 0, 10);
+        // var p = new Particles(new Vector(this.position.x, this.position.y, 6), new Vector(this.velocity.x, this.velocity.y, Math.random()*10+10), 20, 4, 0, 10);
         // p.init();
         // game.addParticles(p);
         game.addEntity(new Resource(this.position, assetMgr.getSprite("meat"), Math.random()*Math.PI*2));

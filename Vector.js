@@ -1,35 +1,45 @@
-class Vector {
+class Vector { // Ignores z in all non-elementary calcs
     constructor(x, y, z) {
         if (arguments.length == 0) {
             this.x = 0;
             this.y = 0;
+            this.z = 0;
         } else {
             this.x = x;
             this.y = y;
+            this.z = z;
+        }
+
+        if (z == undefined) {
+            this.z = 0;
         }
     }
 
     add(vector) {
         this.x += vector.x;
         this.y += vector.y;
+        this.z += vector.z;
         return this;
     }
 
     subtract(vector) {
         this.x -= vector.x;
         this.y -= vector.y;
+        this.z -= vector.z;
         return this;
     }
 
     div(scalar) {
         this.x /= scalar;
         this.y /= scalar;
+        this.z /= scalar;
         return this;
     }
 
     mult(scalar) {
         this.x *= scalar;
         this.y *= scalar;
+        this.z *= scalar;
         return this;
     }
 
@@ -39,9 +49,17 @@ class Vector {
         return this;
     }
 
+    average(vector, amount) {
+        if (amount == undefined) amount = 1;
+        this.mult(amount);
+        this.add(vector);
+        this.div(amount + 1);
+    }
+
     angle() {
         var a = Math.atan(this.y/this.x);
         if (this.x < 0) a += Math.PI;
+        if (this.x == 0) a = Math.PI*Math.sign(this.y);
         return a;
     }
     
@@ -61,36 +79,54 @@ class Vector {
         this.mult(mag);
         return this;
     }
-
+    
     magnitude() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    magnitude3D() {
+        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
 
     MagnitudeSqrd() {
         return this.x * this.x + this.y * this.y;
     }
 
+    MagnitudeSqrd3D() {
+        return this.x * this.x + this.y * this.y + this.z * this.z;
+    }
+
     equals(other) {
         if (!(other instanceof Vector)) return false;
-        return (this.x == other && this.y == other.y);
+        return (this.x == other && this.y == other.y && this.z == other.z);
     }
 
     clone() {
-        return new Vector(this.x, this.y);
+        return new Vector(this.x, this.y, this.z);
     }
 
     set(vector) {
         this.x = vector.x;
         this.y = vector.y;
+        this.z = vector.z;
     }
 
-    offset(offset) {
-        return new Vector(this.position.x + Math.cos(this.angle()*offset.x), this.position.y + Math.sin(this.angle() * offset.y));
+    offset(angle, offset) {
+        return new Vector(this.x + Math.cos(offset.angle() + angle.angle()) * offset.magnitude(), 
+                          this.y + Math.sin(offset.angle() + angle.angle()) * offset.magnitude(), 
+                          this.z + offset.z);
     }
 
     static random(max) {
         if (max == undefined) max = 1;
-        return new Vector((Math.random()*2-1)*max, (Math.random()*2-1)*max);
+        var v = new Vector((Math.random()*2-1)*max, (Math.random()*2-1)*max, 0);
+        return v.limit(max);
+    }
+
+    static random3D(max) {
+        if (max == undefined) max = 1;
+        var v = new Vector((Math.random()*2-1)*max, (Math.random()*2-1)*max, (Math.random()*2-1)*max);
+        return v.limit(max);
     }
 
     static distance(me, other) {
@@ -101,29 +137,36 @@ class Vector {
         return Math.pow(me.x - other.x, 2) + Math.pow(me.y - other.y, 2);
     }
 
+    static distance3D(me, other) {
+        return Math.sqrt(Math.pow(me.x - other.x, 2) + Math.pow(me.y - other.y, 2) + Math.pow(me.z - other.z, 2));
+    }
 
-    //TODO return an encapsulated version of these.  Single instance - no GC
+    static distanceSqrd3D(me, other) {
+        return Math.pow(me.x - other.x, 2) + Math.pow(me.y - other.y, 2) + Math.pow(me.z - other.z, 2);
+    }
+
+    //TODO return an encapsulated version of these.  Single instance - no GC    
     static zero() {
-        return new Vector(0,0);
+        return new Vector(0, 0, 0);
     }
 
     static left() {
-        return new Vector(-1,0);
+        return new Vector(-1, 0, 0);
     }
 
     static right() {
-        return new Vector(1,0);
+        return new Vector(1, 0, 0);
     }
 
     static up() {
-        return new Vector(0,-1);
+        return new Vector(0, -1, 0);
     }
 
     static down() {
-        return new Vector(0,1);
+        return new Vector(0, 1, 0);
     }
 
     static fromAngle(angle) {
-        return new Vector(Math.cos(angle), Math.sin(angle));
+        return new Vector(Math.cos(angle), Math.sin(angle), 0);
     }
 }

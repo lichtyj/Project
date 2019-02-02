@@ -49,8 +49,8 @@ class AssetManager {
         this.spr[name] = sprite;
     }
 
-    createSprite3D(name, frameWidth, frameHeight, layers, scale, frameDuration, frames, loop) {
-        var sprite = new Sprite3D(this.getAsset(name), frameWidth, frameHeight, layers, scale, frameDuration, frames, loop);
+    createSprite3D(name, frameWidth, frameHeight, layers, frameDuration, frames, loop) {
+        var sprite = new Sprite3D(this.getAsset(name), frameWidth, frameHeight, layers, frameDuration, frames, loop);
         this.spr[name] = sprite;
     }
 

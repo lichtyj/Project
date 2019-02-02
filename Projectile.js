@@ -1,7 +1,7 @@
 class Projectile extends Entity {
     constructor(position, sprite, velocity, rate, force, hue, time) {
         super(position, sprite);
-        this.acceleration = new Vector3D();
+        this.acceleration = new Vector();
         this.rate = rate;
         this.hue = hue;
         this.velocity = velocity;
@@ -9,6 +9,8 @@ class Projectile extends Entity {
     }
 
     hit() {
+        var explosion = new Effect(this.position, assetMgr.getSprite("mushroom"));
+        game.addEntity(explosion);
         game.remove(this);
     }
 
@@ -18,7 +20,7 @@ class Projectile extends Entity {
         this.velocity.add(this.acceleration);
         this.velocity.div(1.01);
         this.acceleration.subtract(this.acceleration);
-        this.acceleration.z -= .25;
+        this.acceleration.z -= .125;
 
         if (this.position.z < 0) {
             this.hit();
@@ -27,18 +29,28 @@ class Projectile extends Entity {
         // if (this.elapsed < this.time) {
         //     this.elapsed++;
         //     for (var i = 0; i < this.rate*(1-this.elapsed/this.time); i++) {
-        //         this.particles.push( { "position":this.position.clone(), "velocity":this.velocity.clone().mult(Math.random()).add(Vector3D.random(this.force*(1-this.elapsed/this.time))), "acceleration":Vector3D.random(this.force*(1-this.elapsed/this.time)), "time":10*Math.random() } );
+        //         this.particles.push( { "position":this.position.clone(), "velocity":this.velocity.clone().mult(Math.random()).add(Vector.random(this.force*(1-this.elapsed/this.time))), "acceleration":Vector.random(this.force*(1-this.elapsed/this.time)), "time":10*Math.random() } );
         //     }
         // }
     }
 
     draw(ctx) {
+        ctx.globalAlpha = 1;
         ctx.setTransform(1,0,0,1,0,0);
-        ctx.strokeStyle = "#F11";
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#03b3ff";
+        ctx.lineWidth = this.position.z/6;
         ctx.beginPath();
-        ctx.moveTo(this.position.x - this.velocity.x, this.position.y - this.velocity.y - this.position.z);
+        ctx.moveTo(this.position.x - this.velocity.x*this.position.z/6, this.position.y - this.velocity.y*this.position.z/6 - this.position.z);
         ctx.lineTo(this.position.x, this.position.y-this.position.z);
+        ctx.stroke();
+
+
+        ctx.globalAlpha = .5;
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = this.position.z/12;
+        ctx.beginPath();
+        ctx.moveTo(this.position.x - this.velocity.x, this.position.y - this.velocity.y);
+        ctx.lineTo(this.position.x, this.position.y);
         ctx.stroke();
         // ctx.drawImage(this.sprite, this.hue*2,
         //      0, 2, 2, 

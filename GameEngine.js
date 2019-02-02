@@ -12,42 +12,33 @@ class GameEngine {
         this.bounds = new Vector(worldWidth, worldHeight);
         this.tree;
         this.toRemove = [];
+        this.paused = false;
     }
     init() {
         console.log("Initialized");
-        this.startInput();
         this.tree = new Quadtree(1, 0, 0, this.bounds.x, this.bounds.y, null);
         this.tree.init();
         this.player = new Player(new Vector(200,200), new Vector(), assetMgr.getSprite('scientist'), this.bounds);
+        this.player.gun = new Weapon(this.player.position.clone(), assetMgr.getSprite('gun'));
+        // TODO in entity constructor, add entities to game.entities
         this.addEntity(this.player);
+        this.addEntity(this.player.gun);
         window.requestAnimationFrame(game.gameLoop);
     }
 
     gameLoop() {
-        var current = performance.now();
-        game.dt += Math.min(1, (current - game.lastFrame) / 1000);   // duration capped at 1 sec
-        while(game.dt > game.step) {
-            game.dt -= game.step;
-            game.update(game.step);
-            game.draw(game.step);
+        if (!game.paused) { 
+            var current = performance.now();
+            game.dt += Math.min(.02, (current - game.lastFrame) / 1000);   // duration capped at 200ms
+            while(game.dt > game.step) {
+                game.dt -= game.step;
+                game.update(game.step);
+                game.draw(game.step);
+            }
+            // game.draw(game.dt);
+            game.lastFrame = current;
+            window.requestAnimationFrame(game.gameLoop);
         }
-        game.draw(game.dt);
-        game.lastFrame = current;
-        window.requestAnimationFrame(game.gameLoop);
-    }
-
-    startInput() {
-        console.log('Starting input');
-        document.addEventListener("keydown", function(e) {
-            console.log(e.code + ": down " + e.keyCode);
-            controls.keyDown(e.keyCode); ///////////////////////////////////////////// CONTROLS
-        });
-
-        document.addEventListener("keyup", function(e) {
-            console.log(e.code + ": up " + e.keyCode);
-            controls.keyUp(e.keyCode); ///////////////////////////////////////////// CONTROLS
-        });
-        console.log('Input initiated');
     }
 
     update(dt) {
@@ -71,6 +62,25 @@ class GameEngine {
         for (var i = 0; i < this.entities.length; i++) {
             this.entities[i].draw(this.ctx, dt);
         }
+    }
+
+    pause() {
+        this.paused = true;
+        this.ctx.setTransform(1,0,0,1,0,0);
+        this.ctx.globalAlpha = .5;
+        this.ctx.fillStyle = "#333";
+        this.ctx.fillRect(0,0, this.surfaceWidth, this.surfaceHeight);
+        this.ctx.fillStyle = "#FFF";
+        var text = this.ctx.measureText("PAUSED");
+        this.ctx.fillText("PAUSED", (this.surfaceWidth - text.width)*.5 | 0, (this.surfaceHeight)*.33);
+        text = this.ctx.measureText("- click to continue -");
+        this.ctx.fillText("- click to continue -", (this.surfaceWidth - text.width)*.5 | 0, (this.surfaceHeight)*.33 + 15);
+    }
+
+    resume() {
+        this.paused = false;
+        this.ctx.globalAlpha = 1;
+        window.requestAnimationFrame(game.gameLoop);
     }
  
     addEntity(entity) {

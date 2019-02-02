@@ -2,29 +2,46 @@
     <head>
         <meta charset="UTF-8">
         <script language="javascript" type="text/javascript" src="Vector.js"></script>
-        <script language="javascript" type="text/javascript" src="Vector3D.js"></script>
         <script language="javascript" type="text/javascript" src="Quadtree.js"></script>
         <script language="javascript" type="text/javascript" src="GameEngine.js"></script>
         <script language="javascript" type="text/javascript" src="Terrain.js"></script>
         <script language="javascript" type="text/javascript" src="Entity.js"></script>
         <script language="javascript" type="text/javascript" src="Living.js"></script>
         <script language="javascript" type="text/javascript" src="Object.js"></script>
+        <script language="javascript" type="text/javascript" src="Weapon.js"></script>
         <script language="javascript" type="text/javascript" src="Resource.js"></script>
         <script language="javascript" type="text/javascript" src="Player.js"></script>
         <script language="javascript" type="text/javascript" src="Ship.js"></script>
         <script language="javascript" type="text/javascript" src="Sprite.js"></script>
         <script language="javascript" type="text/javascript" src="Sprite3D.js"></script>
         <script language="javascript" type="text/javascript" src="Particles.js"></script>
+        <script language="javascript" type="text/javascript" src="Effect.js"></script>
         <script language="javascript" type="text/javascript" src="Projectile.js"></script>
         <script language="javascript" type="text/javascript" src="AssetManager.js"></script>
         <script language="javascript" type="text/javascript" src="Controls.js"></script>
         <script language="javascript" type="text/javascript" src="launcher.js"></script>
         <script language="javascript" type="text/javascript" src="Renderer.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic" rel="stylesheet">
         <style> body {padding: 0;} </style>
     </head>
 
     <body style="overflow:hidden;">
-        <canvas id="canvas" tabindex="1" style="margin: 100px; border:1px solid #000;">
+        <div style="float: left">
+            <H3>Controls</H3>
+            <ul>
+                <li>WASD - Move</li>
+                <li>Shift - Draw weapon</li>
+                <li>Space (+shift) - Shoot</li>
+            </ul>
+            <H4>Extras</H4>
+            <ul>
+                <li>F - Spawn chicken</li>
+                <li>G - Spawn terrain objects</li>
+                <li>H - Spawn resources</li>
+                <li>1,2,3,4 - Change skin</li>
+            </ul>
+        </div>
+        <canvas id="canvas" tabindex="1" style="float: left; border:1px solid #000;">
             Your browser does not support the canvas element.
         </canvas>
     </body>

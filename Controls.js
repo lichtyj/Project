@@ -3,12 +3,34 @@ class Controls {
         this.keys = [];
     }
 
+    init() {
+        var that = this;
+        game.ctx.canvas.addEventListener("keydown", function(e) {
+            that.keyDown(e.keyCode)});
+        game.ctx.canvas.addEventListener("keyup", function(e) {
+            that.keyUp(e.keyCode)});
+        game.ctx.canvas.addEventListener("focus", function() {
+            that.focus()});
+        game.ctx.canvas.addEventListener("blur", function() {
+            that.blur()});
+    }
+
+    focus() {
+        console.log("focus");
+        game.resume();
+    }
+
+    blur() {
+        console.log("blur");
+        game.pause();
+    }
+
     keyUp(num) {
         switch(num) {
             case 16: // LeftShift
-                game.player.aiming = false;
+                game.player.setState("normal");
                 game.ctx.canvas.style["cursor"] = "none";
-                game.ctx.canvas.removeEventListener("mousemove", this.captureMouse);
+                game.ctx.canvas.removeEventListener("mousemove", this.mouseMove);
                 game.ctx.canvas.removeEventListener("mousedown", this.mousePress);
                 break;    
         }
@@ -28,7 +50,7 @@ class Controls {
 
         game.ctx.fillStyle = "#0F0";
         game.ctx.fillRect(x,y,2,2);
-        game.player.target(x, y);
+        game.player.setTarget(x, y);
     }
 
     mousePress(e) {
@@ -45,7 +67,7 @@ class Controls {
                         game.ctx.canvas.addEventListener("mousemove", this.mouseMove);
                         game.ctx.canvas.addEventListener("mousedown", this.mousePress);
                     }
-                    game.player.aiming = true;
+                    game.player.setState("aim");
 
                     break;
                 case 49: // 1
@@ -59,6 +81,9 @@ class Controls {
                     break;
                 case 52: // 4
                     game.player.sprite = assetMgr.getSprite("dudeBlue");
+                    break;
+                case 53: // 5
+                    game.player.sprite = assetMgr.getSprite("gun");
                     break;
                 case 87: // W
                     moving.add(Vector.up());

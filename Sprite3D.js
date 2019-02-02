@@ -15,7 +15,7 @@ class Sprite3D {
 
     drawSprite(ctx, elapsedTime, x, y, z, r, bounce, swing) {
         var currentFrame;
-        if (this.loop) elapsedTime %= this.totalTime;    
+        if (this.loop) elapsedTime %= this.totalTime;
         currentFrame = Math.floor(elapsedTime / this.frameDuration) % this.frames;
         this.drawFrame(currentFrame, ctx, x, y, z, r, bounce, swing);
     }

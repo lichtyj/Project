@@ -26,6 +26,8 @@ assetMgr.queueDownload("./sprites/particle.png");
 assetMgr.queueDownload("./sprites/particleShadow.png");
 assetMgr.queueDownload("./sprites/shadow.png");
 assetMgr.queueDownload("./sprites/dna.png");
+assetMgr.queueDownload("./sprites/gun.png");
+assetMgr.queueDownload("./sprites/mushroom.png");
 assetMgr.downloadAll(function() {
     console.log("Done loading image assets");
     createSprites();
@@ -45,10 +47,12 @@ function createSprites() {
     assetMgr.createSprite3D("scientist", 16, 16, 21, frameduration, 6, true);
     assetMgr.createSprite3D("chest", 16, 16, 21, frameduration, 9, false);
     assetMgr.createSprite3D("grass", 16, 16, 21, frameduration, 1, true);
-    assetMgr.createSprite3D("meat", 16, 16, 7, frameduration, 1, false);
+    assetMgr.createSprite3D("meat", 16, 16, 7, frameduration, 1, true);
     assetMgr.createSprite3D("water", 16, 16, 8, frameduration, 1, true);
     assetMgr.createSprite3D("ship", 64, 64, 12, frameduration, 1, true);
     assetMgr.createSprite3D("dna", 16, 16, 16, frameduration, 1, true);
+    assetMgr.createSprite3D("gun", 32, 8, 4, frameduration*.5, 8, true);
+    assetMgr.createSprite3D("mushroom", 16, 16, 8, frameduration*.5, 6, false);
     console.log("Done creating sprites")
     start();
 }
@@ -65,8 +69,9 @@ function start() {
     ctx.imageSmoothingEnabled = false;  
     game = new GameEngine(ctx, size, size);
     game.init();
+    controls.init();
+    game.pause();
 }
-
 
 
 
