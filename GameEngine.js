@@ -29,7 +29,7 @@ class GameEngine {
     gameLoop() {
         if (!game.paused) { 
             var current = performance.now();
-            game.dt += Math.min(.02, (current - game.lastFrame) / 1000);   // duration capped at 200ms
+            game.dt += Math.min(.02, (current - game.lastFrame) / 1000);   // duration capped at 20ms
             while(game.dt > game.step) {
                 game.dt -= game.step;
                 game.update(game.step);

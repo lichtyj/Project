@@ -29,7 +29,7 @@ class Controls {
         switch(num) {
             case 16: // LeftShift
                 game.player.setState("normal");
-                game.ctx.canvas.style["cursor"] = "none";
+                game.ctx.canvas.style["cursor"] = "url(./sprites/crosshairWhite.png) 8 8, crosshair";
                 game.ctx.canvas.removeEventListener("mousemove", this.mouseMove);
                 game.ctx.canvas.removeEventListener("mousedown", this.mousePress);
                 break;    

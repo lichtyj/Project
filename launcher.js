@@ -52,7 +52,7 @@ function createSprites() {
     assetMgr.createSprite3D("ship", 64, 64, 12, frameduration, 1, true);
     assetMgr.createSprite3D("dna", 16, 16, 16, frameduration, 1, true);
     assetMgr.createSprite3D("gun", 32, 8, 4, frameduration*.5, 8, true);
-    assetMgr.createSprite3D("mushroom", 16, 16, 8, frameduration*.5, 6, false);
+    assetMgr.createSprite3D("mushroom", 16, 16, 8, frameduration*.25, 6, false);
     console.log("Done creating sprites")
     start();
 }
@@ -66,6 +66,7 @@ function start() {
     canvas.style.background = '#559061';
     // canvas.style.transform = 'scale(2)';
     var ctx = canvas.getContext('2d', { alpha: false });
+    ctx.canvas.style["cursor"] = "url(./sprites/crosshairWhite.png) 8 8, crosshair";
     ctx.imageSmoothingEnabled = false;  
     game = new GameEngine(ctx, size, size);
     game.init();
