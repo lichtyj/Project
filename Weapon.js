@@ -20,21 +20,26 @@ class Weapon extends Entity {
 
     shoot() {
         var temp = this.facing.clone().limit(1);
-        temp.mult(10);
+        temp.mult(5);
         temp.x += Math.random()*2-1;
         temp.y += Math.random()*2-1;
 
         var tempPos2 = this.position.clone();
         tempPos2.subtract(this.grip);
-        tempPos2.y -= 16; // Dirty, but it works
+        tempPos2.y -= 8; // Dirty, but it works
         var tempPos = tempPos2.offset(this.facing, this.barrel).clone()
 
 
-        var shot = new Projectile(this.position.clone().offset(this.facing, this.barrel), assetMgr.getAsset("particleShadow"), new Vector(temp.x, temp.y, .5), 0, 0, 1, 1);
+        var shot = new Projectile(this.position.clone().offset(this.facing, this.barrel), assetMgr.getAsset("particle"), new Vector(temp.x, temp.y, .5), 0, 0, 1, 1);
         game.addEntity(shot);
 
-        // temp.div(3);
-        var p = new Particles(tempPos.clone(), new Vector(temp.x, temp.y, 0), 40, 1, 7.5, 0, "screen", 1,3, 0);
+        var p = new Particles(tempPos.clone(), new Vector(temp.x, temp.y, 0));
+        p.rate = 40;
+        p.force = .25;
+        p.count = 40;
+        p.hue = 140;
+        p.mode = "screen";
+        p.timeP = 2;
         p.init();
         game.addEntity(p);
     }

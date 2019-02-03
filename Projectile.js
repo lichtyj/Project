@@ -8,26 +8,79 @@ class Projectile extends Entity {
         this.time = time;
     }
 
-    hit(mode) {
+    hit(mode, other) {
         // var explosion = new Effect(this.position, assetMgr.getSprite("mushroom"));
         // game.addEntity(explosion);
         var tempPos = this.position.clone();
         tempPos.x -= 8;
         tempPos.y -= 8;
-        var p;
-        switch (mode) {
-            case "blood":
-                p = new Particles(tempPos, new Vector(this.velocity.x, this.velocity.y, -this.velocity.z), 40, 1, 0, 0, "multiply", 0, 3,0);
-                break;
-            case "fire":
-                p = new Particles(tempPos, new Vector(this.velocity.x, this.velocity.y, -this.velocity.z), 40, 1, 0, 3, "normal", 0, 3,0);
-                break;
-            default:
-                p = new Particles(tempPos, new Vector(this.velocity.x/3, this.velocity.y/3, -this.velocity.z*2), 40, 1, 7.7, 0, "screen", 0, 3,0);
-                break;
+        if (other != undefined) {
+            tempPos.average(other.position, 2);
         }
-        p.init();
-        game.addEntity(p);
+        var that = this;
+        mode.forEach( function(i) {
+            var p = new Particles(tempPos, new Vector(that.velocity.x, that.velocity.y, -that.velocity.z));
+            switch (i) {
+                case "blood":
+                    p.velocity.div(3);
+                    // p.velocity.z *= .125;
+                    p.force = 1;
+                    p.count = 30;
+                    p.rate = 10;
+                    p.mode = "normal";
+                    p.brightR = -64;
+                    p.gravity = .25;
+                    p.time = 10;
+                    p.timeP = 30;
+                    p.glow = false;
+                    p.shadow = true;
+                    break;
+                case "feathers":
+                    p.velocity.div(2);
+                    p.velocity.z *= 2;
+                    p.force = 1;
+                    p.count = 30;
+                    p.rate = 1;
+                    p.mode = "normal";
+                    p.bright = 255;
+                    p.brightR = -16;
+                    p.gravity = .0125;
+                    p.time = 15;
+                    p.timeP = 30;
+                    p.glow = false;
+                    p.shadow = true;
+                    break;
+                case "fire":
+                    p.force = 40;
+                    p.rate = 1;
+                    p.mode = "screen";
+                    p.hue = 0;
+                    p.hueV = 40;
+                    p.hueR = 10;
+                    p.timeP = 3;
+                    p.brightT = 0;
+                    p.glow = true;
+                    break;
+                default:
+                    p.velocity.div(3);
+                    p.velocity.z *= -10;
+                    p.gravity = .5;
+                    p.force = .5;
+                    p.count = 40;
+                    p.rate = 40;
+                    p.mode = "normal";
+                    p.hue = 140;
+                    p.brightV = 128;
+                    p.bright = 192;
+                    p.brightT = -128;
+                    p.timeP = 3;
+                    p.glow = true;
+                    p.shadow = true;
+                    break;
+            }
+            p.init();
+            game.addEntity(p);
+        });
         game.remove(this);
     }
 
@@ -40,7 +93,7 @@ class Projectile extends Entity {
         this.acceleration.z -= .125;
 
         if (this.position.z < 0) {
-            this.hit();
+            this.hit(["ground"]);
         }
 
         // if (this.elapsed < this.time) {

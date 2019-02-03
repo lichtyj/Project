@@ -23,7 +23,6 @@ assetMgr.queueDownload("./sprites/water.png");
 assetMgr.queueDownload("./sprites/ship.png");
 assetMgr.queueDownload("./sprites/shipShadow.png");
 assetMgr.queueDownload("./sprites/particle.png");
-assetMgr.queueDownload("./sprites/particleShadow.png");
 assetMgr.queueDownload("./sprites/shadow.png");
 assetMgr.queueDownload("./sprites/dna.png");
 assetMgr.queueDownload("./sprites/gun.png");
