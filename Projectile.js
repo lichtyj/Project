@@ -1,10 +1,12 @@
 class Projectile extends Entity {
-    constructor(position, sprite, velocity, color, type) {
-        super(position, sprite);
+    constructor(position, velocity) {
+        super(position);
         this.acceleration = new Vector();
-        this.color = color;
+        this.color = "#333";
         this.velocity = velocity;
-        this.type = type;
+        this.type = "";
+        this.gravity = 0;
+        this.size = 2;
     }
 
     hit(mode, other) {
@@ -31,12 +33,17 @@ class Projectile extends Entity {
                     p.preset("feathers");
                     break;
                 case "fire":
+                    p.velocity.div(10);
+                    p.velocity.z *= 2;
                     p.preset("fire");
                     break;
                 case "energy":
                     p.velocity.div(3);
                     p.velocity.z *= 10;
                     p.preset("energy");
+                    break;
+                case "laser":
+                    p.preset("laser");
                     break;
                 default:
                     p.velocity.div(2);
@@ -55,10 +62,10 @@ class Projectile extends Entity {
         this.velocity.add(this.acceleration);
         this.velocity.div(1.01);
         this.acceleration.subtract(this.acceleration);
-        this.acceleration.z -= .125;
+        this.acceleration.z -= this.gravity;
 
         if (this.position.z < 0) {
-            this.hit(["energy", "ground"]);
+            this.hit([this.type, "ground"]);
         }
     }
 
@@ -66,7 +73,7 @@ class Projectile extends Entity {
         ctx.globalAlpha = 1;
         ctx.setTransform(1,0,0,1,0,0);
         ctx.strokeStyle = this.color;
-        ctx.lineWidth = this.position.z/16+1;
+        ctx.lineWidth = this.position.z/32+this.size;
         ctx.beginPath();
         ctx.moveTo(this.position.x - this.velocity.x*this.position.z/6, this.position.y - this.velocity.y*this.position.z/6 - this.position.z);
         ctx.lineTo(this.position.x, this.position.y-this.position.z);

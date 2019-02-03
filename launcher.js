@@ -25,8 +25,11 @@ assetMgr.queueDownload("./sprites/shipShadow.png");
 assetMgr.queueDownload("./sprites/particle.png");
 assetMgr.queueDownload("./sprites/shadow.png");
 assetMgr.queueDownload("./sprites/dna.png");
-assetMgr.queueDownload("./sprites/gun.png");
-assetMgr.queueDownload("./sprites/mushroom.png");
+
+// guns
+assetMgr.queueDownload("./sprites/railgun.png");
+assetMgr.queueDownload("./sprites/laserpistol.png");
+
 assetMgr.downloadAll(function() {
     console.log("Done loading image assets");
     createSprites();
@@ -50,8 +53,11 @@ function createSprites() {
     assetMgr.createSprite3D("water", 16, 16, 8, frameduration, 1, true);
     assetMgr.createSprite3D("ship", 64, 64, 12, frameduration, 1, true);
     assetMgr.createSprite3D("dna", 16, 16, 16, frameduration, 1, true);
-    assetMgr.createSprite3D("gun", 32, 8, 4, frameduration*.5, 8, true);
-    assetMgr.createSprite3D("mushroom", 16, 16, 8, frameduration*.25, 6, false);
+
+    // guns
+    assetMgr.createSprite3D("railgun", 32, 8, 4, frameduration*.5, 8, true);
+    assetMgr.createSprite3D("laserpistol", 16, 8, 4, frameduration*.5, 1, true);
+
     console.log("Done creating sprites")
     start();
 }

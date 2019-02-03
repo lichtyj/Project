@@ -19,7 +19,8 @@ class GameEngine {
         this.tree = new Quadtree(1, 0, 0, this.bounds.x, this.bounds.y, null);
         this.tree.init();
         this.player = new Player(new Vector(200,200), new Vector(), assetMgr.getSprite('scientist'), this.bounds);
-        this.player.gun = new Weapon(this.player.position.clone(), assetMgr.getSprite('gun'));
+        this.player.gun = new Weapon(this.player.position.clone());
+        this.player.gun.preset("railgun");
         // TODO in entity constructor, add entities to game.entities
         this.addEntity(this.player);
         this.addEntity(this.player.gun);

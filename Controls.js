@@ -83,7 +83,10 @@ class Controls {
                     game.player.sprite = assetMgr.getSprite("dudeBlue");
                     break;
                 case 53: // 5
-                    game.player.sprite = assetMgr.getSprite("gun");
+                    game.player.gun.preset('railgun');
+                    break;
+                case 54: // 6
+                    game.player.gun.preset('laserpistol');
                     break;
                 case 87: // W
                     moving.add(Vector.up());

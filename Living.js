@@ -47,6 +47,7 @@ class Living extends Entity {
     
         if (this.position.x < 0) this.position.x = this.bounds.x;
         if (this.position.y < 0) this.position.y = this.bounds.y;
+        this.position.z = 0; // TODO Find the reason z is increasing.  remove if jumping gets implemented
         if (this.position.x > this.bounds.x) this.position.x = 0;
         if (this.position.y > this.bounds.y) this.position.y = 0;
         if (this.life <= 0) {
@@ -55,9 +56,6 @@ class Living extends Entity {
     }
 
     die() {
-        // var p = new Particles(new Vector(this.position.x, this.position.y, 6), new Vector(this.velocity.x, this.velocity.y, Math.random()*10+10), 20, 4, 0, 10);
-        // p.init();
-        // game.addParticles(p);
         game.addEntity(new Resource(this.position, assetMgr.getSprite("meat"), Math.random()*Math.PI*2));
         game.remove(this);
     }
@@ -78,7 +76,6 @@ class Living extends Entity {
             var d = Vector.distance(this.position,other.position);
             if ((other instanceof Player || other instanceof Projectile) && d < 15) {
                 if (other instanceof Projectile || other instanceof Particles) {
-                    // other.hit("blood");
                     other.hit(["feathers", "blood"], this.position.clone());
                 }
                 this.life = 0;
@@ -130,7 +127,7 @@ class Living extends Entity {
                     this.bounce /= 1.05;
                 }
             }
-            this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, 0/*this.position.z*/, this.facing.angle(), this.bounce, 8);   
+            this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.facing.angle(), this.bounce, 8);   
         } else { 
             this.sprite.drawSubImage(0, ctx, this.position.x, this.position.y, this.facing.angle());       
         }

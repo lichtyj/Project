@@ -1,11 +1,28 @@
 class Weapon extends Entity {
-    constructor(position, sprite, barrel, grip) {
-        super(position, sprite);
+    constructor(position) {
+        super(position);
+        this.sprite;
         this.facing = new Vector();
         this.target = new Vector();
         this.bounce = 0;
         this.barrel = new Vector(8, 0, 3);
         this.grip = new Vector(8, -2, 0);
+        this.gun;
+    }
+
+    preset(gun) {
+        this.sprite = assetMgr.getSprite(gun);
+        this.gun = gun;
+        switch(gun) {
+            case "railgun":
+                this.barrel = new Vector(8, 0, 3);
+                this.grip = new Vector(8, -2, 0);
+                break;
+            case "laserpistol":
+                this.barrel = new Vector(3, 0, 1);
+                this.grip = new Vector(3, 0, 0);
+                break;
+        }
     }
 
     // setTarget(x, y) {
@@ -29,6 +46,42 @@ class Weapon extends Entity {
         tempPos2.x += 8; // TODO fix this
         var tempPos = tempPos2.offset(this.facing, this.barrel).clone()
 
+        var shot = new Projectile(this.position.clone().offset(this.facing, this.barrel), new Vector(temp.x, temp.y, .5));
+        var p = new Particles(tempPos.clone(), new Vector(temp.x, temp.y, 0));
+        switch(this.gun) {
+            case "railgun":
+                shot.velocity.mult(.5);
+                shot.velocity.z *= 6;
+                shot.color = "#03b3ff";
+                shot.gravity = 0.125;
+                shot.size = 4;
+                shot.type = "energy";
+                p.velocity.mult(.5);
+                p.velocity.z *= 6;
+                p.rate = 40;
+                p.force = .25;
+                p.count = 40;
+                p.hue = 140;
+                p.mode = "screen";
+                p.timeP = 2;
+                p.init();
+                break;
+            case "laserpistol":
+                shot.color = "#F00";
+                shot.size = 0;
+                shot.type = "laser"
+                p.rate = 2;
+                p.force = .25;
+                p.count = 0;
+                p.hue = 0;
+                p.mode = "normal";
+                p.time = 10;
+                p.timeP = 2;
+                p.init();
+                break;
+        }
+
+        game.addEntity(shot);
         // var p = new Particles(tempPos.clone(), new Vector(temp.x, temp.y, 0));
         // p.rate = 30;
         // p.force = .25;
@@ -43,19 +96,6 @@ class Weapon extends Entity {
         // p.glow = true;
         // p.gravity = -.125;
         // p.init();
-        // var shot = new Projectile(this.position.clone().offset(this.facing, this.barrel), assetMgr.getAsset("particle"), new Vector(temp.x, temp.y, .5), "#333");
-        // game.addEntity(shot);
-
-        var shot = new Projectile(this.position.clone().offset(this.facing, this.barrel), assetMgr.getAsset("particle"), new Vector(temp.x, temp.y, .5), "#03b3ff");
-        game.addEntity(shot);
-        var p = new Particles(tempPos.clone(), new Vector(temp.x, temp.y, 0));
-        p.rate = 40;
-        p.force = .25;
-        p.count = 40;
-        p.hue = 140;
-        p.mode = "screen";
-        p.timeP = 2;
-        p.init();
     }
 
     carry(hand, facing) {
