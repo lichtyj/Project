@@ -20,19 +20,34 @@ class Weapon extends Entity {
 
     shoot() {
         var temp = this.facing.clone().limit(1);
-        temp.mult(5);
+        temp.mult(15);
         temp.x += Math.random()*2-1;
         temp.y += Math.random()*2-1;
 
         var tempPos2 = this.position.clone();
         tempPos2.subtract(this.grip);
-        tempPos2.y -= 8; // Dirty, but it works
+        tempPos2.x += 8; // TODO fix this
         var tempPos = tempPos2.offset(this.facing, this.barrel).clone()
 
+        // var p = new Particles(tempPos.clone(), new Vector(temp.x, temp.y, 0));
+        // p.rate = 30;
+        // p.force = .25;
+        // p.count = 40;
+        // p.hue = 0;
+        // p.hueR = 10;
+        // p.hueV = 50;
+        // p.brightV = 64;
+        // p.mode = "screen";
+        // p.time = 15;
+        // p.timeP = 2;
+        // p.glow = true;
+        // p.gravity = -.125;
+        // p.init();
+        // var shot = new Projectile(this.position.clone().offset(this.facing, this.barrel), assetMgr.getAsset("particle"), new Vector(temp.x, temp.y, .5), "#333");
+        // game.addEntity(shot);
 
-        var shot = new Projectile(this.position.clone().offset(this.facing, this.barrel), assetMgr.getAsset("particle"), new Vector(temp.x, temp.y, .5), 0, 0, 1, 1);
+        var shot = new Projectile(this.position.clone().offset(this.facing, this.barrel), assetMgr.getAsset("particle"), new Vector(temp.x, temp.y, .5), "#03b3ff");
         game.addEntity(shot);
-
         var p = new Particles(tempPos.clone(), new Vector(temp.x, temp.y, 0));
         p.rate = 40;
         p.force = .25;
@@ -41,7 +56,6 @@ class Weapon extends Entity {
         p.mode = "screen";
         p.timeP = 2;
         p.init();
-        game.addEntity(p);
     }
 
     carry(hand, facing) {

@@ -79,7 +79,7 @@ class Living extends Entity {
             if ((other instanceof Player || other instanceof Projectile) && d < 15) {
                 if (other instanceof Projectile || other instanceof Particles) {
                     // other.hit("blood");
-                    other.hit(["feathers", "blood"], this);
+                    other.hit(["feathers", "blood"], this.position.clone());
                 }
                 this.life = 0;
             } 

@@ -37,8 +37,11 @@ class Particles extends Entity{
         if (this.velocity.z < 0) {
             this.velocity.z *= -1;
         }
+        this.position.x -= 8;
+        this.position.y -= 8;
         this.sprite = assetMgr.getAsset("particle");
         this.addParticles(this.count);
+        game.addEntity(this);
     }
 
     addParticles(amount) {
@@ -49,6 +52,80 @@ class Particles extends Entity{
                 "time":this.timeP*Math.random(),
                 "hue":(this.hue+Math.random()*this.hueR),
                 "bright":(this.bright+Math.random()*this.brightR)} );
+        }
+    }
+
+    preset(preset) {
+        switch(preset) {
+            case "blood":
+                this.force = 1;
+                this.count = 30;
+                this.rate = 10;
+                this.mode = "normal";
+                this.brightR = -64;
+                this.gravity = .25;
+                this.time = 10;
+                this.timeP = 30;
+                this.glow = false;
+                this.shadow = true;
+                break;
+            case "feathers":
+                this.force = 1;
+                this.count = 30;
+                this.rate = 1;
+                this.mode = "normal";
+                this.bright = 255;
+                this.brightR = -16;
+                this.gravity = .0125;
+                this.time = 15;
+                this.timeP = 30;
+                this.glow = false;
+                this.shadow = true;
+                break;
+            case "fire":
+                this.force = .5;
+                this.rate = 1;
+                this.mode = "screen";
+                this.hue = 0;
+                this.hueV = 40;
+                this.count = 0;
+                this.hueR = 10;
+                this.time = 10;
+                this.timeP = 5;
+                this.bright = 160;
+                this.brightT = -32;
+                this.gravity = -.0125
+                this.glow = true;
+                break;
+            case "energy":
+                this.gravity = .5;
+                this.force = .5;
+                this.count = 40;
+                this.rate = 40;
+                this.mode = "normal";
+                this.hue = 140;
+                this.brightV = 128;
+                this.bright = 192;
+                this.brightT = -128;
+                this.timeP = 3;
+                this.glow = true;
+                this.shadow = true;
+                break;
+            case "ground":
+                this.force = 1;
+                this.count = 40;
+                this.rate = 0;
+                this.hue = 80;
+                this.hueR = -20;
+                this.mode = "normal";
+                this.bright = 96;
+                this.brightR = -48;
+                this.gravity = .25;
+                this.time = 10;
+                this.timeP = 30;
+                this.glow = false;
+                this.shadow = true;
+                break;
         }
     }
 
@@ -104,7 +181,7 @@ class Particles extends Entity{
 
     drawParticle(size, alpha, ctx, i, shadow) {
         ctx.globalAlpha = alpha;
-        var modV = (this.particles[i].velocity.magnitude() / this.maxV);
+        var modV = (this.particles[i].velocity.magnitude() / (this.force + this.maxV));
         var modT = 1-(this.particles[i].time / this.timeP);
 
         if (shadow) {
