@@ -15,7 +15,7 @@ class Player extends Living {
         this.acceleration.add(direction).limit(1);
         var avgSep = new Vector();
         for (var other of game.entities) {
-             if (!(other instanceof Projectile || other instanceof Weapon)) {
+             if (!(other instanceof Projectile || other instanceof Weapon || other instanceof Particles)) {
                 var d = Vector.distance(this.position,other.position);
                 if (other != this && d < this.separation) {
                     var sep = this.position.clone();

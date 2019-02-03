@@ -77,7 +77,7 @@ class Living extends Entity {
         for (var other of entities) {
             var d = Vector.distance(this.position,other.position);
             if ((other instanceof Player || other instanceof Projectile) && d < 15) {
-                if (other instanceof Projectile) other.hit();
+                if (other instanceof Projectile || other instanceof Particles) other.hit("blood");
                 this.life = 0;
             } 
             if (other instanceof Resource && this.life > 0 && d < this.foodSprint) {

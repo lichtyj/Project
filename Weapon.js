@@ -4,7 +4,7 @@ class Weapon extends Entity {
         this.facing = new Vector();
         this.target = new Vector();
         this.bounce = 0;
-        this.barrel = new Vector(28, 0, 3);
+        this.barrel = new Vector(8, 0, 3);
         this.grip = new Vector(8, -2, 0);
     }
 
@@ -23,8 +23,20 @@ class Weapon extends Entity {
         temp.mult(10);
         temp.x += Math.random()*2-1;
         temp.y += Math.random()*2-1;
-        var shot = new Projectile(this.position.offset(this.facing, this.barrel), assetMgr.getAsset("particle"), new Vector(temp.x, temp.y, .5), 0, 0, 1, 0);
+
+        var tempPos2 = this.position.clone();
+        tempPos2.subtract(this.grip);
+        tempPos2.y -= 16; // Dirty, but it works
+        var tempPos = tempPos2.offset(this.facing, this.barrel).clone()
+
+
+        var shot = new Projectile(this.position.clone().offset(this.facing, this.barrel), assetMgr.getAsset("particleShadow"), new Vector(temp.x, temp.y, .5), 0, 0, 1, 1);
         game.addEntity(shot);
+
+        // temp.div(3);
+        var p = new Particles(tempPos.clone(), new Vector(temp.x, temp.y, 0), 40, 1, 7.5, 0, "screen", 1,3, 0);
+        p.init();
+        game.addEntity(p);
     }
 
     carry(hand, facing) {
