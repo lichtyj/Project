@@ -28,7 +28,7 @@ assetMgr.queueDownload("./sprites/dna.png");
 
 // guns
 assetMgr.queueDownload("./sprites/railgun.png");
-assetMgr.queueDownload("./sprites/laserpistol.png");
+assetMgr.queueDownload("./sprites/laserPistol.png");
 
 assetMgr.downloadAll(function() {
     console.log("Done loading image assets");
@@ -56,7 +56,7 @@ function createSprites() {
 
     // guns
     assetMgr.createSprite3D("railgun", 32, 8, 4, frameduration*.5, 8, true);
-    assetMgr.createSprite3D("laserpistol", 16, 8, 4, frameduration*.5, 1, true);
+    assetMgr.createSprite3D("laserPistol", 16, 8, 4, frameduration*.5, 1, true);
 
     console.log("Done creating sprites")
     start();

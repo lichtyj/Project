@@ -18,7 +18,7 @@ class Weapon extends Entity {
                 this.barrel = new Vector(8, 0, 3);
                 this.grip = new Vector(8, -2, 0);
                 break;
-            case "laserpistol":
+            case "laserPistol":
                 this.barrel = new Vector(3, 0, 1);
                 this.grip = new Vector(3, 0, 0);
                 break;
@@ -66,7 +66,7 @@ class Weapon extends Entity {
                 p.timeP = 2;
                 p.init();
                 break;
-            case "laserpistol":
+            case "laserPistol":
                 shot.color = "#F00";
                 shot.size = 0;
                 shot.type = "laser"

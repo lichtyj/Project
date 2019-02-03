@@ -86,7 +86,7 @@ class Controls {
                     game.player.gun.preset('railgun');
                     break;
                 case 54: // 6
-                    game.player.gun.preset('laserpistol');
+                    game.player.gun.preset('laserPistol');
                     break;
                 case 87: // W
                     moving.add(Vector.up());
