@@ -1,6 +1,6 @@
 class Ship {
     constructor(sprite, shadowSprite) {
-        this.position = new Vector(100,100,200);
+        this.position = new Vector(0, 0, 200);
         this.velocity = new Vector(10,10,-1);
         this.acceleration = new Vector();
         this.elapsedTime = 0;
@@ -28,33 +28,41 @@ class Ship {
         this.velocity.div(1.1);
         this.acceleration.subtract(this.acceleration);
 
+        var pos = new Vector(this.position.x, this.position.y, 3);
+        var dist = Math.random()*30+5;
+        var v = Vector.fromAngle(this.directions+1.5);
+
+        var p = new Particles(pos.offset(Vector.fromAngle(this.direction), Vector.fromAngle(this.direction)), v);
+        p.count = Math.random()*6+6;
+        p.alpha = .75;
+        p.force = .125;
+        p.bright = 0;
+        p.time = 6;
+        p.timeP = Math.random()*4+2;
+        p.glow = true;
+        p.gravity -= .125;
+        p.init();
 
         if (game.player == undefined) { /// TODO pull this out into an animation method and increment a 'stages' variable instead of all these bools
             if (!this.stopped) {
                 if (this.position.z < 0) {
-                    //console.log("Landed");
+                    console.log("Landed");
                     this.position.z = 0;
                     this.landed = true;
-                    // if (this.spin > 0.007) {
-                    //     var pos = new Vector(this.position.x, this.position.y, 3);
-                    //     var dist = Math.random()*30+25;
-                    //     var angle = 3.3+Math.random()*.28;
-                    //     var dir = new Vector(Math.cos(this.direction+angle)*dist, Math.sin(this.direction+angle)*dist, 0);
-                    //     var dir2 = new Vector(Math.cos(this.direction+angle+1.5)*dist, Math.sin(this.direction+angle+1.5)*dist, 0).mult(this.spin*20);
-                    //     if (this.particles != undefined) {
-
-                    //         this.sendMessage( "init", 
-                    //         { "position": pos.add(dir),
-                    //           "velocity": new Vector(dir2.x, dir2.y, Math.random()*10+20),
-                    //           "rate": this.spin, 
-                    //           "force": this.velocity.magnitude()*4, 
-                    //           "hue": 1.5,
-                    //           "time": 1} );
-                    //     }
-                    //     //TODO var p = new Particles(pos.add(dir), new Vector(dir2.x, dir2.y, Math.random()*10+20), this.spin, this.velocity.magnitude()*8, 1.5, 1);
-                    //     //p.init();
-                    //     //game.addParticles(p);
-                    // }
+                    if (this.spin > 0.007) {
+                        var pos = new Vector(this.position.x, this.position.y, 3);
+                        var dist = Math.random()*30+15;
+                        var angle = 3.3+Math.random()*.28;
+                        var dir = new Vector(Math.cos(this.direction+angle)*dist, Math.sin(this.direction+angle)*dist, 0);
+                        var dir2 = new Vector(Math.cos(this.direction+angle+1.8)*dist, Math.sin(this.direction+angle+1.8)*dist, -Math.random()*10).mult(this.spin*6);
+                        
+                        var p = new Particles(pos.add(dir), dir2);
+                        p.rate = this.spin;
+                        p.force = this.velocity.magnitude()/8;
+                        p.hue = 30;
+                        p.time = 6;
+                        p.init();
+                    }
                 }
 
                 if (!this.landed) {
@@ -76,7 +84,10 @@ class Ship {
                 this.timer -= 1;
                 if (this.timer <= 0) {
                         game.player = new Player(new Vector(this.position.x-30, this.position.y+40), new Vector(), assetMgr.getSprite("scientist"), game.bounds);
+                        game.player.gun = new Weapon(game.player.position.clone());
+                        game.player.gun.preset("railgun");
                         game.addEntity(game.player);
+                        game.addEntity(game.player.gun);
                 }
             }
         }

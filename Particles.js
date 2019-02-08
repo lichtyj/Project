@@ -9,6 +9,7 @@ class Particles extends Entity{
         this.maxV = velocity.magnitude();
 
         this.force = 0;
+        this.forceT = 0; // Force change over life
         this.time = 1; // Emitter life
         this.timeP = 1; // Particle max life
         this.count = 10; // Initial burst
@@ -26,9 +27,13 @@ class Particles extends Entity{
 
         this.glow = false;
         this.shadow = false;
+        this.alpha = 1;
 
         this.mode = "normal";
         this.gravity = 0;
+        this.damage = 0;
+        this.resistance = 1.1;
+        this.resistanceP = 1.1;
     }
 
     init() {
@@ -44,8 +49,8 @@ class Particles extends Entity{
     addParticles(amount) {
         for (var i = 0; i < amount; i++) {
             this.particles.push( { "position":this.position.clone(), 
-                "velocity":this.velocity.clone().mult(Math.random()).add(Vector.random(this.force*(1-this.elapsed/this.time))),
-                "acceleration":Vector.random(this.force*(1-this.elapsed/this.time)), 
+                "velocity":this.velocity.clone().mult(Math.random()).add(Vector.random(this.force + this.forceT*(Math.pow(this.elapsed/this.time, 2)))),
+                "acceleration":Vector.random(this.force + this.forceT*(Math.pow(this.elapsed/this.time, 2))), 
                 "time":this.timeP*Math.random(),
                 "hue":(this.hue+Math.random()*this.hueR),
                 "bright":(this.bright+Math.random()*this.brightR)} );
@@ -80,19 +85,21 @@ class Particles extends Entity{
                 this.shadow = true;
                 break;
             case "fire":
-                this.force = .5;
+                this.force = .75;
                 this.rate = 1;
                 this.mode = "screen";
-                this.hue = 0;
-                this.hueV = 40;
+                this.hue = 5;
+                this.hueV = 35;
                 this.count = 0;
                 this.hueR = 10;
-                this.time = 10;
-                this.timeP = 5;
+                this.time = 5;
+                this.timeP = 3;
                 this.bright = 160;
                 this.brightT = -32;
-                this.gravity = -.0125
+                // this.brightV = 32;
+                this.gravity = -.15
                 this.glow = true;
+                this.resistanceP = 1.25;
                 break;
             case "energy":
                 this.gravity = .5;
@@ -105,6 +112,22 @@ class Particles extends Entity{
                 this.bright = 192;
                 this.brightT = -128;
                 this.timeP = 3;
+                this.glow = true;
+                this.shadow = true;
+                break;
+            case "plasma":
+                this.gravity = .125;
+                this.force = .5;
+                this.count = 40;
+                this.rate = 40;
+                this.mode = "normal";
+                this.hue = 80;
+                this.hueR = 10;
+                this.brightV = 32;
+                this.bright = 192;
+                this.brightT = -128;
+                this.timeP = 3;
+                this.resistance = 1.01;
                 this.glow = true;
                 this.shadow = true;
                 break;
@@ -140,7 +163,8 @@ class Particles extends Entity{
     update() {
         this.position.add(this.velocity);
         this.velocity.add(this.acceleration);
-        this.velocity.div(1.1);
+        this.acceleration.mult(0);
+        this.velocity.div(this.resistance);
 
         if (this.elapsed < this.time) {
             this.elapsed++;
@@ -152,7 +176,7 @@ class Particles extends Entity{
             this.particles[i].acceleration.z -= this.gravity;
             this.particles[i].velocity.add(this.particles[i].acceleration);
             this.particles[i].position.add(this.particles[i].velocity);
-            this.particles[i].velocity.div(1.1);
+            this.particles[i].velocity.div(this.resistanceP);
             if (this.particles[i].position.z < 0) {
                 this.particles[i].position.z = 0;
                 if (this.particles[i].velocity.z < 0) {
@@ -178,11 +202,11 @@ class Particles extends Entity{
         ctx.globalAlpha = 1;
         ctx.globalCompositeOperation = this.mode;
         for (var i = 0; i < this.count; i++) {
-            if (this.shadow) this.drawParticle(1, .125, ctx, i, true);
-            this.drawParticle(1, 1, ctx, i, false);
+            if (this.shadow) this.drawParticle(1, this.alpha/4, ctx, i, true);
+            this.drawParticle(1, this.alpha, ctx, i, false);
             if (this.glow) {
-                this.drawParticle(2, .2, ctx, i, false);
-                this.drawParticle(7, .01, ctx, i, false);
+                this.drawParticle(2, this.alpha/5, ctx, i, false);
+                this.drawParticle(7, this.alpha/100, ctx, i, false);
             }
         }
     }

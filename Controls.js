@@ -1,6 +1,7 @@
 class Controls {
     constructor() {
         this.keys = [];
+        this.lmb = 0;
     }
 
     init() {
@@ -13,6 +14,10 @@ class Controls {
             that.focus()});
         game.ctx.canvas.addEventListener("blur", function() {
             that.blur()});
+        game.ctx.canvas.addEventListener("mouseup", function() {
+            that.mouseButton(false) });
+        game.ctx.canvas.addEventListener("mousedown", function() {
+            that.mouseButton(true) });
     }
 
     focus() {
@@ -31,7 +36,6 @@ class Controls {
                 game.player.setState("normal");
                 game.ctx.canvas.style["cursor"] = "url(./sprites/crosshairWhite.png) 8 8, crosshair";
                 game.ctx.canvas.removeEventListener("mousemove", this.mouseMove);
-                game.ctx.canvas.removeEventListener("mousedown", this.mousePress);
                 break;    
         }
 
@@ -53,19 +57,30 @@ class Controls {
         game.player.setTarget(x, y);
     }
 
-    mousePress(e) {
-        game.player.shoot();
+    mouseButton(pressed) {
+        console.log(pressed);
+        if (pressed) {
+            if (this.keys.indexOf("lmb") == -1) {
+                this.keys.push("lmb");
+            }
+        } else {
+            game.player.gun.triggerReleased();
+            delete this.keys.splice(this.keys.indexOf("lmb"),1);
+        }
     }
 
     actions() {
         var moving = Vector.zero();
         for (var key of this.keys) {
             switch(key) {
+                case "lmb":
+                    console.log("lmb");
+                    game.player.gun.triggerPressed();
+                    break;
                 case 16: // LeftShift
                     if (!game.player.aiming) {
                         game.ctx.canvas.style["cursor"] = "url(./sprites/crosshair.png) 8 8, crosshair";
                         game.ctx.canvas.addEventListener("mousemove", this.mouseMove);
-                        game.ctx.canvas.addEventListener("mousedown", this.mousePress);
                     }
                     game.player.setState("aim");
 
@@ -87,6 +102,12 @@ class Controls {
                     break;
                 case 54: // 6
                     game.player.gun.preset('laserPistol');
+                    break;
+                case 55: // 7
+                    game.player.gun.preset('flamethrower');
+                    break;
+                case 56: // 8
+                    game.player.gun.preset('plasmaPistol');
                     break;
                 case 87: // W
                     moving.add(Vector.up());

@@ -61,10 +61,6 @@ class Player extends Living {
         this.target.y = y;
     }
 
-    shoot() {
-        this.gun.shoot();
-    }
-
     update() {
         this.position.add(this.velocity);
         this.velocity.add(this.acceleration).limit(this.topSpeed);
