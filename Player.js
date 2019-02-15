@@ -67,6 +67,10 @@ class Player extends Living {
         this.velocity.div(1.1);
         this.acceleration.mult(0);
 
+        terrain.setPos(this.position.x, this.position.y, 0, true);
+
+        game.updateView();
+
         if (this.aiming) {
             this.facing.x = (this.facing.x + this.target.x - this.position.x)*.5;
             this.facing.y = (this.facing.y + this.target.y - this.position.y)*.5;

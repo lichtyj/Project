@@ -5,11 +5,12 @@ class GameEngine {
         this.lastFrame = 0;
         this.dt = 0;
         this.step = 1/60;
-        this.surfaceWidth = ctx.canvas.width;
-        this.surfaceHeight = ctx.canvas.height;
+        this.viewWidth = ctx.canvas.width;
+        this.viewHeight = ctx.canvas.height;
         this.player;
         this.viewAngle = 1;
         this.bounds = new Vector(worldWidth, worldHeight);
+        this.view = new Vector();
         this.tree;
         this.toRemove = [];
         this.paused = false;
@@ -39,7 +40,6 @@ class GameEngine {
                 game.update(game.step);
                 game.draw(game.step);
             }
-            // game.draw(game.dt);
             game.lastFrame = current;
             window.requestAnimationFrame(game.gameLoop);
         }
@@ -48,6 +48,7 @@ class GameEngine {
     update(dt) {
         controls.actions();
         this.tree.clear();
+        terrain.update();
         var entitiesCount = this.entities.length;
         for (var i = entitiesCount-1; i >= 0; i--) {
             this.tree.insert(this.entities[i]);
@@ -62,10 +63,22 @@ class GameEngine {
 
     draw(dt) {
         this.ctx.canvas.width = this.ctx.canvas.width;
+        // terrain.draw(this.ctx);
         this.entities.sort(function(a,b) {return a.position.y-b.position.y});
         for (var i = 0; i < this.entities.length; i++) {
             this.entities[i].draw(this.ctx, dt);
         }
+        this.ctx.setTransform(1,0,0,1,0,0);
+    }
+
+    updateView() {
+        this.view.x = (this.player.position.x - this.viewWidth*.5);
+        this.view.y = (this.player.position.y - this.viewHeight*.5);
+        var vx = -this.view.x;
+        var vy = -this.view.y;
+        if (vx < 0) vx += worldSize;
+        if (vy < 0) vy += worldSize;
+        this.ctx.canvas.style.backgroundPosition = vx + "px " + vy + "px";
     }
 
     pause() {
@@ -73,12 +86,12 @@ class GameEngine {
         this.ctx.setTransform(1,0,0,1,0,0);
         this.ctx.globalAlpha = .5;
         this.ctx.fillStyle = "#333";
-        this.ctx.fillRect(0,0, this.surfaceWidth, this.surfaceHeight);
+        this.ctx.fillRect(0,0, this.viewWidth, this.viewHeight);
         this.ctx.fillStyle = "#FFF";
         var text = this.ctx.measureText("PAUSED");
-        this.ctx.fillText("PAUSED", (this.surfaceWidth - text.width)*.5 | 0, (this.surfaceHeight)*.33);
+        this.ctx.fillText("PAUSED", (this.viewWidth - text.width)*.5 | 0, (this.viewHeight)*.33);
         text = this.ctx.measureText("- click to continue -");
-        this.ctx.fillText("- click to continue -", (this.surfaceWidth - text.width)*.5 | 0, (this.surfaceHeight)*.33 + 15);
+        this.ctx.fillText("- click to continue -", (this.viewWidth - text.width)*.5 | 0, (this.viewHeight)*.33 + 15);
     }
 
     resume() {

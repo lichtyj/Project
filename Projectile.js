@@ -66,7 +66,11 @@ class Projectile extends Entity {
         this.acceleration.z -= this.gravity;
 
         if (this.position.z < 0) {
-            this.hit([this.type, "ground"]);
+            if (this.size >= 0) {
+                this.hit([this.type, "ground"]);
+            } else {
+                game.remove(this);
+            }
         }
     }
 

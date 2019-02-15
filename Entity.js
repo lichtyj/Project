@@ -15,7 +15,18 @@ class Entity {
     }
 
     update() {
-        this.direction.toAngle(this.position.angleTo(game.mouse));
+        this.position.add(this.velocity);
+        this.acceleration.limit(this.sprint);
+        if (this.acceleration.magnitude() > .1)
+            this.velocity.add(this.acceleration);
+        this.velocity.limit(this.topSpeed);
+
+        if (this.position.x < 0) this.position.x = game.bounds.x;
+        if (this.position.y < 0) this.position.y = game.bounds.y;
+        this.position.z = 0; // TODO Find the reason z is increasing.  remove if jumping gets implemented
+        if (this.position.x > game.bounds.x) this.position.x = 0;
+        if (this.position.y > game.bounds.y) this.position.y = 0;
+
     }
 }
 

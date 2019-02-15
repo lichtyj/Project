@@ -6,6 +6,10 @@ class Resource extends Object {
         this.spin = spin;
     }
 
+    update() {
+        terrain.setPos(this.position.x, this.position.y, 2, true);
+    }
+
     remove() {
         game.remove(this);
     }

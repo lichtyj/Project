@@ -8,11 +8,11 @@ class GameEngine {
         this.step = 1/60;
         this.click = new Vector();
         this.mouse = new Vector();
-        this.surfaceWidth = ctx.canvas.width;
-        this.surfaceHeight = ctx.canvas.height;
+        this.viewWidth = ctx.canvas.width;
+        this.viewHeight = ctx.canvas.height;
         this.player;
         this.viewAngle = 1;
-        this.bounds = new Vector(this.surfaceWidth, this.surfaceHeight);
+        this.bounds = new Vector(this.viewWidth, this.viewHeight);
     }
     init() {
         console.log("Initialized");

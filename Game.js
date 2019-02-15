@@ -7,8 +7,8 @@ class GameEngine {
         GameEngine.prototype.step = 1/60;
         GameEngine.prototype.click = new Vector();
         GameEngine.prototype.mouse = new Vector();
-        GameEngine.prototype.surfaceWidth = ctx.canvas.width;
-        GameEngine.prototype.surfaceHeight = ctx.canvas.height;
+        GameEngine.prototype.viewWidth = ctx.canvas.width;
+        GameEngine.prototype.viewHeight = ctx.canvas.height;
         GameEngine.prototype.running = true;
         GameEngine.prototype.player;
         GameEngine.prototype.viewAngle = 0;
@@ -34,7 +34,7 @@ class GameEngine {
             var v = getXandY(e);
             that.click = v;
             if (GameEngine.prototype.player == undefined) {
-                GameEngine.prototype.player = new Player(new Vector(400,400), new Vector(0,0), assetMgr.getSprite("dudeGreen"), new Vector(GameEngine.prototype.surfaceWidth, GameEngine.prototype.surfaceHeight));
+                GameEngine.prototype.player = new Player(new Vector(400,400), new Vector(0,0), assetMgr.getSprite("dudeGreen"), new Vector(GameEngine.prototype.viewWidth, GameEngine.prototype.viewHeight));
                 that.addEntity(GameEngine.prototype.player);
             } else {
                 GameEngine.prototype.player.moveTo = v;
@@ -67,7 +67,7 @@ class GameEngine {
             if (e.keyCode === 102) {
                 var spr = assetMgr.getSprite("chicken")
                 for (var i = 0; i < 25; i++) {
-                    that.addEntity(new Living(new Vector(Math.random()*GameEngine.prototype.surfaceWidth, Math.random()*GameEngine.prototype.surfaceHeight), Vector.random(3), spr, new Vector(GameEngine.prototype.surfaceWidth, GameEngine.prototype.surfaceHeight), 100));
+                    that.addEntity(new Living(new Vector(Math.random()*GameEngine.prototype.viewWidth, Math.random()*GameEngine.prototype.viewHeight), Vector.random(3), spr, new Vector(GameEngine.prototype.viewWidth, GameEngine.prototype.viewHeight), 100));
                 }
             }
             if (e.keyCode === 103) {
@@ -84,7 +84,7 @@ class GameEngine {
                             spr = assetMgr.getSprite("rock");
                             break;
                     }
-                    that.addEntity(new Object(new Vector(Math.floor(Math.random()*GameEngine.prototype.surfaceWidth), Math.floor(Math.random()*GameEngine.prototype.surfaceHeight)), spr, Math.random()*Math.PI*2));
+                    that.addEntity(new Object(new Vector(Math.floor(Math.random()*GameEngine.prototype.viewWidth), Math.floor(Math.random()*GameEngine.prototype.viewHeight)), spr, Math.random()*Math.PI*2));
                 }
             }
         })

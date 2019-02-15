@@ -32,6 +32,12 @@ class Living extends Entity {
     }
 
     update() {
+        if (this.life <= 0) this.die();
+        
+        super.update();
+        this.flock(this.perceptionCheck());
+        this.facing.set(this.velocity);
+
         if (this.energy <= 0) {
             this.life -= 1;
         } else {
@@ -40,7 +46,7 @@ class Living extends Entity {
 
         if (this.onFire) {
             if (Math.random()*2 | 0) {
-                var p = new Particles(new Vector(this.position.x + Math.random()*6-3, this.position.y + Math.random()*10-5, 0), new Vector(this.velocity.x, this.velocity.y, 0));
+                var p = new Particles(new Vector(this.position.x, this.position.y - (Math.random()*4+2), 0), new Vector(this.velocity.x, this.velocity.y, 0));
                 p.preset("fire");
                 p.rate = 1;
                 p.init();
@@ -48,29 +54,15 @@ class Living extends Entity {
             this.onFire -= .01;
             if (this.onFire < 0) this.onFire = 0;
             this.life -= this.onFire/100;
-        }
-
-        this.flock(this.perceptionCheck());
-
-        this.position.add(this.velocity);
-        this.acceleration.limit(this.sprint);
-        if (this.acceleration.magnitude() > .1)
-            this.velocity.add(this.acceleration);
-        this.velocity.limit(this.topSpeed);
-        this.facing.set(this.velocity);
-    
-        if (this.position.x < 0) this.position.x = this.bounds.x;
-        if (this.position.y < 0) this.position.y = this.bounds.y;
-        this.position.z = 0; // TODO Find the reason z is increasing.  remove if jumping gets implemented
-        if (this.position.x > this.bounds.x) this.position.x = 0;
-        if (this.position.y > this.bounds.y) this.position.y = 0;
-        if (this.life <= 0) {
-            this.die();
-        }
+        }        
     }
 
     die() {
-        game.addEntity(new Resource(this.position, assetMgr.getSprite("meat"), Math.random()*Math.PI*2));
+        if (this.onFire > 0) {
+            game.addEntity(new Resource(this.position, assetMgr.getSprite("cookedMeat"), Math.random()*Math.PI*2));
+        } else {
+            game.addEntity(new Resource(this.position, assetMgr.getSprite("meat"), Math.random()*Math.PI*2));
+        }
         game.remove(this);
     }
 
@@ -94,7 +86,7 @@ class Living extends Entity {
                     if (other instanceof Projectile) {
                         if (other.size >= 0)
                             other.hit(["feathers", "blood"], this.position.clone());
-                        if (other.type == "fire") {
+                        if (other.type == "fire" || other.type == "plasma") {
                             this.onFire += Math.random()*5;
                         }
                     }

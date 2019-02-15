@@ -100,8 +100,8 @@ class Quadtree {
     near(other, me, d, dx, dy, range) {
         var a = this.angle(dx, dy); 
         var a2 = this.angle(other.x - me.x, other.y - me.y);
-        var x = Math.min(Math.pow(other.x - me.x, 2), Math.pow(size - Math.abs(other.x - me.x), 2));
-        var y = Math.min(Math.pow(other.y - me.y, 2), Math.pow(size - Math.abs(other.y - me.y), 2));
+        var x = Math.min(Math.pow(other.x - me.x, 2), Math.pow(worldSize - Math.abs(other.x - me.x), 2));
+        var y = Math.min(Math.pow(other.y - me.y, 2), Math.pow(worldSize - Math.abs(other.y - me.y), 2));
         return (x+y < d || (Math.min(Math.abs(a-a2), Math.PI*2-Math.abs(a-a2)) < range && x + y < d*d));
     }
 

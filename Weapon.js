@@ -60,7 +60,7 @@ class Weapon extends Entity {
                 this.damage = 0;
                 this.spread = 5;
                 this.chargeRate = .5;
-                this.chargeMax = 10;
+                this.chargeMax = 20;
                 break;
         }
     }
@@ -76,7 +76,6 @@ class Weapon extends Entity {
                 if (this.charge > this.chargeMax) this.charge = this.chargeMax;
                 this.chargeP.rate = this.charge;
                 this.chargeP.time += 10;
-                console.log(this.chargeP);
                 this.chargeP.position.set(this.getBarrelPos());
             }
         }

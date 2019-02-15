@@ -59,7 +59,7 @@ function exportImg() {
     for (let index = 0; index < layer.length; index++) {
         canctx.drawImage(layer[index], index * frameWidth, 0, frameWidth, frameHeight);
     }
-    var data = can.toDataURL('image/png', 1.0);
+    var data = can.toDataURL('image/jpg', 1.0);
     var img = new Image();
     img.src = data;
     document.getElementById('exportFrame').appendChild(img);

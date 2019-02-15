@@ -49,8 +49,8 @@ class Controls {
     }
 
     mouseMove(e) {
-        var x = e.clientX - game.ctx.canvas.getBoundingClientRect().left;
-        var y = e.clientY - game.ctx.canvas.getBoundingClientRect().top;
+        var x = e.clientX - game.ctx.canvas.getBoundingClientRect().left + game.view.x;
+        var y = e.clientY - game.ctx.canvas.getBoundingClientRect().top + game.view.y;
 
         game.ctx.fillStyle = "#0F0";
         game.ctx.fillRect(x,y,2,2);

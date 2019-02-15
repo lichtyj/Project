@@ -129,7 +129,7 @@ class Particles extends Entity{
                 this.timeP = 3;
                 this.resistance = 1.01;
                 this.glow = true;
-                this.shadow = true;
+                this.shadow = false;
                 break;
             case "laser":
                 this.gravity = -.125;
@@ -201,6 +201,11 @@ class Particles extends Entity{
         ctx.setTransform(1,0,0,1,0,0);
         ctx.globalAlpha = 1;
         ctx.globalCompositeOperation = this.mode;
+        // var can = document.createElement('canvas');
+        // var tCtx = can.getContext("2d");
+        // tCtx.rotate(Math.PI);
+        // tCtx.fillStyle = "#888";
+        // tCtx.fillRect(0,0, can.width, can.height);
         for (var i = 0; i < this.count; i++) {
             if (this.shadow) this.drawParticle(1, this.alpha/4, ctx, i, true);
             this.drawParticle(1, this.alpha, ctx, i, false);
@@ -215,18 +220,19 @@ class Particles extends Entity{
         ctx.globalAlpha = alpha;
         var modV = (this.particles[i].velocity.magnitude() / (this.force + this.maxV));
         var modT = 1-(this.particles[i].time / this.timeP);
-
+        var pos = this.particles[i].position.clone();
+        pos.subtract(game.view);
         if (shadow) {
             ctx.drawImage(this.sprite, 0,
                 0, 1, 1,
-                this.particles[i].position.x-1-(size/2), 
-                this.particles[i].position.y-1-(size/2),
+                pos.x-1-(size/2), 
+                pos.y-1-(size/2),
                 size, size);
         } else {
             ctx.drawImage(this.sprite, this.particles[i].hue + this.hueT*modT + this.hueV*modV,
                 this.particles[i].bright + this.brightT*modT + this.brightV*modV, 1, 1,
-                this.particles[i].position.x-1-(size/2), 
-                this.particles[i].position.y-this.particles[i].position.z-1-(size/2),
+                pos.x-1-(size/2), 
+                pos.y-pos.z-1-(size/2),
                 size, size);
         }
     }

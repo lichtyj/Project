@@ -17,7 +17,24 @@ class Sprite3D {
         var currentFrame;
         if (this.loop) elapsedTime %= this.totalTime;
         currentFrame = Math.floor(elapsedTime / this.frameDuration) % this.frames;
-        this.drawFrame(currentFrame, ctx, x, y, z, r, bounce, swing);
+        if (x > game.view.x + game.viewWidth + borderBuffer) {
+            x -= worldSize;
+        } else if (x + game.viewWidth + borderBuffer < game.view.x) {
+            x += worldSize;
+        }
+        if (y > game.view.y + game.viewHeight + borderBuffer) {
+            y -= worldSize;
+        } else if (y + game.viewHeight + borderBuffer < game.view.y) {
+            y += worldSize;
+        }
+        x -= game.view.x;
+        y -= game.view.y;
+        if (x >= -borderBuffer && 
+            x <= borderBuffer + game.viewWidth && 
+            y > -borderBuffer && 
+            y < borderBuffer + game.viewHeight) {
+                this.drawFrame(currentFrame, ctx, x, y, z, r, bounce, swing);
+        }
     }
 
     drawFrame(frame, ctx, x, y, z, r, bounce, swing) {
@@ -29,11 +46,11 @@ class Sprite3D {
                 var alpha = .25-Math.pow(z/250,2);
                 if (alpha < 0) alpha = 0;
                 ctx.globalAlpha = alpha;
-                ctx.setTransform(1,0,0,1,x,y-index*game.viewAngle*b);
+                ctx.setTransform(1,0,0,1,x,y-index*b);
             } else {
                 ctx.globalAlpha = 1;
                 ctx.globalCompositeOperation = "normal";
-                ctx.setTransform(1,0,0,1,x,y-z-index*game.viewAngle*b);
+                ctx.setTransform(1,0,0,1,x,y-z-index*b);
             }
             if (typeof swing == "number" && index < swing && index != 0) {
                 ctx.rotate(r+tempR*(1-index/swing));
