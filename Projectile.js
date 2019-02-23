@@ -65,6 +65,11 @@ class Projectile extends Entity {
         this.acceleration.subtract(this.acceleration);
         this.acceleration.z -= this.gravity;
 
+        if (this.position.x < 0) this.position.x = game.bounds.x;
+        if (this.position.y < 0) this.position.y = game.bounds.y;
+        if (this.position.x > game.bounds.x) this.position.x = 0;
+        if (this.position.y > game.bounds.y) this.position.y = 0;
+
         if (this.position.z < 0) {
             if (this.size >= 0) {
                 this.hit([this.type, "ground"]);
@@ -81,17 +86,17 @@ class Projectile extends Entity {
             ctx.strokeStyle = this.color;
             ctx.lineWidth = this.position.z/32+this.size;
             ctx.beginPath();
-            ctx.moveTo(this.position.x - this.velocity.x*this.position.z/6, this.position.y - this.velocity.y*this.position.z/6 - this.position.z);
-            ctx.lineTo(this.position.x, this.position.y-this.position.z);
+            ctx.moveTo(this.position.x - this.velocity.x*this.position.z/6 - game.view.x, this.position.y - this.velocity.y*this.position.z/6 - this.position.z - game.view.y);
+            ctx.lineTo(this.position.x - game.view.x, this.position.y-this.position.z - game.view.y);
             ctx.stroke();
 
 
-            ctx.globalAlpha = .5;
+            ctx.globalAlpha = .75;
             ctx.strokeStyle = "#333";
             ctx.lineWidth = this.position.z/12;
             ctx.beginPath();
-            ctx.moveTo(this.position.x - this.velocity.x, this.position.y - this.velocity.y);
-            ctx.lineTo(this.position.x, this.position.y);
+            ctx.moveTo(this.position.x - this.velocity.x - game.view.x, this.position.y - this.velocity.y - game.view.y);
+            ctx.lineTo(this.position.x - game.view.x, this.position.y - game.view.y);
             ctx.stroke();
         }
     }

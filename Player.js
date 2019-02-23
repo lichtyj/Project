@@ -4,11 +4,15 @@ class Player extends Living {
         this.separation = 15;
         this.moveTo = new Vector();
         this.moveSpeed = 2;
+        this.topSpeed = this.moveSpeed;
         this.aiming = false;
         this.target = new Vector();
         this.hand = new Vector(2,-3, 9);
         this.state = "default";
         this.gun;
+
+        this.health = 100;
+        this.maxhealth = 100;
     }
 
     move(direction) {
@@ -61,15 +65,23 @@ class Player extends Living {
         this.target.y = y;
     }
 
+    takeDamage(other) {
+        this.health -= other.damage;
+        var p = new Particles(this.position, new Vector(other.velocity.x, other.velocity.y, -other.velocity.z));
+        p.preset("blood");
+        p.init();
+        if (this.health <= 0) {
+            game.state = "dead";
+        }
+    }
+
     update() {
         this.position.add(this.velocity);
         this.velocity.add(this.acceleration).limit(this.topSpeed);
         this.velocity.div(1.1);
         this.acceleration.mult(0);
 
-        terrain.setPos(this.position.x, this.position.y, 0, true);
-
-        game.updateView();
+        // terrain.setPos(this.position.x, this.position.y, 0, true); // Too slow, update to only render the changed spots
 
         if (this.aiming) {
             this.facing.x = (this.facing.x + this.target.x - this.position.x)*.5;
@@ -84,4 +96,33 @@ class Player extends Living {
         if (this.position.x > this.bounds.x) this.position.x = 0;
         if (this.position.y > this.bounds.y) this.position.y = 0;
     }
+
+    draw(ctx, dt) {
+        this.elapsedTime += dt;
+        var b = this.velocity.magnitude();
+        this.bounce += b/6;
+        this.bounce %= Math.PI*2;
+        if (b < 0.1) {
+            if (this.bounce > Math.PI) {
+                this.bounce *= 1.05;
+            } else {
+                this.bounce /= 1.05;
+            }
+        }
+        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.facing.angle(), this.bounce, 8);   
+        ctx.setTransform(1,0,0,1,0,0);
+        if (this.health < this.maxhealth) {
+            ctx.drawImage(this.healthBar, 0,
+                128, 1, 1,
+                this.position.x + 5 - (1-this.health/this.maxhealth)*10 - game.view.x, 
+                this.position.y + 8 - game.view.y,
+                (1-this.health/this.maxhealth)*10, 2);
+            ctx.drawImage(this.healthBar, 80,
+                128, 1, 1,
+                this.position.x - 5 - game.view.x, 
+                this.position.y + 8 - game.view.y,
+                (this.health/this.maxhealth)*10, 2);
+        }
+    }
+
 }

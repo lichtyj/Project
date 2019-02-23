@@ -40,7 +40,6 @@ class Particles extends Entity{
         if (this.velocity.z < 0) {
             this.velocity.z *= -1;
         }
-        if (this.position.z > 12) console.log(this.position.z);
         this.sprite = assetMgr.getAsset("particle");
         this.addParticles(this.count);
         game.addEntity(this);
@@ -146,10 +145,10 @@ class Particles extends Entity{
                 this.force = 1;
                 this.count = 40;
                 this.rate = 0;
-                this.hue = 80;
+                this.hue = 100;
                 this.hueR = -40;
                 this.mode = "normal";
-                this.bright = 96;
+                this.bright = 64;
                 this.brightR = -48;
                 this.gravity = .25;
                 this.time = 10;

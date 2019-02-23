@@ -8,22 +8,17 @@ class Terrain {
     }
 
     init() {
-        // this.sprite = assetMgr.getAsset("particle");
         for (var i = 0; i < worldSize * worldSize; i++) {
             this.map[i] = Math.round(Math.random()+.1);
         }
         for (var i = 0; i < worldSize*4; i++) {
-            this.grow();
+            this.grow(); 
         }
+        this.draw();
     }
 
     update() {
         this.grow();
-        this.timer--;
-        if (this.drawQueued && this.timer <= 0) {
-            this.timer = 5;
-            this.draw();
-        }
     }
 
     grow() {
@@ -83,6 +78,7 @@ class Terrain {
             }
         }
         this.map = newMap;
+        this.draw();
     }
 
     getNeighbors(i) {
@@ -176,16 +172,16 @@ class Terrain {
     generateObjects(count) {
         var spr;
         for (var i = 0; i < count; i++) {
-            switch (Math.floor(Math.random()*3)) {
+            switch (Math.floor(Math.random()*2)) {
                 case 0:
                     spr = assetMgr.getSprite("bush");
                     break;
                 case 1: 
                     spr = assetMgr.getSprite("tree");
                     break;
-                case 2: 
-                    spr = assetMgr.getSprite("grass");
-                    break;
+                // case 2: 
+                //     spr = assetMgr.getSprite("grass");
+                //     break;
             }
             game.addEntity(new Object(new Vector(Math.floor(Math.random()*worldSize), 
                             Math.floor(Math.random()*worldSize)), 
@@ -197,7 +193,7 @@ class Terrain {
         var spr = assetMgr.getSprite("water");
         var spin;
         for (var i = 0; i < count; i++) {
-            switch (Math.floor(Math.random()*3)) {
+            switch (Math.floor(Math.random())) {
                 case 0:
                     spr = assetMgr.getSprite("meat");
                     break;
@@ -208,18 +204,20 @@ class Terrain {
                     spr = assetMgr.getSprite("dna");
                     break;
             }
-            game.addEntity(new Resource(new Vector(Math.floor(Math.random()*game.viewWidth), 
-                            Math.floor(Math.random()*game.viewHeight)), 
+            game.addEntity(new Resource(new Vector(Math.floor(Math.random()*worldSize), 
+                            Math.floor(Math.random()*worldSize)), 
                             spr, Math.random()*Math.PI*2, spin));
         }
     }
 
     generateChickens(count) {
         var spr = assetMgr.getSprite("chicken");
+        var chicken;
         for (var i = 0; i < count; i++) {
-            game.addEntity(new Living(new Vector(Math.random()*game.viewWidth, 
-                            Math.random()*game.viewHeight), Vector.random(3), 
-                            spr, game.bounds, 100));
+            chicken = new Chicken(new Vector(Math.random()*game.viewWidth, 
+                Math.random()*game.viewHeight), spr);
+            chicken.init();
+            game.addEntity(chicken);
         };
     }
 }

@@ -21,12 +21,10 @@ class Controls {
     }
 
     focus() {
-        console.log("focus");
         game.resume();
     }
 
     blur() {
-        console.log("blur");
         game.pause();
     }
 
@@ -35,7 +33,7 @@ class Controls {
             case 16: // LeftShift
                 game.player.setState("normal");
                 game.ctx.canvas.style["cursor"] = "url(./sprites/crosshairWhite.png) 8 8, crosshair";
-                game.ctx.canvas.removeEventListener("mousemove", this.mouseMove);
+                // game.ctx.canvas.removeEventListener("mousemove", this.mouseMove);
                 break;    
         }
 
@@ -49,8 +47,8 @@ class Controls {
     }
 
     mouseMove(e) {
-        var x = e.clientX - game.ctx.canvas.getBoundingClientRect().left + game.view.x;
-        var y = e.clientY - game.ctx.canvas.getBoundingClientRect().top + game.view.y;
+        var x = e.clientX - game.ctx.canvas.getBoundingClientRect().left + game.view.x - 200;
+        var y = e.clientY - game.ctx.canvas.getBoundingClientRect().top + game.view.y - 200;
 
         game.ctx.fillStyle = "#0F0";
         game.ctx.fillRect(x,y,2,2);
@@ -58,13 +56,13 @@ class Controls {
     }
 
     mouseButton(pressed) {
-        console.log(pressed);
         if (pressed) {
             if (this.keys.indexOf("lmb") == -1) {
                 this.keys.push("lmb");
             }
         } else {
-            game.player.gun.triggerReleased();
+            if (game.player != null && game.player.gun != null)
+                game.player.gun.triggerReleased();
             delete this.keys.splice(this.keys.indexOf("lmb"),1);
         }
     }
@@ -74,8 +72,8 @@ class Controls {
         for (var key of this.keys) {
             switch(key) {
                 case "lmb":
-                    console.log("lmb");
-                    game.player.gun.triggerPressed();
+                    if (game.player != null && game.player.gun != null)
+                        game.player.gun.triggerPressed();
                     break;
                 case 16: // LeftShift
                     if (!game.player.aiming) {

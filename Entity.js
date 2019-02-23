@@ -20,10 +20,13 @@ class Entity {
         if (this.acceleration.magnitude() > .1)
             this.velocity.add(this.acceleration);
         this.velocity.limit(this.topSpeed);
+        this.velocity.mult(.95);
+        this.acceleration.mult(0);
+
 
         if (this.position.x < 0) this.position.x = game.bounds.x;
         if (this.position.y < 0) this.position.y = game.bounds.y;
-        this.position.z = 0; // TODO Find the reason z is increasing.  remove if jumping gets implemented
+        if (this.position.z < 0) this.position.z = 0;
         if (this.position.x > game.bounds.x) this.position.x = 0;
         if (this.position.y > game.bounds.y) this.position.y = 0;
 

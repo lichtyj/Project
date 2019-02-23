@@ -21,7 +21,9 @@
         <script language="javascript" type="text/javascript" src="Controls.js"></script>
         <script language="javascript" type="text/javascript" src="launcher.js"></script>
         <script language="javascript" type="text/javascript" src="Renderer.js"></script>
-        <style> body {padding: 0;} </style>
+        <script language="javascript" type="text/javascript" src="chicken.js"></script>
+        <script language="javascript" type="text/javascript" src="./behaviorTree/BehaviorTree.js"></script>
+        <script language="javascript" type="text/javascript" src="./behaviorTree/BNode.js"></script>
     </head>
 
     <body>
@@ -29,22 +31,43 @@
             <H3>Controls</H3>
             <ul>
                 <li>WASD - Move</li>
-                <li>Shift - Draw weapon</li>
-                <li>LMB+Shift - Shoot</li>
-            </ul>
-            <H4>Extras</H4>
-            <ul>
+                <li>Mouse - Shoot</li>
+                <li>Hold Shift to aim</li>
                 <li>F - Spawn chicken</li>
                 <li>G - Spawn terrain objects</li>
                 <li>H - Spawn resources</li>
                 <li>1,2,3,4 - Change skin</li>
-                <li>5,6,7 - Change gun</li>
-                <li>Ctrl+Plus - Zoom (I'm going to scale it up later, just haven't figure out how I want to do it yet)</li>
+                <li>5,6,7,8 - Change gun</li>
             </ul>
+            <canvas id="canvas" tabindex="1" style="float: left; border:1px solid #000;">
+                Your browser does not support the canvas element.
+            </canvas>   
+            <div style="float: left;">
+                <H5>Notes</H5>
+                <p> This didn't get as far as I would have liked before getting opened up for peer review.</p>
+                <p> Right now it's more of a sandbox.  Have fun shooting chickens and watching grass grow.</p>
+                <p> The goal was to have flocks of enemies with genetic AI that the player could manipulate to collect resources.</p>
+                <p> It's doubtful that I'll accomplish my goals for this project before the quarter is over, so I'm going to tone it down a bit.</p>
+                <p> From here, I'm going to:</p>
+                <ul>
+                    <li>refactor for days</li>
+                    <li>add a resource collection element.  Collect X resources to repair your ship and escape the planet.</li>
+                    <li>add more enemy types (and spawners?) with unique resource drops.</li>
+                    <li>If I have time add more guns/upgrades/powerups</li>
+                </ul>
+
+                <H5>Known bugs</H5>
+                <ul>
+                    <li>Particles, projectiles, and healthbars don't render across world seams - Planned fix: consolidate the draw calls to a single renderer so I don't need to check for boundaries in 37 places</li>
+                    <li>Particles can cause lag - Planned Fix: Use the web worker safe OffscreenCanvas API for the renderer overhaul</li>
+                    <li>Chickens take the long way around world seams when searching for something - Planned Fix: Math</li>
+                    <li>Chickens are stupid - Planned Fix: Weep softly</li>
+                    <li>Green dots sometimes trail the mouse during gameplay and when paused - no idea</li>
+                </ul>
+            </div> 
         </div>
-        <canvas id="canvas" tabindex="1" style="float: left; border:1px solid #000;">
+        <!-- <canvas id="btcanvas" tabindex="1" style="float: left; border:1px solid #000;">
             Your browser does not support the canvas element.
-        </canvas>
-        <div id="test"></div>
+        </canvas> -->
     </body>
 </html>

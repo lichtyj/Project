@@ -19,12 +19,12 @@ class Sprite3D {
         currentFrame = Math.floor(elapsedTime / this.frameDuration) % this.frames;
         if (x > game.view.x + game.viewWidth + borderBuffer) {
             x -= worldSize;
-        } else if (x + game.viewWidth + borderBuffer < game.view.x) {
+        } else if (x + game.viewWidth - borderBuffer < game.view.x) {
             x += worldSize;
         }
         if (y > game.view.y + game.viewHeight + borderBuffer) {
             y -= worldSize;
-        } else if (y + game.viewHeight + borderBuffer < game.view.y) {
+        } else if (y + game.viewHeight - borderBuffer < game.view.y) {
             y += worldSize;
         }
         x -= game.view.x;

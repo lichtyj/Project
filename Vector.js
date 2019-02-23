@@ -44,8 +44,10 @@ class Vector { // Ignores z in all non-elementary calcs
     }
 
     limit(max) {
+        var last = Math.abs(this.z) | 0;
         var mag = this.magnitude();
         if (mag > max) this.div(mag/max);
+        if (Math.abs(this.z > last)) this.z = last;
         return this;
     }
 
@@ -120,6 +122,12 @@ class Vector { // Ignores z in all non-elementary calcs
     static random(max) {
         if (max == undefined) max = 1;
         var v = new Vector((Math.random()*2-1)*max, (Math.random()*2-1)*max, 0);
+        return v.limit(max);
+    }
+
+    static randomPositive(max) {
+        if (max == undefined) max = 1;
+        var v = new Vector(Math.random()*max, Math.random()*max, 0);
         return v.limit(max);
     }
 

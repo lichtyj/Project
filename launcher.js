@@ -3,7 +3,7 @@ var assetMgr = new AssetManager();
 var terrain = new Terrain();
 var controls = new Controls();
 var viewSize = 400;
-var borderBuffer = 20;
+var borderBuffer = 30;
 var worldSize = 800;
 // Encapsulate these
 
@@ -85,9 +85,11 @@ function start() {
     canvas.width = viewSize;
     canvas.height = viewSize;
     // canvas.style.background = 'url(./sprites/practice.png)';
-    // canvas.style.background = '#559061';
-    // canvas.style.transform = 'scale(2)';
-    canvas.style.background
+    canvas.style.background = '#000';
+
+    canvas.style.transform = 'scale(2)';
+    canvas.style.margin = "200px";
+    
     var ctx = canvas.getContext('2d', { alpha: false });
     ctx.canvas.style["cursor"] = "url(./sprites/crosshairWhite.png) 8 8, crosshair";
     ctx.imageSmoothingEnabled = false;  
@@ -95,7 +97,6 @@ function start() {
     game.init();
     terrain.init();
     controls.init();
-    game.pause();
 }
 
 

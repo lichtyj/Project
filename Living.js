@@ -33,7 +33,6 @@ class Living extends Entity {
 
     update() {
         if (this.life <= 0) this.die();
-        
         super.update();
         this.flock(this.perceptionCheck());
         this.facing.set(this.velocity);
@@ -105,7 +104,7 @@ class Living extends Entity {
                     avgPos.add(other.position); // Cohesion
                     total++;
                 }
-                if (d < this.separation && !(other instanceof Resource) ) { // Separation
+                if (d < this.separation && !(other instanceof Resource) && other.attacking == false) { // Separation
                     var sep = this.position.clone();
                     sep.subtract(other.position).limit(0.5);
                     var rate = (this.separation - d)/this.separation;
@@ -128,21 +127,17 @@ class Living extends Entity {
 
     draw(ctx, dt) {
         this.elapsedTime += dt;
-        if (this.sprite instanceof Sprite3D) {
-            var b = this.velocity.magnitude();
-            this.bounce += b/6;
-            this.bounce %= Math.PI*2;
-            if (b < 0.1) {
-                if (this.bounce > Math.PI) {
-                    this.bounce *= 1.05;
-                } else {
-                    this.bounce /= 1.05;
-                }
+        var b = this.velocity.magnitude();
+        this.bounce += b/6;
+        this.bounce %= Math.PI*2;
+        if (b < 0.1) {
+            if (this.bounce > Math.PI) {
+                this.bounce *= 1.05;
+            } else {
+                this.bounce /= 1.05;
             }
-            this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.facing.angle(), this.bounce, 8);   
-        } else { 
-            this.sprite.drawSubImage(0, ctx, this.position.x, this.position.y, this.facing.angle());       
         }
+        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.facing.angle(), this.bounce, 8);   
         ctx.setTransform(1,0,0,1,0,0);
         if (this.life < this.maxLife) {
             ctx.drawImage(this.healthBar, 0,
