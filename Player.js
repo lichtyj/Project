@@ -70,8 +70,9 @@ class Player extends Living {
         var p = new Particles(this.position, new Vector(other.velocity.x, other.velocity.y, -other.velocity.z));
         p.preset("blood");
         p.init();
-        if (this.health <= 0) {
+        if (this.health <= 0 && game.state == "playing") {
             game.state = "dead";
+            game.fade = 100;
         }
     }
 

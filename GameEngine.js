@@ -17,11 +17,7 @@ class GameEngine {
         this.paused = true;
         this.player;
         this.fade = 100;
-
-        this.ship;
-
         this.state = "falling";
-        // this.state = "playing";
         this.stateTimer = 0;
     }
 
@@ -38,11 +34,11 @@ class GameEngine {
         // this.cameraTarget = this.player;
 
         
-        this.ship = new Ship(assetMgr.getSprite("ship"), assetMgr.getAsset("shipShadow"));
-        this.addEntity(this.ship);
+        var ship = new Ship(assetMgr.getSprite("ship"), assetMgr.getAsset("shipShadow"));
+        this.addEntity(ship);
         this.cameraOffset.x = 17;
         this.cameraOffset.y = -12;
-        this.cameraTarget = this.ship;
+        this.cameraTarget = ship;
 
         terrain.generateObjects(50);
 
@@ -60,10 +56,7 @@ class GameEngine {
         this.ctx.globalAlpha = .5;
         this.ctx.fillStyle = "#333";
         this.ctx.fillRect(0,0, this.viewWidth, this.viewHeight);
-        this.ctx.fillStyle = "#FFF";
-        var text = "CLICK TO BEGIN";
-        var twidth = this.ctx.measureText(text);
-        this.ctx.fillText(text, (this.viewWidth - twidth.width)*.5 | 0, (this.viewHeight)*.33);
+        this.drawMessage("CLICK TO BEGIN", "#FFF");
     }
 
     gameLoop() {
@@ -92,12 +85,12 @@ class GameEngine {
         }
         if (game.state != "dead") {
             this.updateView();
-        }
-        for (var i = entitiesCount-1; i >= 0; i--) {
-            this.entities[i].update(dt);    
-        }
-        while (this.toRemove.length > 0) {
-            this.entities.splice(this.entities.indexOf(this.toRemove.pop()),1);
+            for (var i = entitiesCount-1; i >= 0; i--) {
+                this.entities[i].update(dt);    
+            }
+            while (this.toRemove.length > 0) {
+                this.entities.splice(this.entities.indexOf(this.toRemove.pop()),1);
+            }
         }
     }
 
@@ -114,7 +107,9 @@ class GameEngine {
             this.ctx.fillRect(0,0, this.viewWidth, this.viewHeight);
             this.drawMessage("YOU DIED", "#F00");
             this.stateTimer++;
-            if (this.stateTimer > 260) location.reload(true);
+            if (this.stateTimer = 180) {
+                // location.reload(true);
+            }
         }
         if (game.state != "playing" && this.fade > 0) {
             this.ctx.fillStyle = "#FFF";
@@ -123,11 +118,12 @@ class GameEngine {
         }
     }
 
-    drawMessage(msg, color) {
+    drawMessage(msg, color, offset) {
+        if (offset == undefined) offset = 0;
         this.ctx.fillStyle = color;
         var text = msg;
         var twidth = this.ctx.measureText(text);
-        this.ctx.fillText(text, (this.viewWidth - twidth.width)*.5 | 0, (this.viewHeight)*.33);
+        this.ctx.fillText(text, (this.viewWidth - twidth.width)*.5 | 0, (this.viewHeight)*.33 + offset);
     }
 
     updateView() {
@@ -141,24 +137,23 @@ class GameEngine {
     }
 
     pause() {
-        this.paused = true;
-        this.ctx.setTransform(1,0,0,1,0,0);
-        this.ctx.globalAlpha = .5;
-        this.ctx.fillStyle = "#333";
-        this.ctx.fillRect(0,0, this.viewWidth+1, this.viewHeight+1);
-        this.ctx.fillStyle = "#FFF";
-        var text = "PAUSED";
-        var twidth = this.ctx.measureText(text);
-        this.ctx.fillText(text, (this.viewWidth - twidth.width)*.5 | 0, (this.viewHeight)*.33);
-        text = "- click to continue -";
-        twidth = this.ctx.measureText(text);
-        this.ctx.fillText(text, (this.viewWidth - twidth.width)*.5 | 0, (this.viewHeight)*.33 + 15);
+        if (this.state != "dead") {
+            this.paused = true;
+            this.ctx.setTransform(1,0,0,1,0,0);
+            this.ctx.globalAlpha = .5;
+            this.ctx.fillStyle = "#333";
+            this.ctx.fillRect(0,0, this.viewWidth+1, this.viewHeight+1);
+            this.drawMessage("PAUSED", "#FFF");
+            this.drawMessage("- click to continue -","#FFF", 15);
+        }
     }
 
     resume() {
-        this.paused = false;
-        this.ctx.globalAlpha = 1;
-        window.requestAnimationFrame(game.gameLoop);
+        if (this.paused){
+            this.paused = false;
+            this.ctx.globalAlpha = 1;
+            window.requestAnimationFrame(game.gameLoop);
+        }
     }
  
     addEntity(entity) {

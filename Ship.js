@@ -53,7 +53,7 @@ class Ship extends Entity {
                     var dir2 = new Vector(Math.cos(this.direction+angle)*dist, Math.sin(this.direction+angle)*dist, -Math.random()*10-10).mult(this.spin*6);
                     var p = new Particles(pos.add(dir), dir2);
                     p.preset("ground");
-                    p.count =  20;
+                    p.count =  this.spin*10;
                     p.rate = this.spin/8;
                     p.timeP = 20;
                     p.force = this.velocity.magnitude()/3;
@@ -70,7 +70,7 @@ class Ship extends Entity {
                 this.spin /= 1.05;
                 if (this.spin < 0.001) {
                     game.state = "landed";
-                    this.timer = 20;
+                    this.timer = 10;
                     this.spin = 0;
                     this.velocity.subtract(this.velocity);
                 }

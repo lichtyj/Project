@@ -91,6 +91,11 @@ class Controls {
                     break;
                 case 51: // 3
                     game.player.sprite = assetMgr.getSprite("dudeGreen");
+                    for (var c of game.entities) {
+                        if (c instanceof Chicken) {
+                            c.rage = true;
+                        }
+                    }
                     break;
                 case 52: // 4
                     game.player.sprite = assetMgr.getSprite("dudeBlue");

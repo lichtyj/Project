@@ -45,6 +45,8 @@ class Chicken extends Entity {
         this.elapsedTime = 0;
         this.facing = new Vector();
         this.onFire = 0;
+
+        this.rage = false;
     }
 
     init() {
@@ -66,10 +68,12 @@ class Chicken extends Entity {
         switch(type) {
             case "Attack":
                 // Threats are expected to be evaluated prior to this step
-                this.targetPos.set(this.targetEntity.position);
-                this.topSpeed = this.runSpeed;
-                this.attacking = true;
-                result = true;
+                if (this.targetEntity != null && this.targetPos != null) {
+                    this.targetPos.set(this.targetEntity.position);
+                    this.topSpeed = this.runSpeed;
+                    this.attacking = true;
+                    result = true;   
+                }
                 break;
             case "Food":
                 // console.error("Implement memory map");
@@ -86,7 +90,7 @@ class Chicken extends Entity {
                 break;
             case "Random":
                 this.targetPos = this.position.clone();
-                this.targetPos.add(Vector.random(this.vision));
+                this.targetPos.add(Vector.random(this.vision*.25));
                 this.targetPos.x = Math.abs(this.targetPos.x) % worldSize;
                 this.targetPos.y = Math.abs(this.targetPos.y) % worldSize;
                 result = true;
@@ -170,7 +174,7 @@ class Chicken extends Entity {
 
     attack() {
         this.topSpeed = this.moveSpeed;
-        if (Vector.distance(this.position, this.targetEntity.position) < 25) {// Replace with attack range?  Join with eat?
+        if (Vector.distance(this.position, this.targetEntity.position) < 40) {// Replace with attack range?  Join with eat?
             this.targetEntity.takeDamage(this);
             this.targetEntity = null;
             this.inAction = true;
@@ -205,7 +209,15 @@ class Chicken extends Entity {
         if (this.health <= 0) this.die();
         
         this.aiTimer--;
-        if (this.aiTimer <= 0) {
+        if (this.rage == true && game.player != null) {
+            this.targetEntity = game.player;
+            this.targetPos = game.player.position.clone();
+            this.attacking = true;
+            this.stamina = 1000;
+            this.direction.set(this.targetPos)
+            this.direction.subtract(this.position);
+            this.inAction = true;
+        } else if (this.aiTimer <= 0) {
             this.energy--;
             this.aiTimer = this.ai.tick();
         }
@@ -221,7 +233,11 @@ class Chicken extends Entity {
         if (this.stamina <= 0) {
             this.topSpeed = this.crawlSpeed;
         } else {
-            this.topSpeed = this.moveSpeed;
+            if (this.rage) {
+                this.topSpeed = this.runSpeed;
+            } else {
+                this.topSpeed = this.moveSpeed;
+            }
             this.stamina -= this.velocity.magnitude();
         }
 
@@ -274,7 +290,7 @@ class Chicken extends Entity {
             //     this.targetEntity.target = true;
             // }
 
-            if (this.inAction && Vector.distance(this.position, this.targetPos) > 15) {
+            if (this.inAction && Vector.distance(this.position, this.targetPos) > 25) {
                 if (this.velocity.magnitude() < .1) {
                     this.idle++;
                     if (this.idle > 50) {
@@ -287,6 +303,8 @@ class Chicken extends Entity {
                 this.direction.set(this.targetPos);
                 this.direction.subtract(this.position).limit(1);
                 this.acceleration.add(this.direction).limit(.125);
+            } else if (this.rage && this.targetEntity != null) {
+                this.attack();
             } else {
                 this.acceleration.mult(0);
                 this.targetPos = null;
@@ -344,6 +362,7 @@ class Chicken extends Entity {
         var avgPos = new Vector();
         var total = 0;
         for (var other of entities) {
+            if (other instanceof Player && this.attacking) break;
             var d = Vector.distance(this.position,other.position);
             if (other instanceof Projectile && d < 15) {
                 this.takeDamage(other);
@@ -354,7 +373,7 @@ class Chicken extends Entity {
                     avgPos.add(other.position); // Cohesion
                     total++;
                 }
-                if (d < this.separation && !(other instanceof Resource) && !(other instanceof Player && !this.attacking) ) { // Separation
+                if (d < this.separation && !(other instanceof Resource)) { // Separation
                     var sep = this.position.clone();
                     sep.subtract(other.position).limit(0.5);
                     var rate = (this.separation - d)/this.separation;
@@ -368,9 +387,9 @@ class Chicken extends Entity {
         }
         if (total > 0) {
             avg.add(avgPos.div(total++).subtract(this.position).limit(1)); // Cohesion
-            avg.div(total).subtract(this.velocity).limit(0.01); // Orientation
+            avg.div(total).subtract(this.velocity).limit(0.05); // Orientation
         }
-        this.acceleration.add(avg);
+        if (!this.attacking) this.acceleration.add(avg);
         this.acceleration.add(avgSep); // Separation
         this.acceleration.limit(this.sprint);
     }

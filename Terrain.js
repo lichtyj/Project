@@ -11,7 +11,7 @@ class Terrain {
         for (var i = 0; i < worldSize * worldSize; i++) {
             this.map[i] = Math.round(Math.random()+.1);
         }
-        for (var i = 0; i < worldSize*4; i++) {
+        for (var i = 0; i < worldSize*4.5; i++) {
             this.grow(); 
         }
         this.draw();
