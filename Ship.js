@@ -53,8 +53,8 @@ class Ship extends Entity {
                     var dir2 = new Vector(Math.cos(this.direction+angle)*dist, Math.sin(this.direction+angle)*dist, -Math.random()*10-10).mult(this.spin*6);
                     var p = new Particles(pos.add(dir), dir2);
                     p.preset("ground");
-                    p.count =  this.spin*10;
-                    p.rate = this.spin/8;
+                    p.count =  this.spin*this.spin*10000;
+                    p.rate = 1;//this.spin/8;
                     p.timeP = 20;
                     p.force = this.velocity.magnitude()/3;
                     p.init();

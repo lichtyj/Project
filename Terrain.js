@@ -172,16 +172,19 @@ class Terrain {
     generateObjects(count) {
         var spr;
         for (var i = 0; i < count; i++) {
-            switch (Math.floor(Math.random()*2)) {
+            switch (Math.floor(Math.random()*4)) {
                 case 0:
                     spr = assetMgr.getSprite("bush");
                     break;
                 case 1: 
                     spr = assetMgr.getSprite("tree");
                     break;
-                // case 2: 
-                //     spr = assetMgr.getSprite("grass");
-                //     break;
+                case 2: 
+                    spr = assetMgr.getSprite("tree2");
+                    break;
+                case 3: 
+                    spr = assetMgr.getSprite("rock");
+                    break;
             }
             game.addEntity(new Object(new Vector(Math.floor(Math.random()*worldSize), 
                             Math.floor(Math.random()*worldSize)), 

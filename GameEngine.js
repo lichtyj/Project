@@ -16,7 +16,7 @@ class GameEngine {
         this.toRemove = [];
         this.paused = true;
         this.player;
-        this.fade = 100;
+        this.fade = 50;
         this.state = "falling";
         this.stateTimer = 0;
     }
@@ -76,9 +76,9 @@ class GameEngine {
     update(dt) {
         if (game.state == "playing") {
             controls.actions();
-            this.tree.clear();
             terrain.update();
         }
+        this.tree.clear();
         var entitiesCount = this.entities.length;
         for (var i = entitiesCount-1; i >= 0; i--) {
             this.tree.insert(this.entities[i]);
@@ -113,7 +113,7 @@ class GameEngine {
         }
         if (game.state != "playing" && this.fade > 0) {
             this.ctx.fillStyle = "#FFF";
-            this.ctx.globalAlpha = (this.fade--/100);
+            this.ctx.globalAlpha = (this.fade--/50);
             this.ctx.fillRect(0,0, this.viewWidth, this.viewHeight);
         }
     }

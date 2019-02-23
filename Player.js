@@ -72,7 +72,7 @@ class Player extends Living {
         p.init();
         if (this.health <= 0 && game.state == "playing") {
             game.state = "dead";
-            game.fade = 100;
+            game.fade = 50;
         }
     }
 
