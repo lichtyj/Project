@@ -1,11 +1,12 @@
 class Resource extends Object {
-    constructor(position, sprite, rotation, spin) {
-        super(position, sprite, rotation);
+    constructor(position, type, rotation, spin) {
+        super(position, assetMgr.getSprite(type), rotation);
         this.elapsedTime = 0;
         this.bounce = 0;
         this.spin = spin;
         this.visible = false;
         this.target = false;
+        this.type = type;
     }
 
     update() {

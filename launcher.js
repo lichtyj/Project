@@ -33,7 +33,7 @@ assetMgr.queueDownload("./sprites/scientist.png");
 assetMgr.queueDownload("./sprites/dna.png");
 assetMgr.queueDownload("./sprites/meat.png");
 assetMgr.queueDownload("./sprites/cookedMeat.png");
-assetMgr.queueDownload("./sprites/water.png");
+assetMgr.queueDownload("./sprites/ingot.png");
 
 // Guns
 assetMgr.queueDownload("./sprites/railgun.png");
@@ -57,7 +57,7 @@ function createSprites() {
     assetMgr.createSprite3D("bush", 16, 16, 6, frameduration, 1, true);
     assetMgr.createSprite3D("tree", 16, 16, 24, frameduration, 1, true);
     assetMgr.createSprite3D("tree2", 16, 16, 19, frameduration, 1, true);
-    assetMgr.createSprite3D("rock", 16, 16, 9, frameduration*4, 6, true);
+    assetMgr.createSprite3D("rock", 16, 16, 9, frameduration*2, 12, true);
     assetMgr.createSprite3D("scientist", 16, 16, 21, frameduration, 6, true);
     assetMgr.createSprite3D("chest", 16, 16, 21, frameduration, 9, false);
     assetMgr.createSprite3D("grass", 16, 16, 21, frameduration, 1, true);
@@ -67,7 +67,7 @@ function createSprites() {
     assetMgr.createSprite3D("dna", 16, 16, 16, frameduration, 1, true);
     assetMgr.createSprite3D("meat", 16, 16, 7, frameduration, 1, true);
     assetMgr.createSprite3D("cookedMeat", 16, 16, 7, frameduration, 1, true);
-    assetMgr.createSprite3D("water", 16, 16, 8, frameduration, 1, true);
+    assetMgr.createSprite3D("ingot", 16, 16, 8, frameduration, 1, true);
 
     // Guns
     assetMgr.createSprite3D("railgun", 32, 8, 4, frameduration*.5, 8, true);

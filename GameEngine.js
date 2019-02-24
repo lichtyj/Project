@@ -43,13 +43,13 @@ class GameEngine {
         terrain.generateObjects(50);
 
         var chicken;
-        for (var i = 0; i < 50; i++) {
+        for (var i = 0; i < 25; i++) {
             chicken = new Chicken(Vector.randomPositive(worldSize), assetMgr.getSprite("chicken"));
             chicken.init();
         }
 
         
-        terrain.generateFood(100);
+        terrain.generateFood(10);
         window.requestAnimationFrame(game.gameLoop);
 
         this.ctx.setTransform(1,0,0,1,0,0);

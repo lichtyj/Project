@@ -60,26 +60,26 @@ class Particles extends Entity{
         switch(preset) {
             case "blood":
                 this.force = 1;
-                this.count = 30;
-                this.rate = 10;
+                this.count = 15;
+                this.rate = 5;
                 this.mode = "normal";
                 this.brightR = -64;
                 this.gravity = .25;
                 this.time = 10;
-                this.timeP = 30;
+                this.timeP = 15;
                 this.glow = false;
                 this.shadow = true;
                 break;
             case "feathers":
                 this.force = 1;
-                this.count = 30;
+                this.count = 20;
                 this.rate = 1;
                 this.mode = "normal";
                 this.bright = 255;
                 this.brightR = -16;
                 this.gravity = .0125;
-                this.time = 15;
-                this.timeP = 30;
+                this.time = 10;
+                this.timeP = 20;
                 this.glow = false;
                 this.shadow = true;
                 break;

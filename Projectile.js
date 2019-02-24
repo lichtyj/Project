@@ -9,6 +9,7 @@ class Projectile extends Entity {
         this.size = 2;
         this.damage = 1;
         this.impact = true;
+        this.timer = 20;
     }
 
     hit(mode, other) {
@@ -64,6 +65,10 @@ class Projectile extends Entity {
         this.velocity.div(1.01);
         this.acceleration.subtract(this.acceleration);
         this.acceleration.z -= this.gravity;
+        this.timer--;
+        if (this.timer <= 0) {
+            game.remove(this);
+        }
 
         if (this.position.x < 0) this.position.x = game.bounds.x;
         if (this.position.y < 0) this.position.y = game.bounds.y;

@@ -1,6 +1,6 @@
-class Player extends Living {
-    constructor(position, velocity, sprite, bounds) {
-        super(position, velocity, sprite, bounds);
+class Player extends Entity {
+    constructor(position, sprite) {
+        super(position, sprite);
         this.separation = 15;
         this.moveTo = new Vector();
         this.moveSpeed = 2;
@@ -9,10 +9,18 @@ class Player extends Living {
         this.target = new Vector();
         this.hand = new Vector(2,-3, 9);
         this.state = "default";
-        this.gun;
+        this.separation = 15;
+
+        this.facing = new Vector();
+        this.bounce = 0;
+        this.elapsedTime = 0;
+        this.drawRed = 0;
+        this.healthBar = assetMgr.getAsset("particle");
 
         this.health = 100;
         this.maxhealth = 100;
+        this.inventory = [];
+        this.gun;
     }
 
     move(direction) {
@@ -21,7 +29,9 @@ class Player extends Living {
         for (var other of game.entities) {
              if (!(other instanceof Projectile || other instanceof Weapon || other instanceof Particles)) {
                 var d = Vector.distance(this.position,other.position);
-                if (other != this && d < this.separation) {
+                if (other instanceof Resource && d < this.separation) {
+                    this.collect(other);
+                } else if (other != this && d < this.separation) {
                     var sep = this.position.clone();
                     sep.subtract(other.position).limit(5);
                     var rate = (this.separation - d)/this.separation;
@@ -33,7 +43,6 @@ class Player extends Living {
         if (!this.aiming && this.velocity.magnitude() > .5) this.facing.average(this.velocity, 4);
         this.acceleration.add(avgSep);
         this.acceleration.limit(3);
-        this.position.z = 0;
     }
 
     setState(s) {
@@ -70,6 +79,7 @@ class Player extends Living {
         var p = new Particles(this.position, new Vector(other.velocity.x, other.velocity.y, -other.velocity.z));
         p.preset("blood");
         p.init();
+        this.drawRed += other.damage*2;
         if (this.health <= 0 && game.state == "playing") {
             game.state = "dead";
             game.fade = 50;
@@ -77,25 +87,22 @@ class Player extends Living {
     }
 
     update() {
-        this.position.add(this.velocity);
-        this.velocity.add(this.acceleration).limit(this.topSpeed);
-        this.velocity.div(1.1);
-        this.acceleration.mult(0);
-
-        // terrain.setPos(this.position.x, this.position.y, 0, true); // Too slow, update to only render the changed spots
-
+        super.update();
         if (this.aiming) {
             this.facing.x = (this.facing.x + this.target.x - this.position.x)*.5;
             this.facing.y = (this.facing.y + this.target.y - this.position.y)*.5;
         }
-        
-        this.position.z = 0;
         this.gun.carry(this.position.offset(this.facing, this.hand), this.facing);
+    }
 
-        if (this.position.x < 0) this.position.x = this.bounds.x;
-        if (this.position.y < 0) this.position.y = this.bounds.y;
-        if (this.position.x > this.bounds.x) this.position.x = 0;
-        if (this.position.y > this.bounds.y) this.position.y = 0;
+    collect(other) {
+        var type = other.type;
+        other.remove();
+        if (this.inventory[type] == undefined) {
+            this.inventory[type] = 1;
+        } else {
+            this.inventory[type]++;
+        }
     }
 
     draw(ctx, dt) {
@@ -112,6 +119,13 @@ class Player extends Living {
         }
         this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.facing.angle(), this.bounce, 8);   
         ctx.setTransform(1,0,0,1,0,0);
+        if (this.drawRed > 0) {
+            ctx.fillStyle = "#F00";
+            if (this.drawRed > 25) this.drawRed = 25;
+            ctx.globalAlpha = (this.drawRed--/100);
+            ctx.fillRect(0,0, game.viewWidth, game.viewHeight);
+        }
+
         if (this.health < this.maxhealth) {
             ctx.drawImage(this.healthBar, 0,
                 128, 1, 1,

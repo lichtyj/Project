@@ -78,7 +78,7 @@ class Ship extends Entity {
         } else if (game.state == "landed") {
             this.timer -= 1;
             if (this.timer <= 0) {
-                    game.player = new Player(new Vector(this.position.x+17, this.position.y-12), new Vector(), assetMgr.getSprite("scientist"), game.bounds);
+                    game.player = new Player(new Vector(this.position.x+17, this.position.y-12), assetMgr.getSprite("scientist"));
                     game.player.gun = new Weapon(game.player.position.clone());
                     game.player.gun.preset("railgun");
                     game.addEntity(game.player);
