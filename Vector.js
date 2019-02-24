@@ -166,12 +166,20 @@ class Vector { // Ignores z in all non-elementary calcs
         return new Vector(1, 0, 0);
     }
 
-    static up() {
+    static forward() {
         return new Vector(0, -1, 0);
     }
 
-    static down() {
+    static back() {
         return new Vector(0, 1, 0);
+    }
+
+    static up() {
+        return new Vector(0, 0, 1);
+    }
+    
+    static down() {
+        return new Vector(0, 0, -1);
     }
 
     static fromAngle(angle) {

@@ -113,13 +113,13 @@ class Controls {
                     game.player.gun.preset('plasmaPistol');
                     break;
                 case 87: // W
-                    moving.add(Vector.up());
+                    moving.add(Vector.forward());
                     break;
                 case 65: // A
                     moving.add(Vector.left());
                     break;
                 case 83: // S
-                    moving.add(Vector.down());
+                    moving.add(Vector.back());
                     break;
                 case 68: // D
                     moving.add(Vector.right());

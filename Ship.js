@@ -7,7 +7,6 @@ class Ship extends Entity {
         this.elapsedTime = 0;
         this.direction = 0;
         this.sprite = sprite;
-        this.gravity = .5; // TODO move this
         this.bounce = 0;
         this.spin = 0.09;
         this.landed = false;
@@ -19,31 +18,43 @@ class Ship extends Entity {
         this.i = 0;
     }
 
+    smoke() {
+        var dist = 16;
+        var angle = 2.6;
+        var pos = this.position.clone();
+        var dir = new Vector(Math.cos(this.direction+angle)*dist, Math.sin(this.direction+angle)*dist+6, 9);
+        var p = new Particles(pos.add(dir), this.velocity.clone());
+        p.count = Math.random()*5;
+        p.alpha = .75;
+        p.force = .25;
+        p.bright = 0;
+        p.time = 10;
+        p.timeP = Math.random()*4+2;
+        p.glow = true;
+        p.gravity -= .125;
+        p.init();    
+    }
+
     update(dt) {
         super.update();
 
         this.direction += this.spin;
-        
-        if (game.state != "playing" || Math.random()*20 < 1) {
-            var dist = 16;
-            var angle = 2.6;
-            var pos = this.position.clone();
-            var dir = new Vector(Math.cos(this.direction+angle)*dist, Math.sin(this.direction+angle)*dist+6, 9);
-            var p = new Particles(pos.add(dir), this.velocity.clone());
-            p.count = Math.random()*5;
-            p.alpha = .75;
-            p.force = .25;
-            p.bright = 0;
-            p.time = 10;
-            p.timeP = Math.random()*4+2;
-            p.glow = true;
-            p.gravity -= .125;
-            p.init();    
-        }
 
-        if (game.state != "playing" & game.state != "landed" && game.state !="dead") {
-            if (this.position.z <= 0) {
-                game.state = "impact";
+        this.smoke();
+
+        switch(game.state) {
+            case "falling":
+                if (this.position.z <= 0) game.state = "impact";
+                break;
+            case "impact":
+                this.velocity.div(1.05);
+                this.spin /= 1.05;
+                if (this.spin < 0.001) {
+                    game.state = "landed";
+                    this.timer = 10;
+                    this.spin = 0;
+                    this.velocity.subtract(this.velocity);
+                }
                 if (this.spin > 0.025) {
                     var pos = new Vector(this.position.x, this.position.y-3, 3);
                     var dist = 25+Math.random()*5;
@@ -59,25 +70,10 @@ class Ship extends Entity {
                     p.force = this.velocity.magnitude()/3;
                     p.init();
                 }
-            }
-
-            if (game.state == "falling") {
-                this.acceleration.x += this.gravity*.25;
-                this.acceleration.y += this.gravity*.25;
-                this.acceleration.z -= this.gravity*.25;
-            } else if (game.state == "impact") {
-                this.velocity.div(1.05);
-                this.spin /= 1.05;
-                if (this.spin < 0.001) {
-                    game.state = "landed";
-                    this.timer = 10;
-                    this.spin = 0;
-                    this.velocity.subtract(this.velocity);
-                }
-            }
-        } else if (game.state == "landed") {
-            this.timer -= 1;
-            if (this.timer <= 0) {
+                break;
+            case "landed":
+                this.timer -= 1;
+                if (this.timer <= 0) {
                     game.player = new Player(new Vector(this.position.x+17, this.position.y-12), assetMgr.getSprite("scientist"));
                     game.player.gun = new Weapon(game.player.position.clone());
                     game.player.gun.preset("railgun");
@@ -87,7 +83,10 @@ class Ship extends Entity {
                     game.cameraOffset.x = 0;
                     game.cameraOffset.y = 0;
                     game.state = "playing";
-            }
+                }
+                break;
+            case "playing":
+                break;  
         }
     }
 

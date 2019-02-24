@@ -5,11 +5,11 @@ class Projectile extends Entity {
         this.color = "#333";
         this.velocity = velocity;
         this.type = "";
-        this.gravity = 0;
         this.size = 2;
         this.damage = 1;
         this.impact = true;
         this.timer = 20;
+        this.spread = .5;
     }
 
     hit(mode, other) {
@@ -58,24 +58,30 @@ class Projectile extends Entity {
         game.remove(this);
     }
 
+    checkCollisions() {
+        return game.tree.retrieve(this.position.x, this.position.y, this.velocity.magnitude()*2, this.velocity.x, this.velocity.y, Math.PI*2);
+    }
+
+    checkHit(hit) {
+        for (var h of hit) {
+            if (h.takeDamage != undefined) {
+                h.takeDamage(this);
+            }
+        }
+    }
+
     update(dt) {
+        super.update();
+        var hit = this.checkCollisions();
+        this.checkHit(hit);
+
         this.elapsedTime += dt;
-        this.position.add(this.velocity);
-        this.velocity.add(this.acceleration);
-        this.velocity.div(1.01);
-        this.acceleration.subtract(this.acceleration);
-        this.acceleration.z -= this.gravity;
         this.timer--;
         if (this.timer <= 0) {
             game.remove(this);
         }
 
-        if (this.position.x < 0) this.position.x = game.bounds.x;
-        if (this.position.y < 0) this.position.y = game.bounds.y;
-        if (this.position.x > game.bounds.x) this.position.x = 0;
-        if (this.position.y > game.bounds.y) this.position.y = 0;
-
-        if (this.position.z < 0) {
+        if (this.position.z <= 0) {
             if (this.size >= 0) {
                 this.hit([this.type, "ground"]);
             } else {

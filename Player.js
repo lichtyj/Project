@@ -4,6 +4,7 @@ class Player extends Entity {
         this.separation = 15;
         this.moveTo = new Vector();
         this.moveSpeed = 2;
+        this.stalkSpeed = 1
         this.topSpeed = this.moveSpeed;
         this.aiming = false;
         this.target = new Vector();
@@ -76,7 +77,7 @@ class Player extends Entity {
 
     takeDamage(other) {
         this.health -= other.damage;
-        var p = new Particles(this.position, new Vector(other.velocity.x, other.velocity.y, -other.velocity.z));
+        var p = new Particles(this.position.clone(), Vector.up().mult(5));
         p.preset("blood");
         p.init();
         this.drawRed += other.damage*2;
@@ -84,6 +85,11 @@ class Player extends Entity {
             game.state = "dead";
             game.fade = 50;
         }
+    }
+
+    heal(amount) {
+        this.health += amount;
+        if (this.health > this.maxhealth) this.health = this.maxhealth;
     }
 
     update() {
@@ -97,11 +103,36 @@ class Player extends Entity {
 
     collect(other) {
         var type = other.type;
+        var canStore = false;
         other.remove();
-        if (this.inventory[type] == undefined) {
-            this.inventory[type] = 1;
-        } else {
-            this.inventory[type]++;
+        var p = new Particles(other.position.clone(), Vector.up().mult(3));
+        p.preset("collect");
+        switch(type) {
+            case "meat":
+                p.hue = 60;
+                this.takeDamage({damage:10});
+                break;
+            case "cookedMeat":
+                p.hue = 0;
+                p.bright = 192;
+                this.heal(10);
+                break;
+            case "ingot":
+                p.hue = 43;
+                canStore = true;
+                break;
+            case "dna":
+                p.hue = 180;
+                canStore = true;
+                break;
+        }
+        p.init();
+        if (canStore) {
+            if (this.inventory[type] == undefined) {
+                this.inventory[type] = 1;
+            } else {
+                this.inventory[type]++;
+            }
         }
     }
 

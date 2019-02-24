@@ -70,6 +70,35 @@ class Particles extends Entity{
                 this.glow = false;
                 this.shadow = true;
                 break;
+            case "collect":
+                this.gravity = .125;
+                this.force = .125;
+                this.count = 20;
+                this.rate = 20;
+                this.mode = "normal";
+                this.brightV = 64;
+                this.bright = 128;
+                this.brightR = 64;
+                this.brightT = -128;
+                this.timeP = 6;
+                this.time = 5;
+                this.glow = true;
+                this.resistanceP = 1;
+                break;
+            case "energy":
+                this.gravity = .5;
+                this.force = .5;
+                this.count = 20;
+                this.rate = 20;
+                this.mode = "normal";
+                this.hue = 140;
+                this.brightV = 128;
+                this.bright = 192;
+                this.brightT = -128;
+                this.timeP = 3;
+                this.glow = true;
+                this.shadow = true;
+                break;
             case "feathers":
                 this.force = 1;
                 this.count = 20;
@@ -100,50 +129,9 @@ class Particles extends Entity{
                 this.glow = true;
                 this.resistanceP = 1.25;
                 break;
-            case "energy":
-                this.gravity = .5;
-                this.force = .5;
-                this.count = 40;
-                this.rate = 40;
-                this.mode = "normal";
-                this.hue = 140;
-                this.brightV = 128;
-                this.bright = 192;
-                this.brightT = -128;
-                this.timeP = 3;
-                this.glow = true;
-                this.shadow = true;
-                break;
-            case "plasma":
-                this.gravity = .125;
-                this.force = .5;
-                this.count = 40;
-                this.rate = 40;
-                this.mode = "normal";
-                this.hue = 80;
-                this.hueR = 10;
-                this.brightV = 32;
-                this.bright = 192;
-                this.brightT = -128;
-                this.timeP = 3;
-                this.resistance = 1.01;
-                this.glow = true;
-                this.shadow = false;
-                break;
-            case "laser":
-                this.gravity = -.125;
-                this.force = 0;
-                this.count = 40;
-                this.mode = "normal";
-                this.hue = 0;
-                this.brightV = 256;
-                this.timeP = 15;
-                this.glow = true;
-                this.shadow = true;
-                break;
             case "ground":
                 this.force = 1;
-                this.count = 40;
+                this.count = 20;
                 this.rate = 0;
                 this.hue = 100;
                 this.hueR = -40;
@@ -155,6 +143,33 @@ class Particles extends Entity{
                 this.timeP = 30;
                 this.glow = false;
                 this.shadow = true;
+                break;
+            case "laser":
+                this.gravity = -.0125;
+                this.force = 0.1;
+                this.count = 20;
+                this.mode = "normal";
+                this.hue = 0;
+                this.brightV = 256;
+                this.timeP = 3;
+                this.glow = true;
+                this.shadow = true;
+                break;
+            case "plasma":
+                this.gravity = .125;
+                this.force = .5;
+                this.count = 20;
+                this.rate = 20;
+                this.mode = "normal";
+                this.hue = 80;
+                this.hueR = 10;
+                this.brightV = 32;
+                this.bright = 192;
+                this.brightT = -128;
+                this.timeP = 3;
+                this.resistance = 1.01;
+                this.glow = true;
+                this.shadow = false;
                 break;
         }
     }

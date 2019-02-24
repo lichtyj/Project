@@ -57,7 +57,7 @@ class Chicken extends Entity {
     }
 
     perceptionCheck() {
-        return game.tree.retrieve(this.position.x, this.position.y, this.vision, this.velocity.x, this.velocity.y, this.visionCone)
+        return game.tree.retrieve(this.position.x, this.position.y, this.vision, this.velocity.x, this.velocity.y, this.visionCone);
     }
 
 
@@ -347,8 +347,6 @@ class Chicken extends Entity {
 
     takeDamage(other) {
         this.health -= other.damage;
-        if (other.size >= 0)
-            other.hit(["feathers", "blood"], this.position.clone());
         if (other.type == "fire" || other.type == "plasma") {
             this.onFire += Math.random()*5;
         }
@@ -364,9 +362,6 @@ class Chicken extends Entity {
         for (var other of entities) {
             if (other instanceof Player && this.attacking) break;
             var d = Vector.distance(this.position,other.position);
-            if (other instanceof Projectile && d < 15) {
-                this.takeDamage(other);
-            }
             if (other != this && d < this.vision) {
                 if (other instanceof Chicken) {
                     avg.add(other.velocity);  // Orientation
@@ -380,7 +375,7 @@ class Chicken extends Entity {
                     sep.mult(Math.pow(rate,2));
                     avgSep.add(sep);
                     if (other instanceof Player) {
-                        avgSep.add(sep).mult(3);
+                        avgSep.add(sep).mult(5);
                     }
                 } 
             }

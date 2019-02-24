@@ -26,14 +26,6 @@ class GameEngine {
         this.tree = new Quadtree(1, 0, 0, this.bounds.x, this.bounds.y, null);
         this.tree.init();
         
-        // this.player = new Player(new Vector(200,200,0), new Vector(), assetMgr.getSprite("scientist"),this.bounds);
-        // this.player.gun = new Weapon(game.player.position.clone());
-        // this.player.gun.preset("railgun");
-        // this.addEntity(this.player);
-        // this.addEntity(this.player.gun);
-        // this.cameraTarget = this.player;
-
-        
         var ship = new Ship(assetMgr.getSprite("ship"), assetMgr.getAsset("shipShadow"));
         this.addEntity(ship);
         this.cameraOffset.x = 17;

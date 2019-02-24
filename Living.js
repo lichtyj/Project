@@ -28,7 +28,7 @@ class Living extends Entity {
     }
 
     perceptionCheck() {
-        return game.tree.retrieve(this.position.x, this.position.y, this.vision, this.velocity.x, this.velocity.y, this.visionCone)
+        return game.tree.retrieve(this.position.x, this.position.y, this.vision, this.velocity.x, this.velocity.y, this.visionCone);
     }
 
     update() {
@@ -58,7 +58,7 @@ class Living extends Entity {
 
     die() {
         if (this.onFire > 0) {
-            game.addEntity(new Resource(this.position, "cookedMeat"), Math.random()*Math.PI*2));
+            game.addEntity(new Resource(this.position, "cookedMeat", Math.random()*Math.PI*2));
         } else {
             game.addEntity(new Resource(this.position, "meat", Math.random()*Math.PI*2));
         }

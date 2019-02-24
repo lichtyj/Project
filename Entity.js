@@ -7,13 +7,16 @@ class Entity {
         this.sprite = sprite;
         this.rotation = 0;
         this.elapsedTime = 0;
+        this.gravity = .125;
     }
 
     update() {
         this.position.add(this.velocity);
         this.acceleration.limit(this.sprint);
-        if (this.acceleration.magnitude() > .1)
+        // if (this.acceleration.magnitude() > .1) {
+            this.acceleration.z -= this.gravity;
             this.velocity.add(this.acceleration);
+        // }
         this.velocity.limit(this.topSpeed);
         this.velocity.mult(.95);
         this.acceleration.mult(0);
