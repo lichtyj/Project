@@ -215,11 +215,6 @@ class Particles extends Entity{
         ctx.setTransform(1,0,0,1,0,0);
         ctx.globalAlpha = 1;
         ctx.globalCompositeOperation = this.mode;
-        // var can = document.createElement('canvas');
-        // var tCtx = can.getContext("2d");
-        // tCtx.rotate(Math.PI);
-        // tCtx.fillStyle = "#888";
-        // tCtx.fillRect(0,0, can.width, can.height);
         for (var i = 0; i < this.count; i++) {
             if (this.shadow) this.drawParticle(1, this.alpha/4, ctx, i, true);
             this.drawParticle(1, this.alpha, ctx, i, false);

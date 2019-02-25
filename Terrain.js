@@ -170,46 +170,46 @@ class Terrain {
     }
 
     generateObjects(count) {
-        var spr;
+        var type;
         for (var i = 0; i < count; i++) {
             switch (Math.floor(Math.random()*4)) {
                 case 0:
-                    spr = assetMgr.getSprite("bush");
+                    type = "bush";
                     break;
                 case 1: 
-                    spr = assetMgr.getSprite("tree");
+                    type = "tree";
                     break;
                 case 2: 
-                    spr = assetMgr.getSprite("tree2");
+                    type = "tree2";
                     break;
                 case 3: 
-                    spr = assetMgr.getSprite("rock");
+                    type = "rock";
                     break;
             }
             game.addEntity(new Object(new Vector(Math.floor(Math.random()*worldSize), 
                             Math.floor(Math.random()*worldSize)), 
-                            spr, Math.random()*Math.PI*2));
+                            type, Math.random()*Math.PI*2));
         }
     }
 
     generateFood(count) {
-        var spr;
+        var type;
         var spin;
         for (var i = 0; i < count; i++) {
             switch (Math.floor(Math.random()*2)) {
                 case 0:
-                    spr = "meat";
+                    type = "meat";
                     break;
                 case 1: 
-                    spr = "ingot";
+                    type = "ingot";
                     break;
                 case 2: 
-                    spr = "dna";
+                    type = "dna";
                     break;
             }
             game.addEntity(new Resource(new Vector(Math.floor(Math.random()*worldSize), 
                             Math.floor(Math.random()*worldSize)), 
-                            spr, Math.random()*Math.PI*2, spin));
+                            type, Math.random()*Math.PI*2, spin));
         }
     }
 
@@ -217,7 +217,7 @@ class Terrain {
         var spr = assetMgr.getSprite("chicken");
         var chicken;
         for (var i = 0; i < count; i++) {
-            chicken = new Chicken(new Vector(Math.random()*game.viewWidth, 
+            chicken = new Npc(new Vector(Math.random()*game.viewWidth, 
                 Math.random()*game.viewHeight), spr);
             chicken.init();
             game.addEntity(chicken);

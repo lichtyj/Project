@@ -5,6 +5,7 @@ var controls = new Controls();
 var viewSize = 400;
 var borderBuffer = 30;
 var worldSize = 800;
+var ready = 0;
 // Encapsulate these
 
 assetMgr.queueDownload("./sprites/practice.png");
@@ -76,11 +77,18 @@ function createSprites() {
     assetMgr.createSprite3D("plasmaPistol", 16, 8, 6, frameduration*.5, 5, true);
 
 
-    console.log("Done creating sprites")
-    start();
+    console.log("Done creating sprites");
+    setReady();
 }
 
-//document.addEventListener("DOMContentLoaded", start);
+document.addEventListener("DOMContentLoaded", setReady);
+
+function setReady() {
+    if (ready == 1) {
+        start();
+    }
+    ready++;
+}
 
 function start() {
     var canvas = document.getElementById("canvas");

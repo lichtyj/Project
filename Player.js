@@ -13,15 +13,15 @@ class Player extends Entity {
         this.separation = 15;
 
         this.facing = new Vector();
-        this.bounce = 0;
-        this.elapsedTime = 0;
         this.drawRed = 0;
-        this.healthBar = assetMgr.getAsset("particle");
 
         this.health = 100;
         this.maxhealth = 100;
-        this.inventory = [];
         this.gun;
+
+        this.canInteract = false;
+        this.current = 0;
+        this.inventory = [];
     }
 
     move(direction) {
@@ -80,7 +80,7 @@ class Player extends Entity {
         var p = new Particles(this.position.clone(), Vector.up().mult(5));
         p.preset("blood");
         p.init();
-        this.drawRed += other.damage*2;
+        this.drawRed += other.damage*4;
         if (this.health <= 0 && game.state == "playing") {
             game.state = "dead";
             game.fade = 50;
@@ -103,72 +103,26 @@ class Player extends Entity {
 
     collect(other) {
         var type = other.type;
-        var canStore = false;
+        other.emit();
+        if (this.inventory[type] == undefined) {
+            this.inventory[type] = 1;
+        } else {
+            this.inventory[type]++;
+        }
         other.remove();
-        var p = new Particles(other.position.clone(), Vector.up().mult(3));
-        p.preset("collect");
-        switch(type) {
-            case "meat":
-                p.hue = 60;
-                this.takeDamage({damage:10});
-                break;
-            case "cookedMeat":
-                p.hue = 0;
-                p.bright = 192;
-                this.heal(10);
-                break;
-            case "ingot":
-                p.hue = 43;
-                canStore = true;
-                break;
-            case "dna":
-                p.hue = 180;
-                canStore = true;
-                break;
-        }
-        p.init();
-        if (canStore) {
-            if (this.inventory[type] == undefined) {
-                this.inventory[type] = 1;
-            } else {
-                this.inventory[type]++;
-            }
-        }
     }
 
     draw(ctx, dt) {
-        this.elapsedTime += dt;
-        var b = this.velocity.magnitude();
-        this.bounce += b/6;
-        this.bounce %= Math.PI*2;
-        if (b < 0.1) {
-            if (this.bounce > Math.PI) {
-                this.bounce *= 1.05;
-            } else {
-                this.bounce /= 1.05;
-            }
-        }
-        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.facing.angle(), this.bounce, 8);   
+        super.draw(ctx, dt);
+        super.drawHealth(ctx);
         ctx.setTransform(1,0,0,1,0,0);
         if (this.drawRed > 0) {
             ctx.fillStyle = "#F00";
-            if (this.drawRed > 25) this.drawRed = 25;
+            if (this.drawRed > 50) this.drawRed = 50;
             ctx.globalAlpha = (this.drawRed--/100);
             ctx.fillRect(0,0, game.viewWidth, game.viewHeight);
         }
-
-        if (this.health < this.maxhealth) {
-            ctx.drawImage(this.healthBar, 0,
-                128, 1, 1,
-                this.position.x + 5 - (1-this.health/this.maxhealth)*10 - game.view.x, 
-                this.position.y + 8 - game.view.y,
-                (1-this.health/this.maxhealth)*10, 2);
-            ctx.drawImage(this.healthBar, 80,
-                128, 1, 1,
-                this.position.x - 5 - game.view.x, 
-                this.position.y + 8 - game.view.y,
-                (this.health/this.maxhealth)*10, 2);
-        }
+        game.drawInventory(ctx);
     }
 
 }

@@ -1,6 +1,6 @@
 class Resource extends Object {
     constructor(position, type, rotation, spin) {
-        super(position, assetMgr.getSprite(type), rotation);
+        super(position, type, rotation);
         this.elapsedTime = 0;
         this.bounce = 0;
         this.spin = spin;
@@ -9,12 +9,33 @@ class Resource extends Object {
         this.type = type;
     }
 
-    update() {
-        terrain.setPos(this.position.x, this.position.y, 2, true);
+    remove() {
+        game.remove(this);
     }
 
     remove() {
         game.remove(this);
+    }
+
+    emit() {
+        var p = new Particles(this.position.clone(), Vector.up().mult(3));
+        p.preset("collect");
+        switch(this.type) {
+            case "meat":
+                p.hue = 60;
+                break;
+            case "cookedMeat":
+                p.hue = 0;
+                p.bright = 192;
+                break;
+            case "ingot":
+                p.hue = 256;
+                break;
+            case "dna":
+                p.hue = 180;
+                break;
+        }
+        p.init();
     }
 
     draw(ctx, dt) {

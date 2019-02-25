@@ -71,20 +71,20 @@ class GameEngine {
                 }
             }
             if (e.keyCode === 103) {
-                var spr;
+                var type;
                 for (var i = 0; i < 25; i++) {
                     switch (Math.floor(Math.random()*3)) {
                         case 0:
-                            spr = assetMgr.getSprite("bush");
+                            type = "bush";
                             break;
                         case 1: 
-                            spr = assetMgr.getSprite("tree");
+                            type = "tree";
                             break;
                         case 2: 
-                            spr = assetMgr.getSprite("rock");
+                            type = "rock";
                             break;
                     }
-                    that.addEntity(new Object(new Vector(Math.floor(Math.random()*GameEngine.prototype.viewWidth), Math.floor(Math.random()*GameEngine.prototype.viewHeight)), spr, Math.random()*Math.PI*2));
+                    that.addEntity(new Object(new Vector(Math.floor(Math.random()*GameEngine.prototype.viewWidth), Math.floor(Math.random()*GameEngine.prototype.viewHeight)), type, Math.random()*Math.PI*2));
                 }
             }
         })

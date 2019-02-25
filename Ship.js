@@ -16,6 +16,7 @@ class Ship extends Entity {
         this.particles;
         this.imgData;
         this.i = 0;
+        this.damage = 100000;
     }
 
     smoke() {
@@ -35,6 +36,15 @@ class Ship extends Entity {
         p.init();    
     }
 
+    checkCollisions() {
+        var hit = game.tree.retrieve(this.position.x, this.position.y, 64, this.velocity.x, this.velocity.y, Math.PI*2);
+        for (var h of hit) {
+            if (h.takeDamage != undefined && !(h instanceof Player)) {
+                h.takeDamage(this);
+            }
+        }
+    }
+
     update(dt) {
         super.update();
 
@@ -49,6 +59,7 @@ class Ship extends Entity {
             case "impact":
                 this.velocity.div(1.05);
                 this.spin /= 1.05;
+                this.checkCollisions();
                 if (this.spin < 0.001) {
                     game.state = "landed";
                     this.timer = 10;

@@ -8,16 +8,19 @@ class Entity {
         this.rotation = 0;
         this.elapsedTime = 0;
         this.gravity = .125;
+        this.bounce = 0;
+        this.elapsedTime = 0;
+        this.healthBar = assetMgr.getAsset("particle");
     }
 
     update() {
         this.position.add(this.velocity);
         this.acceleration.limit(this.sprint);
-        // if (this.acceleration.magnitude() > .1) {
-            this.acceleration.z -= this.gravity;
-            this.velocity.add(this.acceleration);
-        // }
+        this.acceleration.z -= this.gravity;
+        this.velocity.add(this.acceleration);
+        var grav = this.velocity.z;
         this.velocity.limit(this.topSpeed);
+        this.velocity.z = grav;
         this.velocity.mult(.95);
         this.acceleration.mult(0);
 
@@ -28,6 +31,37 @@ class Entity {
         if (this.position.x > game.bounds.x) this.position.x = 0;
         if (this.position.y > game.bounds.y) this.position.y = 0;
 
+    }
+
+    draw(ctx, dt) {
+        this.elapsedTime += dt;
+        var b = this.velocity.magnitude();
+        this.bounce += b/6;
+        this.bounce %= Math.PI*2;
+        if (b < 0.1) {
+            if (this.bounce > Math.PI) {
+                this.bounce *= 1.05;
+            } else {
+                this.bounce /= 1.05;
+            }
+        }
+        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.facing.angle(), this.bounce, 8);
+    }
+
+    drawHealth(ctx) {
+        ctx.setTransform(1,0,0,1,0,0);
+        if (this.health < this.maxhealth) {
+            ctx.drawImage(this.healthBar, 0,
+                128, 1, 1,
+                this.position.x + 5 - (1-this.health/this.maxhealth)*10 - game.view.x, 
+                this.position.y + 8 - game.view.y,
+                (1-this.health/this.maxhealth)*10, 2);
+            ctx.drawImage(this.healthBar, 80,
+                128, 1, 1,
+                this.position.x - 5 - game.view.x, 
+                this.position.y + 8 - game.view.y,
+                (this.health/this.maxhealth)*10, 2);
+        }
     }
 }
 

@@ -42,6 +42,7 @@ class Controls {
 
     keyDown(num) {
         if (this.keys.indexOf(num) == -1) {
+            // console.log(num);
             this.keys.push(num);
         }
     }
@@ -81,7 +82,6 @@ class Controls {
                         game.ctx.canvas.addEventListener("mousemove", this.mouseMove);
                     }
                     game.player.setState("aim");
-
                     break;
                 case 49: // 1
                     game.player.sprite = assetMgr.getSprite("scientist");
@@ -92,7 +92,7 @@ class Controls {
                 case 51: // 3
                     game.player.sprite = assetMgr.getSprite("dudeGreen");
                     for (var c of game.entities) {
-                        if (c instanceof Chicken) {
+                        if (c instanceof Npc) {
                             c.rage = true;
                         }
                     }
@@ -118,6 +118,10 @@ class Controls {
                 case 65: // A
                     moving.add(Vector.left());
                     break;
+                case 69: // E
+                    if (game.player != null) {
+                        game.player.interact();
+                    }
                 case 83: // S
                     moving.add(Vector.back());
                     break;

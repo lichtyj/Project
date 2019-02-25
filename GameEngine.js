@@ -35,8 +35,8 @@ class GameEngine {
         terrain.generateObjects(50);
 
         var chicken;
-        for (var i = 0; i < 25; i++) {
-            chicken = new Chicken(Vector.randomPositive(worldSize), assetMgr.getSprite("chicken"));
+        for (var i = 0; i < 10; i++) {
+            chicken = new Npc(Vector.randomPositive(worldSize), assetMgr.getSprite("chicken"));
             chicken.init();
         }
 
@@ -93,6 +93,7 @@ class GameEngine {
             this.entities[i].draw(this.ctx, dt);
         }
         this.ctx.setTransform(1,0,0,1,0,0);
+        if (this.player != null) this.drawInventory();
         if (game.state == "dead") {
             this.ctx.fillStyle = "#000";
             this.ctx.globalAlpha = 1;
@@ -107,6 +108,21 @@ class GameEngine {
             this.ctx.fillStyle = "#FFF";
             this.ctx.globalAlpha = (this.fade--/50);
             this.ctx.fillRect(0,0, this.viewWidth, this.viewHeight);
+        }
+    }
+
+    drawInventory() {
+        var size = 32;
+        var border = 2;
+        var boxes = 4;
+        var left = (this.viewWidth - size*boxes)/2;
+        var top = this.viewHeight-size;
+        this.ctx.globalAlpha = .75;
+        this.ctx.fillStyle = "#888";
+        // this.ctx.fillRect(left + size * , top, size, size);
+        this.ctx.fillStyle = "#333";
+        for (var i = 0; i < boxes; i++) {
+            this.ctx.fillRect(left+border+(size)*i, top + border, size-border*2, size - border*2);
         }
     }
 

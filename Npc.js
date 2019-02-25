@@ -1,4 +1,4 @@
-class Chicken extends Entity {
+class Npc extends Entity {
     constructor(position, sprite) {
         super(position, sprite);
         this.healthBar = assetMgr.getAsset("particle");
@@ -188,7 +188,7 @@ class Chicken extends Entity {
         if (Vector.distance(this.position, this.targetEntity.position) < 25) {
             var temp = this.position.clone();
             temp.average(this.targetEntity.position);
-            this.chicken = new Chicken(temp, assetMgr.getSprite("chicken"));
+            this.chicken = new Npc(temp, assetMgr.getSprite("chicken"));
             this.chicken.init();
             // console.error("baby chicken");
             this.matingTimer = 1000;
@@ -272,7 +272,7 @@ class Chicken extends Entity {
                     case "Mate":
                     for (var e of this.canSee) {
                         if (e === this) continue;
-                        if (e instanceof Chicken) {
+                        if (e instanceof Npc) {
                             dist = Vector.distance(this.position, e.position);
                             if (this.targetEntity === null || dist < Vector.distance(this.position, this.targetEntity.position)) {
                                 this.targetEntity = e;
@@ -347,6 +347,24 @@ class Chicken extends Entity {
 
     takeDamage(other) {
         this.health -= other.damage;
+        var pos;
+        if (other.size == undefined) {
+            pos = this.position.clone();
+        } else {
+            pos = other.position.clone();
+        }
+        pos.z *= -1;
+        if (other.size == undefined || other.size >= 0) {
+            var p = new Particles(pos, new Vector(other.velocity.x, other.velocity.y, -other.velocity.z));
+            p.velocity.div(3);
+            p.preset("blood");
+            p.init();
+            p = new Particles(pos, new Vector(other.velocity.x, other.velocity.y, -other.velocity.z));
+            p.velocity.div(2);
+            p.velocity.z *= 2;
+            p.preset("feathers");
+            p.init();
+        }
         if (other.type == "fire" || other.type == "plasma") {
             this.onFire += Math.random()*5;
         }
@@ -363,7 +381,7 @@ class Chicken extends Entity {
             if (other instanceof Player && this.attacking) break;
             var d = Vector.distance(this.position,other.position);
             if (other != this && d < this.vision) {
-                if (other instanceof Chicken) {
+                if (other instanceof Npc) {
                     avg.add(other.velocity);  // Orientation
                     avgPos.add(other.position); // Cohesion
                     total++;
@@ -390,31 +408,7 @@ class Chicken extends Entity {
     }
 
     draw(ctx, dt) {
-        this.elapsedTime += dt;
-        var b = this.velocity.magnitude();
-        this.bounce += b/6;
-        this.bounce %= Math.PI*2;
-        if (b < 0.1) {
-            if (this.bounce > Math.PI) {
-                this.bounce *= 1.05;
-            } else {
-                this.bounce /= 1.05;
-            }
-        }
-        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.facing.angle(), this.bounce, 8);   
-
-        ctx.setTransform(1,0,0,1,0,0);
-        if (this.health < this.maxhealth) {
-            ctx.drawImage(this.healthBar, 0,
-                128, 1, 1,
-                -game.view.x + this.position.x + 5 - (1-this.health/this.maxhealth)*10, 
-                -game.view.y + this.position.y + 8,
-                (1-this.health/this.maxhealth)*10, 2);
-            ctx.drawImage(this.healthBar, 80,
-                128, 1, 1,
-                -game.view.x + this.position.x - 5, 
-                -game.view.y + this.position.y + 8,
-                (this.health/this.maxhealth)*10, 2);
-        }
+        super.draw(ctx, dt);
+        super.drawHealth(ctx);
     }
 }
