@@ -13,7 +13,6 @@ class Player extends Entity {
         this.separation = 15;
 
         this.facing = new Vector();
-        this.drawRed = 0;
 
         this.health = 100;
         this.maxhealth = 100;
@@ -43,6 +42,7 @@ class Player extends Entity {
         }
         if (!this.aiming && this.velocity.magnitude() > .5) this.facing.average(this.velocity, 4);
         this.acceleration.add(avgSep);
+        this.acceleration.z = 0;
         this.acceleration.limit(3);
     }
 
@@ -76,11 +76,13 @@ class Player extends Entity {
     }
 
     takeDamage(other) {
+        console.log(other);
+        if (typeof other == "number") other = {position:this.position, damage:other};
         this.health -= other.damage;
         var p = new Particles(this.position.clone(), Vector.up().mult(5));
         p.preset("blood");
         p.init();
-        this.drawRed += other.damage*4;
+        game.ui.drawRed += other.damage*4;
         if (this.health <= 0 && game.state == "playing") {
             game.state = "dead";
             game.fade = 50;
@@ -102,27 +104,80 @@ class Player extends Entity {
     }
 
     collect(other) {
-        var type = other.type;
-        other.emit();
-        if (this.inventory[type] == undefined) {
-            this.inventory[type] = 1;
-        } else {
-            this.inventory[type]++;
+        if (other.timer < 0) {
+            var type = other.type;
+            other.emit();
+            var i = this.checkInv(type);
+            if (i != -1) {
+                this.inventory[i].count++;
+            } else {
+                this.inventory.push({name:type, count:1});
+            }
+            other.remove();
         }
-        other.remove();
+    }
+
+    checkInv(type) {
+        var ret = -1;
+        for (var i = 0; i < this.inventory.length; i++) {
+            if (this.inventory[i] != undefined && this.inventory[i].name == type) {
+                ret = i;
+                break;
+            } 
+        }
+        return ret;
+    }
+
+    use() {
+        if (this.inventory[this.current] != undefined && this.inventory[this.current].count > 0) {
+            var type = this.inventory[this.current].name;
+            switch(type) {
+                case "rawMeat":
+                    this.takeDamage(10);
+                    this.inventory[this.current].count--;
+                    break;
+                case "cookedMeat":
+                    if (this.health < this.maxhealth) {
+                        this.heal(25);
+                        this.inventory[this.current].count--;
+                    } else {
+                        game.ui.inventoryMessage("Not hungry", "#F00");
+                    }
+                    break;
+                case "ingot":
+                    console.error("Implement build menu");
+                    break;
+            }
+            if (this.inventory[this.current].count == 0) {
+                this.inventory.splice(this.current--,1);
+            }
+        }        
+    }
+
+    drop() {
+        if (this.inventory[this.current] != undefined && this.inventory[this.current].count > 0) {
+            var type = this.inventory[this.current].name;
+            this.inventory[this.current].count--;
+            var item = new Resource(this.position.clone(), type, Math.random()*Math.PI,0);
+            item.velocity.set(Vector.random(2));
+            item.timer = 180;
+            game.addEntity(item);
+            if (this.inventory[this.current].count == 0) {
+                this.inventory.splice(this.current--,1);
+            }
+        }
+    }
+
+    inventoryScroll(dir) {
+        this.current += dir;
+        if (this.current >= this.inventory.length) this.current -= this.inventory.length;
+        if (this.current < 0) this.current += this.inventory.length;
+        if (this.current > -1) game.ui.inventoryMessage(this.inventory[this.current].name);
     }
 
     draw(ctx, dt) {
         super.draw(ctx, dt);
         super.drawHealth(ctx);
-        ctx.setTransform(1,0,0,1,0,0);
-        if (this.drawRed > 0) {
-            ctx.fillStyle = "#F00";
-            if (this.drawRed > 50) this.drawRed = 50;
-            ctx.globalAlpha = (this.drawRed--/100);
-            ctx.fillRect(0,0, game.viewWidth, game.viewHeight);
-        }
-        game.drawInventory(ctx);
     }
 
 }

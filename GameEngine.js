@@ -17,41 +17,46 @@ class GameEngine {
         this.paused = true;
         this.player;
         this.fade = 50;
-        this.state = "falling";
+        this.state = "loading";
         this.stateTimer = 0;
+        this.ui = new GUI(ctx);
     }
 
     init() {
         console.log("Initialized");
         this.tree = new Quadtree(1, 0, 0, this.bounds.x, this.bounds.y, null);
         this.tree.init();
-        
-        var ship = new Ship(assetMgr.getSprite("ship"), assetMgr.getAsset("shipShadow"));
-        this.addEntity(ship);
-        this.cameraOffset.x = 17;
-        this.cameraOffset.y = -12;
-        this.cameraTarget = ship;
 
-        terrain.generateObjects(50);
+        this.cameraTarget = {position: new Vector(terrain.overworldSize/2, terrain.overworldSize/2, 0)};
 
-        var chicken;
-        for (var i = 0; i < 10; i++) {
-            chicken = new Npc(Vector.randomPositive(worldSize), assetMgr.getSprite("chicken"));
-            chicken.init();
-        }
-
-        
-        terrain.generateFood(10);
-        window.requestAnimationFrame(game.gameLoop);
+        // terrain.populate();
 
         this.ctx.setTransform(1,0,0,1,0,0);
         this.ctx.globalAlpha = .5;
         this.ctx.fillStyle = "#333";
         this.ctx.fillRect(0,0, this.viewWidth, this.viewHeight);
-        this.drawMessage("CLICK TO BEGIN", "#FFF");
+        this.ui.drawMessage("BUILDING WORLD...", "#FFF");
+
+        window.requestAnimationFrame(game.gameLoop);
+    }
+
+    start() {
+        this.ctx.canvas.width = this.ctx.canvas.width;
+        this.ctx.setTransform(1,0,0,1,0,0);
+        this.ctx.globalAlpha = .5;
+        this.ctx.fillStyle = "#333";
+        this.ctx.fillRect(0,0, this.viewWidth, this.viewHeight);
+        this.ui.drawMessage("CLICK TO BEGIN", "#FFF");
+        this.state = "ready";
+
+        var ship = new Ship(assetMgr.getSprite("ship"), assetMgr.getAsset("shipShadow"));
+        this.addEntity(ship);
     }
 
     gameLoop() {
+        if (game.state == "loading") {
+            terrain.load();
+        }
         if (!game.paused) { 
             var current = performance.now();
             game.dt += Math.min(.02, (current - game.lastFrame) / 1000);   // duration capped at 20ms
@@ -61,14 +66,17 @@ class GameEngine {
                 game.draw(game.step);
             }
             game.lastFrame = current;
-            window.requestAnimationFrame(game.gameLoop);
         }
+        window.requestAnimationFrame(game.gameLoop);
     }
 
     update(dt) {
         if (game.state == "playing") {
             controls.actions();
             terrain.update();
+        }
+        if (game.state == "flying" || game.state == "mayday") {
+            terrain.zoomIn();
         }
         this.tree.clear();
         var entitiesCount = this.entities.length;
@@ -93,12 +101,12 @@ class GameEngine {
             this.entities[i].draw(this.ctx, dt);
         }
         this.ctx.setTransform(1,0,0,1,0,0);
-        if (this.player != null) this.drawInventory();
+        if (this.player != null) this.ui.drawInventory();
         if (game.state == "dead") {
             this.ctx.fillStyle = "#000";
             this.ctx.globalAlpha = 1;
             this.ctx.fillRect(0,0, this.viewWidth, this.viewHeight);
-            this.drawMessage("YOU DIED", "#F00");
+            this.ui.drawMessage("YOU DIED", "#F00");
             this.stateTimer++;
             if (this.stateTimer = 180) {
                 // location.reload(true);
@@ -107,40 +115,23 @@ class GameEngine {
         if (game.state != "playing" && this.fade > 0) {
             this.ctx.fillStyle = "#FFF";
             this.ctx.globalAlpha = (this.fade--/50);
+            if (this.ctx.globalAlpha > 1) this.ctx.globalAlpha = 1;
             this.ctx.fillRect(0,0, this.viewWidth, this.viewHeight);
         }
-    }
-
-    drawInventory() {
-        var size = 32;
-        var border = 2;
-        var boxes = 4;
-        var left = (this.viewWidth - size*boxes)/2;
-        var top = this.viewHeight-size;
-        this.ctx.globalAlpha = .75;
-        this.ctx.fillStyle = "#888";
-        // this.ctx.fillRect(left + size * , top, size, size);
-        this.ctx.fillStyle = "#333";
-        for (var i = 0; i < boxes; i++) {
-            this.ctx.fillRect(left+border+(size)*i, top + border, size-border*2, size - border*2);
+        this.ui.draw();
+        if (game.player != undefined && game.state == "playing") {
+            // terrain.draw();
+            this.ui.drawInventory();
         }
-    }
-
-    drawMessage(msg, color, offset) {
-        if (offset == undefined) offset = 0;
-        this.ctx.fillStyle = color;
-        var text = msg;
-        var twidth = this.ctx.measureText(text);
-        this.ctx.fillText(text, (this.viewWidth - twidth.width)*.5 | 0, (this.viewHeight)*.33 + offset);
     }
 
     updateView() {
         this.view.x = (this.cameraTarget.position.x + this.cameraOffset.x - this.viewWidth*.5);
         this.view.y = (this.cameraTarget.position.y + this.cameraOffset.y - this.cameraOffset.z - this.viewHeight*.5);
-        var vx = -this.view.x;
-        var vy = -this.view.y;
-        if (vx < 0) vx += worldSize;
-        if (vy < 0) vy += worldSize;
+        var vx = -this.view.x - terrain.zoom*2;
+        var vy = -this.view.y - terrain.zoom*2;
+        // if (vx < 0) vx += worldSize;
+        // if (vy < 0) vy += worldSize;
         this.ctx.canvas.style.backgroundPosition = vx + "px " + vy + "px";
     }
 
@@ -151,13 +142,18 @@ class GameEngine {
             this.ctx.globalAlpha = .5;
             this.ctx.fillStyle = "#333";
             this.ctx.fillRect(0,0, this.viewWidth+1, this.viewHeight+1);
-            this.drawMessage("PAUSED", "#FFF");
-            this.drawMessage("- click to continue -","#FFF", 15);
+            this.ui.drawMessage("PAUSED", "#FFF");
+            this.ui.drawMessage("- click to continue -","#FFF", 15);
         }
     }
 
     resume() {
-        if (this.paused){
+        if (this.state == "ready") {
+            this.state = "flying";
+            terrain.zooming = true;
+        }
+
+        if (this.state != "loading" && this.paused){
             this.paused = false;
             this.ctx.globalAlpha = 1;
             window.requestAnimationFrame(game.gameLoop);

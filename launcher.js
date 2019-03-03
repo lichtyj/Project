@@ -4,7 +4,7 @@ var terrain = new Terrain();
 var controls = new Controls();
 var viewSize = 400;
 var borderBuffer = 30;
-var worldSize = 800;
+var worldSize = 1600;
 var ready = 0;
 // Encapsulate these
 
@@ -32,7 +32,7 @@ assetMgr.queueDownload("./sprites/scientist.png");
 
 // Resources
 assetMgr.queueDownload("./sprites/dna.png");
-assetMgr.queueDownload("./sprites/meat.png");
+assetMgr.queueDownload("./sprites/rawMeat.png");
 assetMgr.queueDownload("./sprites/cookedMeat.png");
 assetMgr.queueDownload("./sprites/ingot.png");
 
@@ -66,7 +66,7 @@ function createSprites() {
     
     // Resources
     assetMgr.createSprite3D("dna", 16, 16, 16, frameduration, 1, true);
-    assetMgr.createSprite3D("meat", 16, 16, 7, frameduration, 1, true);
+    assetMgr.createSprite3D("rawMeat", 16, 16, 7, frameduration, 1, true);
     assetMgr.createSprite3D("cookedMeat", 16, 16, 7, frameduration, 1, true);
     assetMgr.createSprite3D("ingot", 16, 16, 8, frameduration, 1, true);
 
@@ -103,6 +103,7 @@ function start() {
     var ctx = canvas.getContext('2d', { alpha: false });
     ctx.canvas.style["cursor"] = "url(./sprites/crosshairWhite.png) 8 8, crosshair";
     ctx.imageSmoothingEnabled = false;  
+    canvas.style.imageRendering = "Pixelated";
     game = new GameEngine(ctx, worldSize, worldSize);
     game.init();
     terrain.init();

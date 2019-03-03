@@ -64,9 +64,9 @@ class Projectile extends Entity {
 
     checkHit(hit) {
         for (var h of hit) {
-            if (h.takeDamage != undefined && !(h instanceof Player || h instanceof Resource)) {
+            if (h.takeDamage != undefined && !(h instanceof Player)) {
                 h.takeDamage(this);
-                game.remove(this);
+                if (!(h instanceof Resource)) game.remove(this);
             }
         }
     }

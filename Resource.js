@@ -7,21 +7,25 @@ class Resource extends Object {
         this.visible = false;
         this.target = false;
         this.type = type;
+        this.timer = 30;
     }
 
     remove() {
         game.remove(this);
     }
 
-    remove() {
-        game.remove(this);
+    takeDamage(other) {
+        if (this.type == "rawMeat" && other.type == "fire" || other.type == "plasma") {
+            this.type = "cookedMeat";
+            this.sprite = assetMgr.getSprite(this.type);
+        }
     }
 
     emit() {
         var p = new Particles(this.position.clone(), Vector.up().mult(3));
         p.preset("collect");
         switch(this.type) {
-            case "meat":
+            case "rawMeat":
                 p.hue = 60;
                 break;
             case "cookedMeat":
@@ -41,6 +45,7 @@ class Resource extends Object {
     draw(ctx, dt) {
         this.rotation += 0.01;
         this.elapsedTime += dt;
+        this.timer--;
         if (this.visible) {
             ctx.setTransform(1,0,0,1,0,0);
             if (this.target) {
@@ -52,8 +57,6 @@ class Resource extends Object {
             this.visible = false;
             this.target = false;
         }
-        if (this.sprite instanceof Sprite3D) {
-            this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, 0/*this.position.z*/, this.rotation, this.bounce += .075, this.spin);
-        }
+        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, 0/*this.position.z*/, this.rotation, this.bounce += .075, this.spin);
     }
 }

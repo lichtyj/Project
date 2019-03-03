@@ -18,19 +18,24 @@ class Controls {
             that.mouseButton(false) });
         game.ctx.canvas.addEventListener("mousedown", function() {
             that.mouseButton(true) });
+        game.ctx.canvas.addEventListener("wheel", function(e) {
+            that.mouseWheel(Math.sign(e.deltaY)) });
     }
 
     focus() {
         game.resume();
+        document.getElementById("body").style="overflow: hidden;"
     }
 
     blur() {
         game.pause();
+        document.getElementById("body").style="overflow: auto;"
     }
 
     keyUp(num) {
         switch(num) {
             case 16: // LeftShift
+                if (game.player != undefined)
                 game.player.setState("normal");
                 game.ctx.canvas.style["cursor"] = "url(./sprites/crosshairWhite.png) 8 8, crosshair";
                 // game.ctx.canvas.removeEventListener("mousemove", this.mouseMove);
@@ -42,7 +47,10 @@ class Controls {
 
     keyDown(num) {
         if (this.keys.indexOf(num) == -1) {
-            // console.log(num);
+            if (num == 32) terrain.reset();
+            if (num == 66) terrain.restart();
+            if (num == 78) terrain.zoomIn();
+            console.log(num);
             this.keys.push(num);
         }
     }
@@ -65,6 +73,12 @@ class Controls {
             if (game.player != null && game.player.gun != null)
                 game.player.gun.triggerReleased();
             delete this.keys.splice(this.keys.indexOf("lmb"),1);
+        }
+    }
+
+    mouseWheel(y) {
+        if (game.player != undefined && game.player.inventory.length != 0) {
+            game.player.inventoryScroll(y);
         }
     }
 
@@ -112,18 +126,14 @@ class Controls {
                 case 56: // 8
                     game.player.gun.preset('plasmaPistol');
                     break;
-                case 87: // W
-                    moving.add(Vector.forward());
-                    break;
                 case 65: // A
                     moving.add(Vector.left());
                     break;
                 case 69: // E
                     if (game.player != null) {
-                        game.player.interact();
+                        game.player.use();
                     }
-                case 83: // S
-                    moving.add(Vector.back());
+                    this.keyUp(69);
                     break;
                 case 68: // D
                     moving.add(Vector.right());
@@ -139,6 +149,18 @@ class Controls {
                 case 72: // H
                     terrain.generateFood(25);
                     this.keyUp(72);
+                    break;
+                case 81: // Q
+                    if (game.player != null) {
+                        game.player.drop();
+                    }
+                    this.keyUp(81);
+                    break;
+                case 83: // S
+                    moving.add(Vector.back());
+                    break;
+                case 87: // W
+                    moving.add(Vector.forward());
                     break;
             }
         }

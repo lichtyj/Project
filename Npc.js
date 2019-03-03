@@ -340,7 +340,7 @@ class Npc extends Entity {
         if (this.onFire > 0) {
             game.addEntity(new Resource(this.position, "cookedMeat", Math.random()*Math.PI*2));
         } else {
-            game.addEntity(new Resource(this.position, "meat", Math.random()*Math.PI*2));
+            game.addEntity(new Resource(this.position, "rawMeat", Math.random()*Math.PI*2));
         }
         game.remove(this);
     }
