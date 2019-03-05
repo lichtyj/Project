@@ -25,11 +25,11 @@ class Entity {
         this.acceleration.mult(0);
 
 
-        if (this.position.x < 0) this.position.x = game.bounds.x;
-        if (this.position.y < 0) this.position.y = game.bounds.y;
+        if (this.position.x < 0) this.position.x += game.bounds.x;
+        if (this.position.y < 0) this.position.y += game.bounds.y;
         if (this.position.z < 0) this.position.z = 0;
-        if (this.position.x > game.bounds.x) this.position.x = 0;
-        if (this.position.y > game.bounds.y) this.position.y = 0;
+        if (this.position.x > game.bounds.x) this.position.x -= game.bounds.x;
+        if (this.position.y > game.bounds.y) this.position.y -= game.bounds.y;
 
     }
 
@@ -45,7 +45,13 @@ class Entity {
                 this.bounce /= 1.05;
             }
         }
-        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.facing.angle(), this.bounce, 8);
+        var facing;
+        if (this.facing == undefined) {
+            facing = this.velocity.angle();
+        } else {
+            facing = this.facing.angle();
+        }
+        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, facing, this.bounce, 8);
     }
 
     drawHealth(ctx) {

@@ -23,14 +23,37 @@
         <script language="javascript" type="text/javascript" src="Renderer.js"></script>
         <script language="javascript" type="text/javascript" src="Npc.js"></script>
         <script language="javascript" type="text/javascript" src="GUI.js"></script>
+        <script language="javascript" type="text/javascript" src="WorldBuilder.js"></script>
         <script language="javascript" type="text/javascript" src="./behaviorTree/BehaviorTree.js"></script>
         <script language="javascript" type="text/javascript" src="./behaviorTree/BNode.js"></script>
+        <style>
+            canvas {
+                transform: scale(2);
+                position: absolute;
+                top: 200px;
+                left: 200px;
+                border: solid black 1px;
+            }
+
+            #viewport {
+                position: relative;
+                float: left;
+                width: 800px;
+                height: 800px;
+            }
+        </style>
     </head>
 
-    <body id="body" style="overflow:hidden;">
-        <canvas id="canvas" tabindex="1" style="float: left; border:1px solid #000;">
-            Your browser does not support the canvas element.
-        </canvas> 
+    <body id="body">
+        <div id="viewport" tabindex="1">
+            <canvas id="canvas" >
+                Your browser does not support the canvas element.
+            </canvas> 
+            <canvas id="uiCanvas">
+            </canvas>
+            <canvas id="overlayCanvas">
+            </canvas>  
+        </div>
         <div style="float: left">
             <p>Runs best in chrome</p>
             <p>Click outside the game to pause/scroll down</p>
@@ -48,24 +71,24 @@
             <div style="float: left;">
                 <H5>Notes</H5>
                 <p> The goal was to have flocks of enemies with a genetic AI that the player could manipulate to collect resources.</p>
-                <p> Right now it's more of a sandbox.  For now, just shoot chickens, collect resources, eat food, and watch grass grow.</p>
+                <p> Right now it's more of a sandbox.  For now, just shoot chickens, explore, collect resources, and eat food</p>
                 <p> It's doubtful that I'll accomplish my goals for this project before the quarter is over, so I'm going to tone it down a bit.</p>
                 <ul>
                 <li><span style="font-weight: bold">Tasklist:</span></li>
                     <li>refactor for days</li>
-                    <li><span style="text-decoration: line-through">add a resource collection element.</span>  Collect X resources to repair your ship and escape the planet.</li>
-                    <li>Create a larger world map</li>
+                    <li><span style="text-decoration: line-through">add a resource collection element.</span></li>
+                    <li>A burly alien will steal a chunk of your ship.  Kill it to retrieve the part.</li>
+                    <li> Collect X resources to repair your ship and escape the planet.</li>
+                    <li><span style="text-decoration: line-through">Create a larger world map</span></li>
                     <li>add more enemy types (and spawners?) with unique resource drops.</li>
                     <li>If I have time add more guns/upgrades/powerups</li>
                 </ul>
 
                 <H5>Known bugs</H5>
                 <ul>
-                    <li>Particles, projectiles, and healthbars don't render across world seams - Planned fix: consolidate the draw calls to a single renderer so I don't need to check for boundaries in 37 places</li>
-                    <li>Particles can cause lag - Planned Fix: Use the web worker safe OffscreenCanvas API for the renderer overhaul</li>
-                    <li>Chickens take the long way around world seams when searching for something - Planned Fix: Math</li>
+                    <li>Particles can cause lag - Planned Fix: Use the web worker safe OffscreenCanvas API for the renderer overhaul, github hosting doesn't support workers</li>
                     <li>Chickens are stupid - Planned Fix: Weep softly</li>
-                    <li>Green dots sometimes trail the mouse during gameplay and when paused - no idea</li>
+                    <li>Aside from initial placement, entities don't react to water.  Haven't gotten that far yet</li>
                 </ul>
             </div> 
         </div>

@@ -2,24 +2,27 @@ class Controls {
     constructor() {
         this.keys = [];
         this.lmb = 0;
+        this.doc;
     }
 
     init() {
         var that = this;
-        game.ctx.canvas.addEventListener("keydown", function(e) {
+        this.doc =  document.getElementById("viewport");
+        this.doc.addEventListener("keydown", function(e) {
             that.keyDown(e.keyCode)});
-        game.ctx.canvas.addEventListener("keyup", function(e) {
+        this.doc.addEventListener("keyup", function(e) {
             that.keyUp(e.keyCode)});
-        game.ctx.canvas.addEventListener("focus", function() {
+        this.doc.addEventListener("focus", function() {
             that.focus()});
-        game.ctx.canvas.addEventListener("blur", function() {
+        this.doc.addEventListener("blur", function() {
             that.blur()});
-        game.ctx.canvas.addEventListener("mouseup", function() {
+        this.doc.addEventListener("mouseup", function() {
             that.mouseButton(false) });
-        game.ctx.canvas.addEventListener("mousedown", function() {
+        this.doc.addEventListener("mousedown", function() {
             that.mouseButton(true) });
-        game.ctx.canvas.addEventListener("wheel", function(e) {
+        this.doc.addEventListener("wheel", function(e) {
             that.mouseWheel(Math.sign(e.deltaY)) });
+        // this.doc.addEventListener("mousemove", this.mouseMove);
     }
 
     focus() {
@@ -37,7 +40,7 @@ class Controls {
             case 16: // LeftShift
                 if (game.player != undefined)
                 game.player.setState("normal");
-                game.ctx.canvas.style["cursor"] = "url(./sprites/crosshairWhite.png) 8 8, crosshair";
+                this.doc.style["cursor"] = "url(./sprites/crosshairWhite.png) 8 8, crosshair";
                 // game.ctx.canvas.removeEventListener("mousemove", this.mouseMove);
                 break;    
         }
@@ -47,9 +50,6 @@ class Controls {
 
     keyDown(num) {
         if (this.keys.indexOf(num) == -1) {
-            if (num == 32) terrain.reset();
-            if (num == 66) terrain.restart();
-            if (num == 78) terrain.zoomIn();
             console.log(num);
             this.keys.push(num);
         }
@@ -59,8 +59,6 @@ class Controls {
         var x = e.clientX - game.ctx.canvas.getBoundingClientRect().left + game.view.x - 200;
         var y = e.clientY - game.ctx.canvas.getBoundingClientRect().top + game.view.y - 200;
 
-        game.ctx.fillStyle = "#0F0";
-        game.ctx.fillRect(x,y,2,2);
         game.player.setTarget(x, y);
     }
 
@@ -92,8 +90,8 @@ class Controls {
                     break;
                 case 16: // LeftShift
                     if (!game.player.aiming) {
-                        game.ctx.canvas.style["cursor"] = "url(./sprites/crosshair.png) 8 8, crosshair";
-                        game.ctx.canvas.addEventListener("mousemove", this.mouseMove);
+                        this.doc.style["cursor"] = "url(./sprites/crosshair.png) 8 8, crosshair";
+                        this.doc.addEventListener("mousemove", this.mouseMove);
                     }
                     game.player.setState("aim");
                     break;

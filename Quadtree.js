@@ -54,7 +54,12 @@ class Quadtree {
         this.child[3].init();
     }
 
-    retrieve(x, y, dist, dx, dy, range) {
+    retrieve(x, y, dist) {
+        return this.retrieveCone(x,y,dist, 1, 0, Math.PI*2);
+    }
+
+    // dx, dy, and range are for vision cones
+    retrieveCone(x, y, dist, dx, dy, range) {
         var quad = this.getQuad(x, y, dist);
         var nearObjs = [];
         // if (dist >= quad.height) {

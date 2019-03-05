@@ -1,6 +1,7 @@
 class GUI {
-    constructor(ctx) {
-        this.ctx = ctx;
+    constructor(uiCtx, overlayCtx) {
+        this.uiCtx = uiCtx;
+        this.overlayCtx = overlayCtx;
 
         this.invSize = 32;
         this.invBorder = 2;
@@ -10,19 +11,27 @@ class GUI {
         this.bounce = 0;
 
         this.drawRed = 0;
+        this.drawWhite = 50;
         this.textFade = 0;
         this.msg = "";
         this.msgColor = "#FFF";
     }
 
     draw() {
-        this.ctx.setTransform(1,0,0,1,0,0);
+        this.overlayCtx.canvas.width = this.overlayCtx.canvas.width;
         if (this.drawRed > 0) {
-            this.ctx.fillStyle = "#F00";
+            this.overlayCtx.setTransform(1,0,0,1,0,0); 
             if (this.drawRed > 50) this.drawRed = 50;
-            this.ctx.globalAlpha = (this.drawRed--/100);
-            this.ctx.fillRect(0,0, game.viewWidth, game.viewHeight);
+            this.drawRect(this.drawRed--/100, "#F00");
         }
+        if (this.drawWhite > 0) {
+            this.overlayCtx.setTransform(1,0,0,1,0,0); 
+            this.drawRect(this.drawWhite--/50, "#FFF");
+        }
+    }
+
+    clearOverlay() {
+        this.overlayCtx.canvas.width = this.overlayCtx.canvas.width;
     }
 
     inventoryMessage(msg, color, fade) {
@@ -34,55 +43,66 @@ class GUI {
     }
 
     drawInventoryMessage() {
-        this.ctx.fillStyle = this.color;
-        var twidth = this.ctx.measureText(this.msg).width;
-        this.ctx.globalAlpha = this.textFade--/100;
-        if (this.ctx.globalAlpha > 1) this.ctx.globalAlpha = 1;
-        this.ctx.fillText(this.msg, (game.viewWidth - twidth)*.5 | 0, game.viewHeight-this.invSize - 4);
+        this.uiCtx.fillStyle = this.color;
+        var twidth = this.uiCtx.measureText(this.msg).width;
+        this.uiCtx.globalAlpha = this.textFade--/100;
+        if (this.uiCtx.globalAlpha > 1) this.uiCtx.globalAlpha = 1;
+        this.uiCtx.fillText(this.msg, (game.viewWidth - twidth)*.5 | 0, game.viewHeight-this.invSize - 4);
     }
     
     drawMessage(msg, color, offset) {
         if (offset == undefined) offset = 0;
-        this.ctx.fillStyle = color;
+        this.overlayCtx.fillStyle = color;
         var text = msg;
-        var twidth = this.ctx.measureText(text).width;
-        this.ctx.fillText(text, (game.viewWidth - twidth)*.5 | 0, (game.viewHeight)*.25 + offset);
+        var twidth = this.overlayCtx.measureText(text).width;
+        this.overlayCtx.fillText(text, (game.viewWidth - twidth)*.5 | 0, (game.viewHeight)*.25 + offset);
+    }
+
+    drawRect(alpha, color) {
+        this.overlayCtx.setTransform(1,0,0,1,0,0);
+        if (alpha > 1) alpha = 1;
+        this.overlayCtx.globalAlpha = alpha;
+        this.overlayCtx.fillStyle = color;
+        this.overlayCtx.fillRect(0,0, game.viewWidth, game.viewHeight);
     }
 
     drawInventory() {
+        console.error("draw");
+        this.uiCtx.canvas.width = this.uiCtx.canvas.width;
+        this.uiCtx.setTransform(1,0,0,1,0,0);
         if (this.textFade > 0) {
             this.drawInventoryMessage();
         }
         var left = (game.viewWidth - this.invSize*this.invBoxes)/2;
         var top = game.viewHeight-this.invSize;
-        this.ctx.globalAlpha = .5;
-        this.ctx.setTransform(1,0,0,1,0,0);
+        this.uiCtx.globalAlpha = .5;
         for (var i = 0; i < this.invBoxes; i++) {
             if (i == game.player.current && game.player.inventory.length > 0) {
-                this.ctx.fillStyle = "#888";
+                this.uiCtx.fillStyle = "#888";
             } else {
-                this.ctx.fillStyle = "#333";
+                this.uiCtx.fillStyle = "#333";
             }
-            this.ctx.fillRect(left+this.invBorder+(this.invSize)*i, top + this.invBorder, this.invSize-this.invBorder*2, this.invSize - this.invBorder*2);
+            this.uiCtx.fillRect(left+this.invBorder+(this.invSize)*i, top + this.invBorder, this.invSize-this.invBorder*2, this.invSize - this.invBorder*2);
         }
         for (var i = 0; i < this.invBoxes; i++) {
             if (i == game.player.current && game.player.inventory.length > 0) {
-                this.ctx.fillStyle = "#FFF";
+                this.uiCtx.fillStyle = "#FFF";
             } else {
-                this.ctx.fillStyle = "#888";
+                this.uiCtx.fillStyle = "#888";
             }
             if (game.player.inventory[i] != undefined) {
                 this.drawResource(game.player.inventory[i].name,left+this.invBorder+(this.invSize)*(i+1/3), top+this.invBorder+this.invSize/3);
-                this.ctx.setTransform(1,0,0,1,0,0);
+                this.uiCtx.setTransform(1,0,0,1,0,0);
                 var text = game.player.inventory[i].count;
-                var twidth = this.ctx.measureText(text).width;
-                this.ctx.fillText(text, left+this.invBorder+(this.invSize)*(i+.75)-twidth, top+this.invBorder+this.invSize*(3/4))
+                // var twidth = this.uiCtx.measureText(text).width;
+                var twidth = 5;
+                this.uiCtx.fillText(text, left+this.invBorder+(this.invSize)*(i+.75)-twidth, top+this.invBorder+this.invSize*(3/4))
             }
         }
     }
 
     drawResource(sprite, x,y) {
         this.rotation += 0.01;
-        assetMgr.getSprite(sprite).drawFrame(0, this.ctx, x, y, 0, this.rotation, this.bounce += .075);
+        assetMgr.getSprite(sprite).drawFrame(0, this.uiCtx, x, y, 0, this.rotation, this.bounce += .075);
     }
 }

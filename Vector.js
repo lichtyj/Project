@@ -125,10 +125,12 @@ class Vector { // Ignores z in all non-elementary calcs
         return v.limit(max);
     }
 
-    static randomPositive(max) {
+    static randomPositive(max, bounded) {
         if (max == undefined) max = 1;
+        if (bounded == undefined) bounded = true;
         var v = new Vector(Math.random()*max, Math.random()*max, 0);
-        return v.limit(max);
+        if (bounded) v.limit(max);
+        return v;
     }
 
     static random3D(max) {

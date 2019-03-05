@@ -5,7 +5,7 @@ class Object extends Entity {
         this.elapsedTime = 0;
         this.type = type;
     }
-
+    
     takeDamage(other) {
         var vel = Vector.up().mult(3);
         vel.average(other.velocity.clone(), 2);

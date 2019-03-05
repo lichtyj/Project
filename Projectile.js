@@ -59,7 +59,7 @@ class Projectile extends Entity {
     }
 
     checkCollisions() {
-        return game.tree.retrieve(this.position.x, this.position.y, this.velocity.magnitude()*2, this.velocity.x, this.velocity.y, Math.PI*2);
+        return game.tree.retrieveCone(this.position.x, this.position.y, this.velocity.magnitude()*2, this.velocity.x, this.velocity.y, Math.PI*2);
     }
 
     checkHit(hit) {

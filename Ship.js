@@ -1,7 +1,7 @@
 class Ship extends Entity {
     constructor(sprite, shadowSprite) {
         super();
-        this.position = new Vector(150, 300, 0);
+        this.position = new Vector();
         this.velocity = new Vector();
         this.acceleration = new Vector();
         this.elapsedTime = 0;
@@ -17,6 +17,7 @@ class Ship extends Entity {
         this.imgData;
         this.i = 0;
         this.damage = 100000;
+        this.state = "flying";
     }
 
     smoke() {
@@ -79,7 +80,7 @@ class Ship extends Entity {
     }
 
     checkCollisions() {
-        var hit = game.tree.retrieve(this.position.x, this.position.y, 32, this.velocity.x, this.velocity.y, Math.PI*2);
+        var hit = game.tree.retrieve(this.position.x, this.position.y, 32);
         for (var h of hit) {
             if (h.takeDamage != undefined && !(h instanceof Player)) {
                 h.takeDamage(this);
@@ -94,33 +95,57 @@ class Ship extends Entity {
 
         this.direction += this.spin;
 
-        switch(game.state) {
+        switch(this.state) {
             case "ready":
                 break;
             case "flying":
-                this.position.z = Math.sin(this.elapsedTime*4)*5;
+                this.position.x = game.view.x + viewSize*.33;
+                this.position.y = game.view.y + viewSize*.75;
+                this.position.z = Math.sin(this.elapsedTime*4)*2;
                 this.gravity = 0;
+                terrain.zoomIn();
+                terrain.zooming = true;
+                if (terrain.zoom > 125) this.state = "mayday";
                 break;
             case "mayday":
                 if (this.spin == 0) {
+                    game.ui.drawRed = 5;
                     this.explode();
                 }
                 this.acceleration.add(Vector.fromAngle(this.direction-Math.PI/2).mult(0.1));
-                game.ui.drawRed += 1.33;
+                game.ui.drawRed += 1.5;
+                if (terrain.zoom > 300) {
+                    game.ui.drawWhite += 2;
+                }
                 this.spin = 0.04;
                 this.fire();
+                terrain.zoomIn();
+                if (terrain.zoom > 600) {
+                    game.ui.drawRed = 0;
+                    this.state = "falling";
+                    terrain.zoom = 1024;
+                    terrain.zooming = false;
+                    game.ctx.canvas.style.backgroundSize = (terrain.zoom)+"%";
+                    game.ui.drawWhite = 60;
+                    terrain.populate();
+                }
                 break;
             case "falling":
                 if (this.gravity == 0) {
+                    terrain.draw();
                     this.gravity = .125;
-                    this.position.z = 140;
+                    this.position = terrain.getRandomLand();
+                    this.position.x -= 1390; // Moves 1390 in fall
+                    this.position.y -= 990; // 990
+                    this.position.z = 275;
                     this.spin = 0.09;
                     this.velocity = new Vector(40,20,-1);
                     game.cameraOffset.x = 17;
                     game.cameraOffset.y = -12;
                     game.cameraTarget = this;
                 }
-                if (this.position.z <= 0) game.state = "impact";
+                // console.log(this.position);
+                if (this.position.z <= 0) this.state = "impact";
                 this.acceleration.x += .25;
                 this.acceleration.y += .25;
                 this.smoke();
@@ -132,8 +157,8 @@ class Ship extends Entity {
                 game.ui.drawRed += (1+this.spin);
                 this.checkCollisions();
                 if (this.spin < 0.001) {
-                    game.state = "landed";
-                    this.timer = 10;
+                    this.state = "landed";
+                    this.timer = 30;
                     this.spin = 0;
                     this.velocity.subtract(this.velocity);
                 }
@@ -161,12 +186,14 @@ class Ship extends Entity {
                     game.player = new Player(new Vector(this.position.x+17, this.position.y-12), assetMgr.getSprite("scientist"));
                     game.player.gun = new Weapon(game.player.position.clone());
                     game.player.gun.preset("railgun");
+                    game.player.init();
                     game.addEntity(game.player);
                     game.addEntity(game.player.gun);
                     game.cameraTarget = game.player;
                     game.cameraOffset.x = 0;
                     game.cameraOffset.y = 0;
                     game.state = "playing";
+                    this.state = "playing";
                 }
                 break;
             case "playing":

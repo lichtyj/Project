@@ -57,7 +57,7 @@ class Npc extends Entity {
     }
 
     perceptionCheck() {
-        return game.tree.retrieve(this.position.x, this.position.y, this.vision, this.velocity.x, this.velocity.y, this.visionCone);
+        return game.tree.retrieveCone(this.position.x, this.position.y, this.vision, this.velocity.x, this.velocity.y, this.visionCone);
     }
 
 

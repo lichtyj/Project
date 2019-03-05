@@ -23,6 +23,10 @@ class Player extends Entity {
         this.inventory = [];
     }
 
+    init() {
+        game.ui.drawInventory();
+    }
+
     move(direction) {
         this.acceleration.add(direction).limit(1);
         var avgSep = new Vector();
@@ -85,7 +89,7 @@ class Player extends Entity {
         game.ui.drawRed += other.damage*4;
         if (this.health <= 0 && game.state == "playing") {
             game.state = "dead";
-            game.fade = 50;
+            game.ui.drawWhite = 50;
         }
     }
 
@@ -114,6 +118,7 @@ class Player extends Entity {
                 this.inventory.push({name:type, count:1});
             }
             other.remove();
+            game.ui.drawInventory();
         }
     }
 
@@ -151,6 +156,7 @@ class Player extends Entity {
             if (this.inventory[this.current].count == 0) {
                 this.inventory.splice(this.current--,1);
             }
+            game.ui.drawInventory();
         }        
     }
 
@@ -165,6 +171,7 @@ class Player extends Entity {
             if (this.inventory[this.current].count == 0) {
                 this.inventory.splice(this.current--,1);
             }
+            game.ui.drawInventory();
         }
     }
 
@@ -173,6 +180,7 @@ class Player extends Entity {
         if (this.current >= this.inventory.length) this.current -= this.inventory.length;
         if (this.current < 0) this.current += this.inventory.length;
         if (this.current > -1) game.ui.inventoryMessage(this.inventory[this.current].name);
+        game.ui.drawInventory();
     }
 
     draw(ctx, dt) {

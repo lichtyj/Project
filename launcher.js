@@ -4,7 +4,7 @@ var terrain = new Terrain();
 var controls = new Controls();
 var viewSize = 400;
 var borderBuffer = 30;
-var worldSize = 1600;
+var worldSize = 4096;
 var ready = 0;
 // Encapsulate these
 
@@ -42,6 +42,8 @@ assetMgr.queueDownload("./sprites/laserPistol.png");
 assetMgr.queueDownload("./sprites/flamethrower.png");
 assetMgr.queueDownload("./sprites/plasmaPistol.png");
 
+assetMgr.queueDownload("./sprites/turret.png");
+
 
 assetMgr.downloadAll(function() {
     console.log("Done loading image assets");
@@ -76,6 +78,7 @@ function createSprites() {
     assetMgr.createSprite3D("flamethrower", 32, 8, 6, frameduration*.5, 3, true);
     assetMgr.createSprite3D("plasmaPistol", 16, 8, 6, frameduration*.5, 5, true);
 
+    assetMgr.createSprite3D("turret", 16, 16, 8, frameduration*.5, 1, true);
 
     console.log("Done creating sprites");
     setReady();
@@ -91,20 +94,35 @@ function setReady() {
 }
 
 function start() {
+    // Game canvas
     var canvas = document.getElementById("canvas");
     canvas.width = viewSize;
     canvas.height = viewSize;
-    // canvas.style.background = 'url(./sprites/practice.png)';
     canvas.style.background = '#000';
-
-    canvas.style.transform = 'scale(2)';
-    canvas.style.margin = "200px";
-    
+    canvas.style.imageRendering = "Pixelated";
+    canvas.style.backgroundRepeat = "no-repeat";
     var ctx = canvas.getContext('2d', { alpha: false });
     ctx.canvas.style["cursor"] = "url(./sprites/crosshairWhite.png) 8 8, crosshair";
-    ctx.imageSmoothingEnabled = false;  
-    canvas.style.imageRendering = "Pixelated";
-    game = new GameEngine(ctx, worldSize, worldSize);
+    ctx.imageSmoothingEnabled = false;
+
+    // UI canvas
+    var uiCanvas = document.getElementById("uiCanvas");
+    uiCanvas.width = viewSize;
+    uiCanvas.height = viewSize;
+    uiCanvas.style.imageRendering = "Pixelated";
+    var uiCtx = uiCanvas.getContext('2d', { alpha: true });
+    uiCtx.imageSmoothingEnabled = false;
+
+    // Overlay canvas
+    var overlayCanvas = document.getElementById("overlayCanvas");
+    overlayCanvas.width = viewSize;
+    overlayCanvas.height = viewSize;
+    overlayCanvas.style.imageRendering = "Pixelated";
+    var overlayCtx = overlayCanvas.getContext('2d', { alpha: true });
+    overlayCtx.imageSmoothingEnabled = false;
+
+
+    game = new GameEngine(ctx, uiCtx, overlayCtx, worldSize);
     game.init();
     terrain.init();
     controls.init();
