@@ -80,7 +80,6 @@ class Player extends Entity {
     }
 
     takeDamage(other) {
-        console.log(other);
         if (typeof other == "number") other = {position:this.position, damage:other};
         this.health -= other.damage;
         var p = new Particles(this.position.clone(), Vector.up().mult(5));

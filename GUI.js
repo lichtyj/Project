@@ -18,20 +18,19 @@ class GUI {
     }
 
     draw() {
-        this.overlayCtx.canvas.width = this.overlayCtx.canvas.width;
+        if (game.state != "dead" && (this.drawRed > 0 || this.drawWhite > 0))
+            this.clearUI();
         if (this.drawRed > 0) {
-            this.overlayCtx.setTransform(1,0,0,1,0,0); 
             if (this.drawRed > 50) this.drawRed = 50;
             this.drawRect(this.drawRed--/100, "#F00");
         }
         if (this.drawWhite > 0) {
-            this.overlayCtx.setTransform(1,0,0,1,0,0); 
             this.drawRect(this.drawWhite--/50, "#FFF");
         }
     }
 
-    clearOverlay() {
-        this.overlayCtx.canvas.width = this.overlayCtx.canvas.width;
+    clearUI() {
+        this.uiCtx.canvas.width = viewSize;
     }
 
     inventoryMessage(msg, color, fade) {
@@ -52,24 +51,22 @@ class GUI {
     
     drawMessage(msg, color, offset) {
         if (offset == undefined) offset = 0;
-        this.overlayCtx.fillStyle = color;
+        this.uiCtx.fillStyle = color;
         var text = msg;
-        var twidth = this.overlayCtx.measureText(text).width;
-        this.overlayCtx.fillText(text, (game.viewWidth - twidth)*.5 | 0, (game.viewHeight)*.25 + offset);
+        var twidth = this.uiCtx.measureText(text).width;
+        this.uiCtx.fillText(text, (game.viewWidth - twidth)*.5 | 0, (game.viewHeight)*.25 + offset);
     }
 
     drawRect(alpha, color) {
-        this.overlayCtx.setTransform(1,0,0,1,0,0);
         if (alpha > 1) alpha = 1;
-        this.overlayCtx.globalAlpha = alpha;
-        this.overlayCtx.fillStyle = color;
-        this.overlayCtx.fillRect(0,0, game.viewWidth, game.viewHeight);
+        this.uiCtx.globalAlpha = alpha;
+        this.uiCtx.fillStyle = color;
+        this.uiCtx.fillRect(0,0, game.viewWidth, game.viewHeight);
     }
 
     drawInventory() {
-        console.error("draw");
+        if (game.player == undefined) return;
         this.uiCtx.canvas.width = this.uiCtx.canvas.width;
-        this.uiCtx.setTransform(1,0,0,1,0,0);
         if (this.textFade > 0) {
             this.drawInventoryMessage();
         }
@@ -104,5 +101,6 @@ class GUI {
     drawResource(sprite, x,y) {
         this.rotation += 0.01;
         assetMgr.getSprite(sprite).drawFrame(0, this.uiCtx, x, y, 0, this.rotation, this.bounce += .075);
+        this.uiCtx.setTransform(1,0,0,1,0,0);
     }
 }

@@ -17,7 +17,6 @@ class GameEngine {
         this.paused = true;
         this.player;
         this.state = "loading";
-        this.stateTimer = 0;
         this.ui = new GUI(uiCtx, overlayCtx);
 
         this.ship;
@@ -36,7 +35,7 @@ class GameEngine {
     }
 
     start() {
-        this.ui.clearOverlay();
+        this.ui.clearUI();
         this.ui.drawRect(.5,"#333");
         this.ui.drawMessage("CLICK TO BEGIN", "#FFF");
         document.getElementById("viewport").blur();
@@ -81,19 +80,17 @@ class GameEngine {
     }
 
     draw(dt) {
-        this.ctx.canvas.width = this.ctx.canvas.width;
-        var toDraw = this.tree.retrieve(this.view.x + (viewSize>>1), this.view.y + (viewSize>>1), viewSize*.75);
-        toDraw.sort(function(a,b) {return a.position.y-b.position.y});
-        for (var i = 0; i < toDraw.length; i++) {
-            toDraw[i].draw(this.ctx, dt);
-        }
-        if (game.state == "dead") {
+        if (game.state != "dead") {
+            this.ctx.canvas.width = this.ctx.canvas.width;
+            var toDraw = this.tree.retrieve(this.view.x + (viewSize>>1), this.view.y + (viewSize>>1), viewSize*.75);
+            toDraw.sort(function(a,b) {return a.position.y-b.position.y});
+            for (var i = 0; i < toDraw.length; i++) {
+                toDraw[i].draw(this.ctx, dt);
+            }
+        } else {
+            this.ui.clearUI();
             this.ui.drawRect(1,"#000");
             this.ui.drawMessage("YOU DIED", "#F00");
-            this.stateTimer++;
-            if (this.stateTimer = 180) {
-                // location.reload(true);
-            }
         }
         this.ui.draw();
     }

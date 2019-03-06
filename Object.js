@@ -29,7 +29,6 @@ class Object extends Entity {
                         item.velocity = Vector.random(1);
                         item.velocity.z = -Math.random()*2;
                         game.addEntity(item);
-                        console.log(item);
                     }
                     p.preset("collect");
                     p.count *= 3;

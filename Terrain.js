@@ -65,12 +65,16 @@ class Terrain {ds
         var pos;
         while (!valid) {
             pos = Vector.randomPositive(worldSize, false);
-            h = terrain.getHeight(pos.x, pos.y);
+            h = this.getHeight(pos.x, pos.y);
             if (h > 0.375 && h < 0.875) {
                 valid = true;
             }
         }
         return pos;
+    }
+
+    isAboveWater(pos) {
+        return (this.getHeight(pos.x,pos.y) > 0.375);
     }
 
     load() {

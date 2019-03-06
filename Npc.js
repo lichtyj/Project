@@ -89,11 +89,14 @@ class Npc extends Entity {
                 result = true;
                 break;
             case "Random":
-                this.targetPos = this.position.clone();
-                this.targetPos.add(Vector.random(this.vision*.25));
-                this.targetPos.x = Math.abs(this.targetPos.x) % worldSize;
-                this.targetPos.y = Math.abs(this.targetPos.y) % worldSize;
-                result = true;
+                var valid = 5
+                while (valid-- > 0 && !result) {
+                    this.targetPos = this.position.clone();
+                    this.targetPos.add(Vector.random(this.vision*.25));
+                    this.targetPos.x = Math.abs(this.targetPos.x) % worldSize;
+                    this.targetPos.y = Math.abs(this.targetPos.y) % worldSize;
+                    if (terrain.isAboveWater(this.targetPos)) result = true;
+                }
                 break;
             default:
                 console.error("Bad type");

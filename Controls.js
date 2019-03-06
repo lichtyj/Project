@@ -50,7 +50,7 @@ class Controls {
 
     keyDown(num) {
         if (this.keys.indexOf(num) == -1) {
-            console.log(num);
+            // console.log(num);
             this.keys.push(num);
         }
     }
