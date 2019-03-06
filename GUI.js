@@ -31,7 +31,7 @@ class GUI {
 
     clearUI() {
         this.uiCtx.canvas.width = viewSize;
-        if (game.state = "playing" && game.player != undefined) {
+        if (game.state == "playing" && game.player != undefined) {
             this.drawInventory();
         }
     }
