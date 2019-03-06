@@ -122,6 +122,7 @@ class GameEngine {
         }
 
         if (this.state != "loading" && this.paused){
+            this.ui.clearUI();
             this.paused = false;
             this.ctx.globalAlpha = 1;
             window.requestAnimationFrame(game.gameLoop);
