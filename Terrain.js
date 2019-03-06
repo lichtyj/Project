@@ -5,7 +5,7 @@ class Terrain {ds
         this.colors = [];
         this.type = [];
 
-        this.zoom = 25;
+        this.zoom = 10;
         this.zooming = true;
     }
 
@@ -175,8 +175,9 @@ class Terrain {ds
         terrain.generateChickens(100);
     }
 
-    zoomIn() {
-        this.zoom *= 1.01;
+    zoomIn(amount) {
+        if (amount == undefined) console.error("zoom amount undefined");
+        this.zoom *= amount;
         game.ctx.canvas.style.backgroundSize = (this.zoom)+"%";
         game.updateView();
     }

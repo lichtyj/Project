@@ -79,6 +79,27 @@ class Ship extends Entity {
         p.init(); 
     }
 
+    engines(left) {
+        var dist = 22;
+        var angle = 2.725;
+        if (left) angle *= -1;
+        var pos = this.position.clone();
+        var dir = new Vector(Math.cos(this.direction+angle)*dist, Math.sin(this.direction+angle)*dist+6, 9);
+        var p = new Particles(pos.add(dir), Vector.fromAngle(this.direction+Math.PI).mult(10));
+        p.preset("energy");
+        p.count = 24;
+        p.hue = 160;
+        p.bright = 160;
+        p.brightR = 64
+        p.alpha = .75;
+        p.force = .5;
+        p.time = 2;
+        p.timeP = 1;
+        p.glow = true;
+        p.gravity = 0;
+        p.init();    
+    }
+
     checkCollisions() {
         var hit = game.tree.retrieve(this.position.x, this.position.y, 32);
         for (var h of hit) {
@@ -103,9 +124,27 @@ class Ship extends Entity {
                 this.position.y = game.view.y + viewSize*.75;
                 this.position.z = Math.sin(this.elapsedTime*4)*2;
                 this.gravity = 0;
-                terrain.zoomIn();
-                terrain.zooming = true;
-                if (terrain.zoom > 125) this.state = "mayday";
+                if (terrain.zoom < 80) {
+                    terrain.zoomIn(1.1);
+                    this.engines();
+                    this.engines(true);
+                } else if (terrain.zoom < 110) {
+                    terrain.zoomIn(1.01);
+                    this.engines();
+                    this.engines(true);
+                } else if (terrain.zoom < 118) {
+                    terrain.zoomIn(1.003);
+                    this.engines(true);
+                } else if (terrain.zoom < 120) {
+                    terrain.zoomIn(1.003);
+                    this.engines();
+                    this.engines(true);
+                } else if (terrain.zoom < 125) {
+                    terrain.zoomIn(1.001);
+                    this.engines(true);
+                } else {
+                    this.state = "mayday";
+                } 
                 break;
             case "mayday":
                 if (this.spin == 0) {
@@ -114,13 +153,14 @@ class Ship extends Entity {
                 }
                 this.acceleration.add(Vector.fromAngle(this.direction-Math.PI/2).mult(0.1));
                 game.ui.drawRed += 1.5;
-                if (terrain.zoom > 300) {
-                    game.ui.drawWhite += 2;
+                if (terrain.zoom > 135) {
+                    game.ui.drawWhite += 1.5;
                 }
                 this.spin = 0.04;
                 this.fire();
-                terrain.zoomIn();
-                if (terrain.zoom > 600) {
+                this.engines(true);
+                terrain.zoomIn(1.001);
+                if (terrain.zoom > 150) {
                     game.ui.drawRed = 0;
                     this.state = "falling";
                     terrain.zoom = 1024;

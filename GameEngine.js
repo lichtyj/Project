@@ -104,12 +104,12 @@ class GameEngine {
     }
 
     pause() {
-        // if (this.state == "playing") {
+        if (this.state == "playing" || this.state == "intro") {
             this.paused = true;
             this.ui.drawRect(.5, "#333");
             this.ui.drawMessage("PAUSED", "#FFF");
             this.ui.drawMessage("- click to continue -","#FFF", 15);
-        // }
+        }
     }
 
     resume() {
