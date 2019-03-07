@@ -46,6 +46,7 @@ class Npc extends Entity {
         this.facing = new Vector();
         this.onFire = 0;
 
+        this.dead = false;
         this.rage = false;
     }
 
@@ -346,11 +347,12 @@ class Npc extends Entity {
     }
 
     die() {
-        if (this.onFire > 0) {
-            game.addEntity(new Resource(this.position, "cookedMeat", Math.random()*Math.PI*2));
+        if (this.onFire > 0 && !dead) {
+            Resource.create(this.position, "cookedMeat", Math.random()*Math.PI*2);
         } else {
-            game.addEntity(new Resource(this.position, "rawMeat", Math.random()*Math.PI*2));
+            Resource.create(this.position, "rawMeat", Math.random()*Math.PI*2);
         }
+        dead = true;
         game.remove(this);
     }
 

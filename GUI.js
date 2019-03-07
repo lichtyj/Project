@@ -18,14 +18,19 @@ class GUI {
     }
 
     draw() {
-        if (game.state != "dead" && (this.drawRed > 0 || this.drawWhite > 0))
-            this.clearUI();
-        if (this.drawRed > 0) {
-            if (this.drawRed > 50) this.drawRed = 50;
-            this.drawRect(this.drawRed--/100, "#F00");
-        }
-        if (this.drawWhite > 0) {
-            this.drawRect(this.drawWhite--/50, "#FFF");
+        if (game.state != "dead" && game.state != "won") {
+            if (this.drawRed > 0) {
+                this.clearUI();
+                if (this.drawRed > 50) this.drawRed = 50;
+                this.drawRect(this.drawRed--/100, "#F00");
+            }
+            if (this.drawWhite > 0) {
+                this.clearUI();
+                this.drawRect(this.drawWhite--/50, "#FFF");
+            }
+            if (this.textFade > 0) {
+                this.clearUI();
+            }
         }
     }
 
@@ -94,8 +99,7 @@ class GUI {
                 this.uiCtx.setTransform(1,0,0,1,0,0);
                 this.drawResource(game.player.inventory[i].name,left+this.invBorder+(this.invSize)*(i+1/3), top+this.invBorder+this.invSize/3);
                 var text = game.player.inventory[i].count;
-                // var twidth = this.uiCtx.measureText(text).width;
-                var twidth = 5;
+                var twidth = this.uiCtx.measureText(text).width;
                 this.uiCtx.fillText(text, left+this.invBorder+(this.invSize)*(i+.75)-twidth, top+this.invBorder+this.invSize*(3/4))
             }
         }
