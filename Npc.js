@@ -49,6 +49,13 @@ class Npc extends Entity {
         this.rage = false;
     }
 
+    static create(position, sprite) {
+        var obj = new Npc(position, sprite);
+        game.addEntity(obj);
+        obj.init();
+        return obj;
+    }
+
     init() {
         game.addEntity(this);
         this.ai = new BehaviorTree(this);
@@ -191,8 +198,7 @@ class Npc extends Entity {
         if (Vector.distance(this.position, this.targetEntity.position) < 25) {
             var temp = this.position.clone();
             temp.average(this.targetEntity.position);
-            this.chicken = new Npc(temp, assetMgr.getSprite("chicken"));
-            this.chicken.init();
+            this.chicken = Npc.create(temp, assetMgr.getSprite("chicken"));
             // console.error("baby chicken");
             this.matingTimer = 1000;
             this.targetEntity.matingTimer = 1000;
@@ -222,7 +228,7 @@ class Npc extends Entity {
             this.inAction = true;
         } else if (this.aiTimer <= 0) {
             this.energy--;
-            this.aiTimer = this.ai.tick();
+            this.aiTimer = this.ai.tick() + Math.random()*2;
         }
 
         this.canSee = this.perceptionCheck();
@@ -411,7 +417,7 @@ class Npc extends Entity {
     }
 
     draw(ctx, dt) {
-        super.draw(ctx, dt);
+        super.draw(ctx, dt, true);
         super.drawHealth(ctx);
     }
 }

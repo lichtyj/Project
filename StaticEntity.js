@@ -1,9 +1,15 @@
-class Object extends Entity {
+class StaticEntity extends Entity {
     constructor(position, type, rotation) {
         super(position, assetMgr.getSprite(type));
         this.rotation = rotation;
         this.elapsedTime = 0;
         this.type = type;
+    }
+
+    static create(position, type, rotation) {
+        var obj = new StaticEntity(position, type, rotation);
+        game.addEntity(obj);
+        return obj;
     }
     
     takeDamage(other) {
@@ -25,7 +31,7 @@ class Object extends Entity {
                 if (other.damage >= 100) {
                     var item;
                     for (var i = 0; i < Math.random()*3; i++) {
-                        item = new Resource(this.position.clone(), "ingot", Math.random()*Math.PI*2);
+                        item = new Resource(this.position.clone(), "metal", Math.random()*Math.PI*2);
                         item.velocity = Vector.random(1);
                         item.velocity.z = -Math.random()*2;
                         game.addEntity(item);

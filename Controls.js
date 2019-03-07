@@ -49,8 +49,9 @@ class Controls {
     }
 
     keyDown(num) {
+        if (game.state == "intro") game.skipIntro();
         if (this.keys.indexOf(num) == -1) {
-            // console.log(num);
+            console.log(num);
             this.keys.push(num);
         }
     }

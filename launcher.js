@@ -34,7 +34,7 @@ assetMgr.queueDownload("./sprites/scientist.png");
 assetMgr.queueDownload("./sprites/dna.png");
 assetMgr.queueDownload("./sprites/rawMeat.png");
 assetMgr.queueDownload("./sprites/cookedMeat.png");
-assetMgr.queueDownload("./sprites/ingot.png");
+assetMgr.queueDownload("./sprites/metal.png");
 
 // Guns
 assetMgr.queueDownload("./sprites/railgun.png");
@@ -70,7 +70,7 @@ function createSprites() {
     assetMgr.createSprite3D("dna", 16, 16, 16, frameduration, 1, true);
     assetMgr.createSprite3D("rawMeat", 16, 16, 7, frameduration, 1, true);
     assetMgr.createSprite3D("cookedMeat", 16, 16, 7, frameduration, 1, true);
-    assetMgr.createSprite3D("ingot", 16, 16, 8, frameduration, 1, true);
+    assetMgr.createSprite3D("metal", 16, 16, 8, frameduration, 1, true);
 
     // Guns
     assetMgr.createSprite3D("railgun", 32, 8, 4, frameduration*.5, 8, true);

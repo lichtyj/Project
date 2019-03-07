@@ -42,6 +42,30 @@ class GameEngine {
         this.state = "ready";
     }
 
+    end() {
+        this.state = "outro";
+        this.ui.clearUI();
+        this.ship.state = "take off";
+    }
+
+    win() {
+        this.state = "won";
+        this.ui.drawRect(1, "#FFF");
+        this.ui.drawMessage("YOU WON!", "#050");
+    }
+
+    skipIntro() {
+        if (terrain.zoom < 1024) {
+            this.ui.drawRed = 0;
+            this.ship.state = "falling";
+            terrain.zoom = 1024;
+            terrain.zooming = false;
+            this.ctx.canvas.style.backgroundSize = (terrain.zoom)+"%";
+            this.ui.drawWhite = 60;
+            terrain.populate();
+        }
+    }
+
     gameLoop() {
         if (!game.paused) { 
             var current = performance.now();
@@ -104,7 +128,7 @@ class GameEngine {
     }
 
     pause() {
-        if (this.state == "playing" || this.state == "intro") {
+        if (this.state == "playing" || this.state == "intro" || this.state == "outro") {
             this.paused = true;
             this.ui.drawRect(.5, "#333");
             this.ui.drawMessage("PAUSED", "#FFF");

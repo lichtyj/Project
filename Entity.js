@@ -13,6 +13,12 @@ class Entity {
         this.healthBar = assetMgr.getAsset("particle");
     }
 
+    static create(position, sprite) {
+        var obj = new Entity(position, sprite);
+        game.addEntity(obj);
+        return obj;
+    }
+
     update() {
         this.position.add(this.velocity);
         this.acceleration.limit(this.sprint);
@@ -24,7 +30,6 @@ class Entity {
         this.velocity.mult(.95);
         this.acceleration.mult(0);
 
-
         if (this.position.x < 0) this.position.x += game.bounds.x;
         if (this.position.y < 0) this.position.y += game.bounds.y;
         if (this.position.z < 0) this.position.z = 0;
@@ -33,7 +38,7 @@ class Entity {
 
     }
 
-    draw(ctx, dt) {
+    draw(ctx, dt, shadow) {
         this.elapsedTime += dt;
         var b = this.velocity.magnitude();
         this.bounce += b/6;
@@ -51,7 +56,7 @@ class Entity {
         } else {
             facing = this.facing.angle();
         }
-        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, facing, this.bounce, 8);
+        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, facing, this.bounce, 8, shadow);
     }
 
     drawHealth(ctx) {

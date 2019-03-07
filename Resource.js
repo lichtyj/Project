@@ -1,4 +1,4 @@
-class Resource extends Object {
+class Resource extends StaticEntity {
     constructor(position, type, rotation, spin) {
         super(position, type, rotation);
         this.elapsedTime = 0;
@@ -8,6 +8,12 @@ class Resource extends Object {
         this.target = false;
         this.type = type;
         this.timer = 30;
+    }
+
+    static create(position, type, rotation, spin) {
+        var obj = new Resource(position, type, rotation, spin);
+        game.addEntity(obj);
+        return obj;
     }
 
     remove() {
@@ -32,7 +38,7 @@ class Resource extends Object {
                 p.hue = 0;
                 p.bright = 192;
                 break;
-            case "ingot":
+            case "metal":
                 p.hue = 256;
                 break;
             case "dna":
@@ -57,6 +63,6 @@ class Resource extends Object {
             this.visible = false;
             this.target = false;
         }
-        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, 0/*this.position.z*/, this.rotation, this.bounce += .075, this.spin);
+        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, 0/*this.position.z*/, this.rotation, this.bounce += .075, this.spin, true);
     }
 }

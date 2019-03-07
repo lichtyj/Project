@@ -51,6 +51,10 @@ class Terrain {ds
     getHeight(x,y) {
         x = x|0;
         y = y|0;
+        x = Math.min(x, worldSize);
+        x = Math.max(x, 0);
+        y = Math.min(y, worldSize);
+        y = Math.max(y, 0);
         return this.map[x][y];
     }
 
@@ -170,9 +174,9 @@ class Terrain {ds
     }
 
     populate() {
-        terrain.generateObjects(500);        
+        terrain.generateObjects(250);        
         terrain.generateFood(10);
-        terrain.generateChickens(100);
+        // terrain.generateChickens(50);
     }
 
     zoomIn(amount) {
@@ -199,7 +203,7 @@ class Terrain {ds
                     type = "rock";
                     break;
             }
-            game.addEntity(new Object(this.getRandomLand(), type, Math.random()*Math.PI*2));
+            StaticEntity.create(this.getRandomLand(), type, Math.random()*Math.PI*2);
         }
     }
 
@@ -212,7 +216,7 @@ class Terrain {ds
                     type = "rawMeat";
                     break;
                 case 1: 
-                    type = "ingot";
+                    type = "metal";
                     break;
                 case 2: 
                     type = "dna";
@@ -225,8 +229,7 @@ class Terrain {ds
     generateChickens(count) {
         var chicken;
         for (var i = 0; i < count; i++) {
-            chicken = new Npc(this.getRandomLand(), assetMgr.getSprite("chicken"));
-            chicken.init();
+            chicken = Npc.create(this.getRandomLand(), assetMgr.getSprite("chicken"));
         };
     }
 }

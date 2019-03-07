@@ -148,8 +148,8 @@ class Player extends Entity {
                         game.ui.inventoryMessage("Not hungry", "#F00");
                     }
                     break;
-                case "ingot":
-                    console.error("Implement build menu");
+                case "metal":
+                    this.buildMenu();
                     break;
             }
             if (this.inventory[this.current].count == 0) {
@@ -157,6 +157,14 @@ class Player extends Entity {
             }
             game.ui.drawInventory();
         }        
+    }
+
+    buildMenu() {
+        if (Vector.distance(this.position, game.ship.position) < 50) {
+            game.end();
+        } else {
+            console.error("Implement build menu");
+        }
     }
 
     drop() {
@@ -183,7 +191,7 @@ class Player extends Entity {
     }
 
     draw(ctx, dt) {
-        super.draw(ctx, dt);
+        super.draw(ctx, dt, true);
         super.drawHealth(ctx);
     }
 

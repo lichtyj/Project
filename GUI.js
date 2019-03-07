@@ -91,8 +91,8 @@ class GUI {
                 this.uiCtx.fillStyle = "#888";
             }
             if (game.player.inventory[i] != undefined) {
-                this.drawResource(game.player.inventory[i].name,left+this.invBorder+(this.invSize)*(i+1/3), top+this.invBorder+this.invSize/3);
                 this.uiCtx.setTransform(1,0,0,1,0,0);
+                this.drawResource(game.player.inventory[i].name,left+this.invBorder+(this.invSize)*(i+1/3), top+this.invBorder+this.invSize/3);
                 var text = game.player.inventory[i].count;
                 // var twidth = this.uiCtx.measureText(text).width;
                 var twidth = 5;
@@ -103,7 +103,9 @@ class GUI {
 
     drawResource(sprite, x,y) {
         this.rotation += 0.01;
-        assetMgr.getSprite(sprite).drawFrame(0, this.uiCtx, x, y, 0, this.rotation, this.bounce += .075);
+        x += game.view.x; // This is a janky fix
+        y += game.view.y;
+        assetMgr.getSprite(sprite).drawFrame(0, this.uiCtx, x, y+1, 1, this.rotation, this.bounce += .075, null, true);
         this.uiCtx.setTransform(1,0,0,1,0,0);
     }
 }

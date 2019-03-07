@@ -53,6 +53,7 @@ class Ship extends Entity {
         p.time = 10;
         p.timeP = Math.random()*4+2;
         p.glow = true;
+        p.shadow = false;
         p.gravity = 0;
         p.resistanceP = 1.01;
         p.init(); 
@@ -74,12 +75,14 @@ class Ship extends Entity {
         p.time = 5;
         p.timeP = 30;
         p.glow = true;
+        p.shadow = false;
         p.gravity = 0;
         p.resistanceP = 1.01;
         p.init(); 
     }
 
-    engines(left) {
+    engines(left, hue) {
+        if (hue == undefined) hue = 0;
         var dist = 22;
         var angle = 2.725;
         if (left) angle *= -1;
@@ -88,14 +91,32 @@ class Ship extends Entity {
         var p = new Particles(pos.add(dir), Vector.fromAngle(this.direction+Math.PI).mult(10));
         p.preset("energy");
         p.count = 24;
-        p.hue = 160;
-        p.bright = 160;
+        p.hue = 160 + hue;
+        p.bright = 170;
         p.brightR = 64
         p.alpha = .75;
         p.force = .5;
         p.time = 2;
         p.timeP = 1;
         p.glow = true;
+        p.shadow = false;
+        p.gravity = 0;
+        p.init();    
+    }
+
+    ftl(speed) {
+        var pos = this.position.clone();
+        var p = new Particles(pos.add(Vector.random(16)), Vector.fromAngle(this.direction+Math.PI).mult(speed));
+        p.preset("energy");
+        p.count = speed;
+        p.hue = 160
+        p.bright = 223;
+        p.brightR = 32
+        p.alpha = .75;
+        p.time = 5;
+        p.timeP = 3;
+        p.glow = false;
+        p.shadow = false;
         p.gravity = 0;
         p.init();    
     }
@@ -124,22 +145,34 @@ class Ship extends Entity {
                 this.position.y = game.view.y + viewSize*.75;
                 this.position.z = Math.sin(this.elapsedTime*4)*2;
                 this.gravity = 0;
-                if (terrain.zoom < 80) {
-                    terrain.zoomIn(1.1);
+                if (terrain.zoom < 70) {
+                    terrain.zoomIn(1.075);
                     this.engines();
                     this.engines(true);
-                } else if (terrain.zoom < 110) {
+                    this.ftl(20*(1-terrain.zoom/80));
+                } else if (terrain.zoom < 100) { // Running
                     terrain.zoomIn(1.01);
                     this.engines();
                     this.engines(true);
-                } else if (terrain.zoom < 118) {
+                } else if (terrain.zoom < 110) { // Right out
                     terrain.zoomIn(1.003);
                     this.engines(true);
-                } else if (terrain.zoom < 120) {
+                } else if (terrain.zoom < 115) { // Flicker on
                     terrain.zoomIn(1.003);
                     this.engines();
                     this.engines(true);
-                } else if (terrain.zoom < 125) {
+                } else if (terrain.zoom < 119) { // Right out
+                    terrain.zoomIn(1.003);
+                    this.engines(true);
+                } else if (terrain.zoom < 120) { // Flame out
+                    terrain.zoomIn(1.005);
+                    this.engines(false, -120);
+                    this.engines(true);
+                } else if (terrain.zoom < 123) { // Running
+                    terrain.zoomIn(1.005);
+                    this.engines();
+                    this.engines(true);
+                } else if (terrain.zoom < 125) { // Right out
                     terrain.zoomIn(1.001);
                     this.engines(true);
                 } else {
@@ -238,7 +271,35 @@ class Ship extends Entity {
                 break;
             case "playing":
                 this.smoke();
-                break;  
+                break;
+            case "take off":
+                if (this.gravity != 0) { //init
+                    game.cameraTarget = {position: this.position.clone()};
+                    this.gravity = 0;
+                    this.direction %= Math.PI*2;
+                    console.log(this.direction);
+                    this.direction -= Math.PI*2;
+                    game.remove(game.player.gun);
+                    game.remove(game.player);
+                }
+                this.direction /= 1.01;
+                if (this.position.z < 60) {
+                    this.position.z += .25;
+                } else {
+                    this.state = "fly away";
+                }
+                break;
+            case "fly away":
+                this.engines();
+                this.engines(true);
+                this.acceleration.z = 0;
+                this.velocity.z = 0;
+                this.acceleration.x += .5;
+                game.ui.drawWhite += 1.5;
+                if (game.ui.drawWhite > 50) {
+                    game.win();
+                }
+                break;
         }
     }
 
@@ -254,6 +315,6 @@ class Ship extends Entity {
                 this.bounce /= 1.05;
             }
         }
-        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.direction, this.bounce);   
+        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.direction, this.bounce, null, true);   
     }
 }
