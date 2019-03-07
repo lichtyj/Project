@@ -161,9 +161,12 @@ class Player extends Entity {
 
     buildMenu() {
         if (Vector.distance(this.position, game.ship.position) < 50) {
-            game.end();
+            game.ship.repair -= this.inventory[this.current].count;
+            this.inventory[this.current].count = 0;
+            game.ui.inventoryMessage("Repaired ship " + (((1-game.ship.repair/50)*100)|0) + "%", "#FFF");
+            if (game.ship.repair <= 0) game.end();
         } else {
-            console.error("Implement build menu");
+            game.ui.inventoryMessage("Too far from the ship to repair", "#F00");
         }
     }
 

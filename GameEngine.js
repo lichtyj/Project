@@ -50,8 +50,6 @@ class GameEngine {
 
     win() {
         this.state = "won";
-        this.ui.drawRect(1, "#FFF");
-        this.ui.drawMessage("YOU WON!", "#050");
     }
 
     skipIntro() {
@@ -72,7 +70,7 @@ class GameEngine {
             game.dt += Math.min(.02, (current - game.lastFrame) / 1000);   // duration capped at 20ms
             while(game.dt > game.step) {
                 game.dt -= game.step;
-                if (game.state != "dead") game.update(game.step);
+                if (game.state != "dead" && game.state != "won") game.update(game.step);
                 game.draw(game.step);
             }
             game.lastFrame = current;
@@ -104,17 +102,21 @@ class GameEngine {
     }
 
     draw(dt) {
-        if (game.state != "dead") {
+        if (game.state != "dead" && game.state != "won") {
             this.ctx.canvas.width = this.ctx.canvas.width;
             var toDraw = this.tree.retrieve(this.view.x + (viewSize>>1), this.view.y + (viewSize>>1), viewSize*.75);
             toDraw.sort(function(a,b) {return a.position.y-b.position.y});
             for (var i = 0; i < toDraw.length; i++) {
                 toDraw[i].draw(this.ctx, dt);
             }
-        } else {
+        } else if (game.state == "dead") {
             this.ui.clearUI();
             this.ui.drawRect(1,"#000");
             this.ui.drawMessage("YOU DIED", "#F00");
+        } else if (game.state == "won") {
+            this.ui.clearUI();
+            this.ui.drawRect(1, "#FFF");
+            this.ui.drawMessage("YOU WON!", "#080");
         }
         this.ui.draw();
     }

@@ -176,7 +176,7 @@ class Terrain {ds
     populate() {
         terrain.generateObjects(250);        
         terrain.generateFood(10);
-        // terrain.generateChickens(50);
+        terrain.generateChickens(50);
     }
 
     zoomIn(amount) {

@@ -17,6 +17,7 @@ class Ship extends Entity {
         this.imgData;
         this.i = 0;
         this.damage = 100000;
+        this.repair = 50;
         this.state = "flying";
     }
 
@@ -274,15 +275,14 @@ class Ship extends Entity {
                 break;
             case "take off":
                 if (this.gravity != 0) { //init
-                    game.cameraTarget = {position: this.position.clone()};
+                    game.cameraTarget = {position: game.player.position.clone()};
                     this.gravity = 0;
                     this.direction %= Math.PI*2;
-                    console.log(this.direction);
-                    this.direction -= Math.PI*2;
+                    if (this.direction > Math.PI) this.direction -= Math.PI*2;
                     game.remove(game.player.gun);
                     game.remove(game.player);
                 }
-                this.direction /= 1.01;
+                this.direction /= 1.05;
                 if (this.position.z < 60) {
                     this.position.z += .25;
                 } else {
@@ -295,10 +295,14 @@ class Ship extends Entity {
                 this.acceleration.z = 0;
                 this.velocity.z = 0;
                 this.acceleration.x += .5;
-                game.ui.drawWhite += 1.5;
+                game.ui.drawWhite += 2;
                 if (game.ui.drawWhite > 50) {
                     game.win();
+                    game.ui.drawWhite = 50;
+                    this.state = "done";
                 }
+                break;
+            case "done":
                 break;
         }
     }
