@@ -12,7 +12,6 @@ class Resource extends StaticEntity {
 
     static create(position, type, rotation, spin) {
         var obj = new Resource(position, type, rotation, spin);
-        console.error("chicken");
         game.addEntity(obj);
         return obj;
     }
