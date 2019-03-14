@@ -19,13 +19,12 @@ class GUI {
 
     draw() {
         if (game.state != "dead" && game.state != "won") {
+            if (this.drawRed > 0 || this.drawWhite > 0) this.clearUI();
             if (this.drawRed > 0) {
-                this.clearUI();
                 if (this.drawRed > 50) this.drawRed = 50;
                 this.drawRect(this.drawRed--/100, "#F00");
             }
             if (this.drawWhite > 0) {
-                this.clearUI();
                 this.drawRect(this.drawWhite--/50, "#FFF");
             }
             if (this.textFade > 0) {
