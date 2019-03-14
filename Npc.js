@@ -58,7 +58,6 @@ class Npc extends Entity {
     }
 
     init() {
-        game.addEntity(this);
         this.ai = new BehaviorTree(this);
         this.ai.buildTree();
         this.ai.formatTree();
@@ -347,13 +346,15 @@ class Npc extends Entity {
     }
 
     die() {
-        if (this.onFire > 0 && !this.dead) {
-            Resource.create(this.position, "cookedMeat", Math.random()*Math.PI*2);
-        } else {
-            Resource.create(this.position, "rawMeat", Math.random()*Math.PI*2);
+        if (!this.dead) {
+            if (this.onFire > 0) {
+                Resource.create(this.position, "cookedMeat", Math.random()*Math.PI*2);
+            } else {
+                Resource.create(this.position, "rawMeat", Math.random()*Math.PI*2);
+            }
+            this.dead = true;
+            game.remove(this);
         }
-        this.dead = true;
-        game.remove(this);
     }
 
     takeDamage(other) {
