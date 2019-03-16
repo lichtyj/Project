@@ -1,11 +1,9 @@
 class Weapon extends Entity {
     constructor(position) {
         super(position);
-        this.sprite;
         this.lastFacing = new Vector();
         this.facing = new Vector();
         this.target = new Vector();
-        this.bounce = 0;
         this.barrel = new Vector(8, 0, 3);
         this.grip = new Vector(8, -2, 0);
         this.gun;
@@ -18,8 +16,7 @@ class Weapon extends Entity {
         this.chargeMax = 0;
         this.chargeRate = 0;
         this.chargeP;
-        // this.action = "semi";
-
+        this.action;
     }
 
     preset(gun) {
@@ -238,5 +235,27 @@ class Weapon extends Entity {
         } else { 
             this.sprite.drawSubImage(0, ctx, this.position.x, this.position.y, this.facing.angle());       
         }
+    }
+
+    save() {
+        return JSON.stringify({position:this.position, direction:this.direction, rotation:this.rotation, 
+            lastFacing:this.lastFacing, facing:this.facing, target:this.target, gun:this.gun, 
+            state:this.state, stateTimer:this.stateTimer});
+    }
+
+    static load(data) {
+        data = JSON.parse(data);
+        var obj = new Weapon(Vector.create(data.position));
+        obj.direction = Vector.create(data.direction);
+        obj.rotation = data.rotation;
+        obj.lastFacing = Vector.create(data.lastFacing);
+        obj.facing = Vector.create(data.facing);
+        obj.target = data.target;
+        obj.gun = data.gun;
+        obj.state = data.state;
+        obj.stateTimer = data.stateTimer;
+        obj.preset(data.gun);
+        game.addEntity(obj);
+        return obj;
     }
 }

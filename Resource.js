@@ -1,11 +1,7 @@
 class Resource extends StaticEntity {
     constructor(position, type, rotation, spin) {
         super(position, type, rotation);
-        this.elapsedTime = 0;
-        this.bounce = 0;
         this.spin = spin;
-        this.visible = false;
-        this.target = false;
         this.type = type;
         this.timer = 30;
     }
@@ -52,17 +48,19 @@ class Resource extends StaticEntity {
         this.rotation += 0.01;
         this.elapsedTime += dt;
         this.timer--;
-        if (this.visible) {
-            ctx.setTransform(1,0,0,1,0,0);
-            if (this.target) {
-                ctx.fillStyle = "#0F0";
-            } else {
-                ctx.fillStyle = "#00F";
-            }
-            ctx.fillRect(this.position.x-1 - game.view.x, this.position.y  - game.view.y, 2, 10)
-            this.visible = false;
-            this.target = false;
-        }
-        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, 0/*this.position.z*/, this.rotation, this.bounce += .075, this.spin, true);
+        this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, 
+            0/*this.position.z*/, this.rotation, this.bounce += .075, this.spin, true);
+    }
+
+    save() {
+        return JSON.stringify({position:this.position, type:this.type, 
+            rotation:this.rotation, spin:this.spin, timer:this.timer});
+    }
+
+    static load(data) {
+        data = JSON.parse(data);
+        var obj = Resource.create(Vector.create(data.position), data.type, data.rotation, data.spin);
+        obj.timer = data.timer;
+        return obj;
     }
 }

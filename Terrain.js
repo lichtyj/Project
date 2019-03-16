@@ -176,7 +176,10 @@ class Terrain {ds
     populate() {
         terrain.generateObjects(250);        
         terrain.generateFood(10);
-        terrain.generateChickens(50);
+        terrain.generateChickens(20);
+        terrain.generateAliens(30);
+        terrain.generateAliensSmall(30);
+        terrain.generateAliensLarge(5);
     }
 
     zoomIn(amount) {
@@ -227,211 +230,66 @@ class Terrain {ds
     }
 
     generateChickens(count) {
-        var chicken;
+        var n;
         for (var i = 0; i < count; i++) {
-            chicken = Npc.create(this.getRandomLand(), assetMgr.getSprite("chicken"));
+            n = Npc.create(this.getRandomLand(), "chicken");
         };
     }
+
+    generateAliens(count) {
+        var n;
+        for (var i = 0; i < count; i++) {
+            n = Npc.create(this.getRandomLand(), "alien");
+            n.rage = false;
+            n.health = 300;
+            n.maxhealth = 300;
+            n.vision = 110;
+            n.matingThreshold = -1;
+            n.runSpeed = 1;
+            n.damage = 10;
+            n.moveSpeed = .5;
+            n.direction = Vector.random(1);
+        };
+    }
+
+    generateAliensSmall(count) {
+        var n;
+        for (var i = 0; i < count; i++) {
+            n = Npc.create(this.getRandomLand(), "alienSmall");
+            n.rage = true;
+            n.health = 50;
+            n.vision = 150;
+            n.maxhealth = 50;
+            n.matingThreshold = -1;
+            n.runSpeed = 5;
+            n.damage = 2;
+            n.moveSpeed = 3;
+        };
+    }
+
+    generateAliensLarge(count) {
+        var n;
+        for (var i = 0; i < count; i++) {
+            n = Npc.create(this.getRandomLand(), "alienLarge");
+            n.rage = false;
+            n.aggression = 0;
+            n.health = 1500;
+            n.maxhealth = 1500;
+            n.matingThreshold = -1;
+            n.runSpeed = .5;
+            n.damage = 15;
+            n.moveSpeed = .5;
+        };
+    }
+
+    save() {
+        return JSON.stringify(this.map);
+    }
+
+    static load(data) {
+        this.map = JSON.parse(data);
+        draw();
+    }
+
+
 }
-
-// distToCenter(i) {
-//     return this.distToPoint(i, this.overworldSize*.5, this.overworldSize*.5);
-// }
-
-// distToPoint(i, px, py) {
-//     var y = (i / this.overworldSize)|0;
-//     var x = i % this.overworldSize;
-//     return (Math.pow(x - px, 2) + Math.pow(y - py, 2))/1000;
-// }
-
-// make() {
-//     this.maxHeight = -1;
-//     for (var i = 0; i < this.overworldSize*this.overworldSize; i++) {
-//         this.growthMap[i] = 0;
-//         var mod = this.distToCenter(i);
-//         mod = mod/40;
-//         this.map[i] = Math.round(Math.random()-mod-.4);
-//         if (this.map[i] < 0) this.map[i] = 0;
-//     }
-// }
-
-// load() {
-//     if (this.building) {
-//         if (this.timer < 50) { 
-//             this.buildworld();
-//             this.timer++;
-//         } else {
-//             console.log("Drawing world");
-//             this.building = false;
-//             this.biomeworld();
-//             this.biomeworld();
-//             this.biomeworld();
-//             this.blurworld();
-//             this.blurworld();
-//             this.blurworld();
-//             this.blurworld();
-//             this.blurworld();
-//             this.getHeights();
-//             this.draw();
-//             game.updateView();
-//             console.log("Done drawing world");
-//             game.start();
-//         }
-//     }
-// }
-
-// getHeights() {
-//     var max = this.overworldSize*this.overworldSize;
-//     this.maxHeight = -1;
-//     var count = 0;
-//     for (var i = 0; i < max; i++) {
-//         if (this.map[i] > this.maxHeight) this.maxHeight = this.map[i];
-//         if (this.map[i] > 0) {this.avgHeight += this.map[i]; count++;}
-//     }
-//     this.avgHeight /= count;
-// }
-
-// biomeworld(x) {
-//     var neighbors = 0;
-//     var max = this.overworldSize*this.overworldSize;
-//     this.newMap = [this.overworldSize*this.overworldSize];
-//     for (var i = 0; i < max; i++) {
-//         if (this.map[i] == -1) continue;
-//         neighbors = this.neighbors(i);
-//         this.newMap[i] = (this.map[i] + neighbors.average)*(Math.random()*.5+.5);
-//         var mod = this.distToCenter(i);
-//         mod = mod/80;
-//         if (mod > 1) mod = 1;
-//         this.newMap[i] *= 1-mod;
-//         if (mod > .75) {
-//             this.map[i] = -1;
-//             this.newMap[i] = -1;
-//         } else if (this.newMap[i] < 1) this.newMap[i] = 1;
-//     }
-//     this.map = this.newMap;
-// }
-
-
-// blurworld() {
-//     var neighbors = 0;
-//     var max = this.overworldSize*this.overworldSize;
-//     this.newMap = [this.overworldSize*this.overworldSize];
-//     for (var i = 0; i < max; i++) {
-//         if (this.map[i] == -1) continue;
-//         neighbors = this.neighbors(i);
-//         this.newMap[i] = neighbors.average;
-//         var mod = this.distToCenter(i);
-//         mod = mod/40;
-//         if (mod > 1) mod = 1;
-//         this.newMap[i] *= 1-mod;
-//         if (mod > .75) {
-//             this.map[i] = -1;
-//             this.newMap[i] = -1;
-//         } else if (this.newMap[i] < 1) this.newMap[i] = 1;
-//     }
-//     this.map = this.newMap;
-// }
-
-// buildworld() {  
-//     var neighbors = 0;
-//     var max = this.overworldSize*this.overworldSize;
-//     for (var i = 0; i < max; i++) {
-//         if (this.map[i] == -1) continue;
-//         neighbors = this.neighbors(i);
-//         if (this.map[i]-this.growthMap[i] == 0) {
-//             this.newMap[i] = this.birthrule[neighbors.count];
-//             if (this.newMap[i] == 0) this.growthMap[i] = neighbors.average;
-//         } else if (this.map[i] < 32) {
-//             this.newMap[i] = this.aliverule[neighbors.count]*this.growthMap[i];
-//             this.growthMap[i] += neighbors.average-.125;
-//         } else if (this.map[i] < 128) {
-//             this.newMap[i] += neighbors.average*this.aliverule[neighbors.count]
-//             this.growthMap[i] += neighbors.average-4;
-//         } else if (this.map[i] >= 128) {
-//             this.newMap[i] = this.map[i];
-//             // this.growthMap[i]--;
-//         }
-//         if (this.newMap[i] < 0) this.newMap[i] = 0;
-//         var mod = this.distToCenter(i);
-//         mod = mod/40;
-//         if (mod > 1) mod = 1;
-//         this.newMap[i] *= 1-mod;
-//         if (mod > .75) {
-//             this.map[i] = -1;
-//             this.newMap[i] = -1;
-//         }
-//     }
-//     this.map = this.newMap;
-// }
-
-// neighbors(i) {
-//     var neighbors = 0;
-//     var count = 0;
-//     var ti = i;
-//     for (var j = -1; j < 2; j++) {
-//         for (var k = -1; k < 2; k++) {
-//             if (j != 0 || k != 0) {
-//                 ti = (i + k + j*this.overworldSize) % (this.overworldSize*this.overworldSize);
-//                 if (ti < 0) ti += this.overworldSize*this.overworldSize;
-//                 if (this.map[ti] > this.map[i]/2)neighbors += this.map[ti];
-//                 if (this.map[ti] != 0) count++;
-//             }
-//         }
-//     }
-//     return {count:count, average:neighbors/8};
-// }
-
-// draw() {
-//     if (this.overworldView) {
-//         var total = this.overworldSize*this.overworldSize*4;
-//         var v = new Uint8ClampedArray(total);
-//         var j,k,l,m;
-//         var snowline = (this.maxHeight + this.avgHeight)*.75;
-//         for (var i = 0; i < total;) {
-//             j = this.map[i/4];
-//             k = j/snowline;
-//             l = (this.distToPoint(i/4, this.overworldSize*.75, this.overworldSize*.25)-10)|0;
-//             l *= 4;
-//             m = (this.distToCenter(i/4));
-//             m *= m;
-//             if (m > 80) {
-//                 m = 80-m;
-//             }
-//             if (k > 1) k = 1;
-//             if (k < 0) k = 0;
-//             k = Math.round(k*(this.colors.length-1));
-//             if (j == -1 || isNaN(k)) {
-//                 if (Math.round(Math.random()*500) == 0)
-//                     m = 255;
-//                 else
-//                     m = 0;
-//                 v[i++] = m;
-//                 v[i++] = m;
-//                 v[i++] = m;
-//             } else {
-//                 v[i++] = this.colors[k].r - l+m;
-//                 v[i++] = this.colors[k].g - (l*1.25)+m;
-//                 v[i++] = this.colors[k].b - (l*1.5)+m;
-//             }
-//             v[i++] = 255;
-//         }
-//         var can = document.createElement('canvas');
-//         can.width = this.overworldSize;
-//         can.height = this.overworldSize;
-//         var tempCtx = can.getContext('2d');
-//         tempCtx.putImageData(new ImageData(v, this.overworldSize, this.overworldSize), 0, 0);
-//         game.ctx.canvas.style.background = "url(" + can.toDataURL('terrain/png', 1.0) + ")";
-//         // game.ctx.canvas.style.backgroundPosition = "top -200px left -200px";
-//         game.updateView();
-//     } else {
-//         // var snowline = (this.maxHeight + this.avgHeight)*.75;
-//         var x = game.cameraTarget.position.x/worldSize*this.overworldSize;
-//         var y = game.cameraTarget.position.y/worldSize*this.overworldSize;
-//         // var k = this.map[(x+y*this.overworldSize)|0]/snowline;
-//         // k = Math.round(k*(this.colors.length-1));
-//         console.log(game.cameraTarget.position + ": " + x + ", " + y);
-//         // console.log(this.colors[k]);
-//         // game.ctx.canvas.style.background = "rgb(" + this.colors[k].r + ", " + this.colors[k].g + ", " + this.colors[k].b + ")";
-//         // game.updateView();
-//     }
-// }

@@ -187,4 +187,8 @@ class Vector { // Ignores z in all non-elementary calcs
     static fromAngle(angle) {
         return new Vector(Math.cos(angle), Math.sin(angle), 0);
     }
+
+    static create(v) {
+        return new Vector(v.x, v.y, v.z);
+    }
 }

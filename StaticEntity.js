@@ -94,4 +94,15 @@ class StaticEntity extends Entity {
             this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, 0/*this.position.z*/, this.rotation, 0.25, true);   
         }
     }
+
+
+    save() {
+        return JSON.stringify({position:this.position, type:this.type, 
+            rotation:this.rotation});
+    }
+
+    static load(data) {
+        data = JSON.parse(data);
+        return StaticEntity.create(Vector.create(data.position), data.type, data.rotation);
+    }
 }

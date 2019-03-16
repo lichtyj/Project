@@ -2,7 +2,6 @@ class Player extends Entity {
     constructor(position, sprite) {
         super(position, sprite);
         this.separation = 15;
-        this.moveTo = new Vector();
         this.moveSpeed = 2;
         this.stalkSpeed = 1
         this.topSpeed = this.moveSpeed;
@@ -10,15 +9,12 @@ class Player extends Entity {
         this.target = new Vector();
         this.hand = new Vector(2,-3, 9);
         this.state = "default";
-        this.separation = 15;
-
         this.facing = new Vector();
 
         this.health = 100;
         this.maxhealth = 100;
         this.gun;
 
-        this.canInteract = false;
         this.current = 0;
         this.inventory = [];
     }
@@ -196,6 +192,27 @@ class Player extends Entity {
     draw(ctx, dt) {
         super.draw(ctx, dt, true);
         super.drawHealth(ctx);
+    }
+
+    save() {
+        return JSON.stringify({position:this.position, topSpeed:this.topSpeed, aiming:this.aiming, 
+            target:this.target, state:this.state, facing:this.facing, health:this.health,
+            current:this.current, inventory:this.inventory});
+    }
+
+    static load(data) {
+        data = JSON.parse(data);
+        var obj = new Player(Vector.create(data.position), assetMgr.getSprite("scientist"));
+        game.addEntity(obj);
+        obj.topSpeed = data.topSpeed;
+        obj.aiming = data.aiming;
+        obj.target=  Vector.create(data.target);
+        obj.state = data.state;
+        obj.facing = Vector.create(data.facing);
+        obj.health = data.health;
+        obj.current = data.current;
+        obj.inventory = data.inventory;
+        return obj;
     }
 
 }

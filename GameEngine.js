@@ -9,7 +9,6 @@ class GameEngine {
         this.viewHeight = ctx.canvas.height;
         this.cameraTarget = null;
         this.cameraOffset= new Vector();
-        this.viewAngle = 1;
         this.bounds = new Vector(worldSize, worldSize);
         this.view = new Vector();
         this.tree;
@@ -18,8 +17,8 @@ class GameEngine {
         this.player;
         this.state = "loading";
         this.ui = new GUI(uiCtx, overlayCtx);
-
         this.ship;
+        this.socket;
     }
 
     init() {
@@ -27,6 +26,7 @@ class GameEngine {
         this.tree = new Quadtree(1, 0, 0, this.bounds.x, this.bounds.y, null);
         this.tree.init();
         this.cameraTarget = {position: new Vector(terrain.overworldSize/2, terrain.overworldSize/2, 0)};
+        this.save();
         this.ui.drawRect(1,"#000");
         this.ctx.canvas.style.background = "#F00";
         this.ui.drawMessage("BUILDING WORLD...", "#FFF");
@@ -97,6 +97,7 @@ class GameEngine {
             toUpdate[i].update(dt);    
         }
         while (this.toRemove.length > 0) {
+
             this.entities.splice(this.entities.indexOf(this.toRemove.pop()),1);
         }
     }
@@ -161,5 +162,66 @@ class GameEngine {
 
     remove(entity) {
         this.toRemove.push(entity);
+    }
+
+
+
+    saveData() {
+        var e = [];
+        for (var entity of this.entities) {
+            if (!(entity instanceof Particles || entity instanceof Projectile))
+                e.push({"class":entity.constructor.name, "data":entity.save()});
+        }
+        return JSON.stringify({entities:e});
+    }
+
+    save() {
+        // this.socket.emit("save", { studentname: "Josh Lichty", statename: "gameState", data: "Goodbye World" });
+        if (this.state == "playing")
+            saveString = this.saveData();
+    }
+
+    load() {
+        game.entities = [];
+        this.loadData(saveString);
+    }
+
+    loadData(data) {
+        // map
+        var gun;
+        data = JSON.parse(data);
+        var a = {};
+        a.Player = 0;
+        a.Ship = 0;
+        a.Weapon = 0;
+        a.Npc = 0;
+        a.StaticEntity = 0;
+        a.Resource = 0;
+        for (var entity of data.entities) {
+            a[entity.class]++;
+            switch(entity.class) {
+                case "Player":
+                    this.player = Player.load(entity.data);
+                    break;
+                case "Ship":
+                    this.ship = Ship.load(entity.data);
+                    break;
+                case "Weapon":
+                    gun = Weapon.load(entity.data);
+                    break;
+                case "Npc":
+                    Npc.load(entity.data);
+                    break;
+                case "StaticEntity":
+                    StaticEntity.load(entity.data);
+                    break;
+                case "Resource":
+                    Resource.load(entity.data);
+                    break;
+            }
+        }
+        console.log(a);
+        this.player.gun = gun;
+        this.cameraTarget = this.player
     }
 }

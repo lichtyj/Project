@@ -6,7 +6,6 @@ class Entity {
         this.acceleration = new Vector();
         this.sprite = sprite;
         this.rotation = 0;
-        this.elapsedTime = 0;
         this.gravity = .125;
         this.bounce = 0;
         this.elapsedTime = 0;

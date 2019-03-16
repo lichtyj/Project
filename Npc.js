@@ -1,6 +1,7 @@
 class Npc extends Entity {
     constructor(position, sprite) {
         super(position, sprite);
+        this.spr;
         this.healthBar = assetMgr.getAsset("particle");
         this.vision = Math.random()*100+150;
         this.visionCone = Math.PI*(1+Math.random());
@@ -10,11 +11,8 @@ class Npc extends Entity {
         this.topSpeed = 1.5;
         this.runSpeed = 4;
         this.crawlSpeed = 1;
-        this.speed;
         this.ai;
         this.aiTimer = 0;
-        this.memory = [];
-        // this.faction = Math.random()*8 | 0 // 
 
         // Survival variables
         this.health = 100;
@@ -26,32 +24,28 @@ class Npc extends Entity {
         this.staminaThreshold = 500; // Genetic
 
         this.isMale = (Math.random()*2 | 0 == 0);
-        this.aggression = Math.random() + Math.random()*this.isMale // genetic
-        this.damage = 5;
+        this.aggression = 1 // genetic
+        this.damage = 2;
+        this.attackTimer = 0;
         this.attacking = false;
         this.matingTimer = 0;
         this.matingThreshold = 25 // genetic
 
-        this.perception = 5; // genetic
-        this.timer = 0;
         this.targetPos = new Vector();
         this.targetEntity = null;
         this.inAction = false;
         this.find = null;
         this.idle = 0;
 
-        // Drawing stuff
-        this.bounce = 0;
-        this.elapsedTime = 0;
-        this.facing = new Vector();
         this.onFire = 0;
-
         this.dead = false;
         this.rage = false;
+        this.facing = new Vector();
     }
 
     static create(position, sprite) {
-        var obj = new Npc(position, sprite);
+        var obj = new Npc(position, assetMgr.getSprite(sprite));
+        obj.spr = sprite;
         game.addEntity(obj);
         obj.init();
         return obj;
@@ -168,7 +162,7 @@ class Npc extends Entity {
 
     getAggression() {
         // console.error("Implement this");
-        this.ai.finishAction(this.stamina > 0);
+        this.ai.finishAction(this.stamina > 0 && this.aggression);
     }
 
     eat() {
@@ -183,14 +177,17 @@ class Npc extends Entity {
     }
 
     attack() {
-        this.topSpeed = this.moveSpeed;
-        if (Vector.distance(this.position, this.targetEntity.position) < 40) {// Replace with attack range?  Join with eat?
-            this.targetEntity.takeDamage(this);
-            this.targetEntity = null;
-            this.inAction = true;
-            this.ai.finishAction(true);
-        } else {
-            this.ai.finishAction(false);
+        if (this.attackTimer < 0) {
+            this.topSpeed = this.moveSpeed;
+            if (Vector.distance(this.position, this.targetEntity.position) < 40) {// Replace with attack range?  Join with eat?
+                this.targetEntity.takeDamage(this);
+                this.targetEntity = null;
+                this.inAction = true;
+                this.ai.finishAction(true);
+                this.attackTimer = this.damage + 10;
+            } else {
+                this.ai.finishAction(false);
+            }
         }
     }
 
@@ -198,7 +195,7 @@ class Npc extends Entity {
         if (Vector.distance(this.position, this.targetEntity.position) < 25) {
             var temp = this.position.clone();
             temp.average(this.targetEntity.position);
-            this.chicken = Npc.create(temp, assetMgr.getSprite("chicken"));
+            this.chicken = Npc.create(temp, "chicken");
             // console.error("baby chicken");
             this.matingTimer = 1000;
             this.targetEntity.matingTimer = 1000;
@@ -218,6 +215,8 @@ class Npc extends Entity {
         if (this.health <= 0) this.die();
         
         this.aiTimer--;
+        this.attackTimer--;
+        if (this.attackTimer < -10 && ((this.spr == "alienSmall") || (this.spr == "alien" && this.health == this.maxhealth))) this.rage = false;
         if (this.rage == true && game.player != null) {
             this.targetEntity = game.player;
             this.targetPos = game.player.position.clone();
@@ -327,6 +326,8 @@ class Npc extends Entity {
             }
         }
         this.flock(this.canSee);
+        this.velocity.z = 0;
+        this.position.z = 0; // This is dirty, but the npcs are gettings jumpy and I don't know why
         super.update();
         this.facing.set(this.velocity);
 
@@ -374,11 +375,25 @@ class Npc extends Entity {
             p = new Particles(pos, new Vector(other.velocity.x, other.velocity.y, -other.velocity.z));
             p.velocity.div(2);
             p.velocity.z *= 2;
-            p.preset("feathers");
+            if (this.spr == "chicken") {
+                p.preset("feathers");
+            } else {
+                p.preset("plasma");
+            }
             p.init();
         }
-        if (other.type == "fire" || other.type == "plasma") {
+        if (this.spr == "chicken" && other.type == "fire" || other.type == "plasma") {
             this.onFire += Math.random()*5;
+        }
+        if (this.spr == "alienLarge") {
+            this.spr = "alienLargeRage";
+            this.runSpeed = 1.5;
+            this.sprite = assetMgr.getSprite(this.spr);
+            this.rage = true;
+        }
+        if (this.spr == "alien") {
+            this.runSpeed = 1.75;
+            this.rage = true;
         }
         this.interrupt();
     }
@@ -390,22 +405,27 @@ class Npc extends Entity {
         var avgPos = new Vector();
         var total = 0;
         for (var other of entities) {
-            if (other instanceof Player && this.attacking) break;
             var d = Vector.distance(this.position,other.position);
             if (other != this && d < this.vision) {
+                if (other instanceof Player && (this.spr == "alien" || this.spr == "alienSmall")) {
+                    this.rage = true;
+                    if (this.attackTimer < 0) this.attackTimer = -1;
+                }
                 if (other instanceof Npc) {
                     avg.add(other.velocity);  // Orientation
                     avgPos.add(other.position); // Cohesion
                     total++;
                 }
                 if (d < this.separation && !(other instanceof Resource)) { // Separation
-                    var sep = this.position.clone();
-                    sep.subtract(other.position).limit(0.5);
-                    var rate = (this.separation - d)/this.separation;
-                    sep.mult(Math.pow(rate,2));
-                    avgSep.add(sep);
-                    if (other instanceof Player) {
-                        avgSep.add(sep).mult(5);
+                    if (!(other instanceof Player && this.attacking)) {
+                        var sep = this.position.clone();
+                        sep.subtract(other.position).limit(0.5);
+                        var rate = (this.separation - d)/this.separation;
+                        sep.mult(Math.pow(rate,2));
+                        avgSep.add(sep);
+                        if (other instanceof Player) {
+                            avgSep.add(sep).mult(5);
+                        }
                     }
                 } 
             }
@@ -414,7 +434,7 @@ class Npc extends Entity {
             avg.add(avgPos.div(total++).subtract(this.position).limit(1)); // Cohesion
             avg.div(total).subtract(this.velocity).limit(0.05); // Orientation
         }
-        if (!this.attacking) this.acceleration.add(avg);
+        if (!this.attacking && !this.rage) this.acceleration.add(avg);
         this.acceleration.add(avgSep); // Separation
         this.acceleration.limit(this.sprint);
     }
@@ -422,5 +442,51 @@ class Npc extends Entity {
     draw(ctx, dt) {
         super.draw(ctx, dt, true);
         super.drawHealth(ctx);
+    }
+
+    save() {
+        return JSON.stringify({position:this.position, velocity:this.velocity, 
+            direction:this.direction, acceleration:this.acceleration, rotation:this.rotation, 
+            gravity:this.gravity, vision:this.vision, visionCone:this.visionCone, 
+            separation:this.separation, aiTimer:this.aiTimer, health:this.health, 
+            stamina:this.stamina, isMale:this.isMale, aggression:this.aggression, 
+            matingTimer:this.matingTimer, targetPos:this.targetPos, inAction:this.inAction, 
+            find:this.find, idle:this.idle, onFire:this.onFire, dead:this.dead, rage:this.rage, 
+            elapsedTime:this.elapsedTime, facing:this.facing, spr:this.spr, runSpeed:this.runSpeed, 
+            moveSpeed:this.moveSpeed, damage:this.damage, maxhealth:this.maxhealth});
+    }
+
+    static load(data) {
+        data = JSON.parse(data);
+        var obj = Npc.create(Vector.create(data.position), data.spr);
+        obj.sprite = assetMgr.getSprite(data.spr)
+        obj.velocity = Vector.create(data.velocity);
+        obj.direction = Vector.create(data.direction);
+        obj.acceleration = Vector.create(data.acceleration);
+        obj.rotation = data.rotation;
+        obj.gravity = data.gravity;
+        obj.vision = data.vision;
+        obj.visionCone = data.visionCone;
+        obj.separation = data.separation;
+        obj.aiTimer = data.aiTimer;
+        obj.health = data.health;
+        obj.maxhealth = data.maxhealth;
+        obj.stamina = data.stamina;
+        obj.isMale = data.isMale;
+        obj.aggression = data.aggression;
+        obj.damage = data.damage;
+        obj.matingTimer = data.matingTimer;
+        if (data.targetPos != null) obj.targetPos = Vector.create(data.targetPos);
+        obj.inAction = data.inAction;
+        obj.find = data.find;
+        obj.idle = data.idle;
+        obj.onFire = data.onFire;
+        obj.dead = data.dead;
+        obj.rage = data.rage;
+        obj.runSpeed = data.runSpeed;
+        obj.moveSpeed = data.moveSpeed;
+        obj.elapsedTime = data.elapsedTime;
+        obj.facing = Vector.create(data.facing);
+        return obj;
     }
 }

@@ -51,7 +51,7 @@ class Controls {
     keyDown(num) {
         if (game.state == "intro") game.skipIntro();
         if (this.keys.indexOf(num) == -1) {
-            console.log(num);
+            // console.log(num);
             this.keys.push(num);
         }
     }
@@ -160,6 +160,14 @@ class Controls {
                     break;
                 case 87: // W
                     moving.add(Vector.forward());
+                    break;
+                case 118: // F7
+                    game.save();
+                    this.keyUp(118);
+                    break;
+                case 120: // F9
+                    game.load();
+                    this.keyUp(120);
                     break;
             }
         }

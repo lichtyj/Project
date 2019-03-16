@@ -1,21 +1,12 @@
 class Ship extends Entity {
     constructor(sprite, shadowSprite) {
-        super();
-        this.position = new Vector();
+        super(new Vector(), sprite);
         this.velocity = new Vector();
         this.acceleration = new Vector();
-        this.elapsedTime = 0;
         this.direction = 5.25;
-        this.sprite = sprite;
-        this.bounce = 0;
         this.spin = 0;
-        this.landed = false;
-        this.stopped = false;
         this.shadowSprite = shadowSprite;
         this.timer = 0;
-        this.particles;
-        this.imgData;
-        this.i = 0;
         this.damage = 100000;
         this.repair = 50;
         this.state = "flying";
@@ -320,5 +311,20 @@ class Ship extends Entity {
             }
         }
         this.sprite.drawSprite(ctx, this.elapsedTime, this.position.x, this.position.y, this.position.z, this.direction, this.bounce, null, true);   
+    }
+
+    save() {
+        return JSON.stringify({position:this.position, direction:this.direction, repair:this.repair});
+    }
+
+    static load(data) {
+        data = JSON.parse(data);
+        var obj = new Ship(assetMgr.getSprite("ship"), assetMgr.getAsset("shipShadow"));
+        game.addEntity(obj);
+        obj.position = Vector.create(data.position);
+        obj.direction = data.direction; 
+        obj.repair = data.repair;
+        obj.state = "playing";
+        return obj;
     }
 }

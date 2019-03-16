@@ -6,6 +6,7 @@ var viewSize = 400;
 var borderBuffer = 30;
 var worldSize = 4096;
 var ready = 0;
+var saveString = "";
 // Encapsulate these
 
 assetMgr.queueDownload("./sprites/practice.png");
@@ -24,6 +25,10 @@ assetMgr.queueDownload("./sprites/particle.png");
 assetMgr.queueDownload("./sprites/shadow.png");
 
 // Characters
+assetMgr.queueDownload("./sprites/alien.png");
+assetMgr.queueDownload("./sprites/alienSmall.png");
+assetMgr.queueDownload("./sprites/alienLarge.png");
+assetMgr.queueDownload("./sprites/alienLargeRage.png");
 assetMgr.queueDownload("./sprites/dudeRed.png");
 assetMgr.queueDownload("./sprites/dudeGreen.png");
 assetMgr.queueDownload("./sprites/dudeBlue.png");
@@ -52,7 +57,10 @@ assetMgr.downloadAll(function() {
 
 function createSprites() {
     var frameduration = 0.15;
-    assetMgr.createSprite("practice", 16, 16, 16, frameduration, 8, true, 1, 1, 8, 8);
+    assetMgr.createSprite3D("alien", 16, 16, 21, frameduration, 1, true);
+    assetMgr.createSprite3D("alienSmall", 16, 16, 10, frameduration, 1, true);
+    assetMgr.createSprite3D("alienLarge", 16, 16, 21, frameduration, 1, true);
+    assetMgr.createSprite3D("alienLargeRage", 16, 16, 21, frameduration, 1, true);
     assetMgr.createSprite3D("dudeRed", 16, 16, 18, frameduration, 1, true);
     assetMgr.createSprite3D("dudeGreen", 16, 16, 21, frameduration, 1, true);
     assetMgr.createSprite3D("dudeBlue", 16, 16, 18, frameduration, 1, true);
@@ -120,7 +128,6 @@ function start() {
     overlayCanvas.style.imageRendering = "Pixelated";
     var overlayCtx = overlayCanvas.getContext('2d', { alpha: true });
     overlayCtx.imageSmoothingEnabled = false;
-
 
     game = new GameEngine(ctx, uiCtx, overlayCtx, worldSize);
     game.init();
